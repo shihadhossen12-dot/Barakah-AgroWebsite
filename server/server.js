@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createOrder, getOrders, updateOrderStatus } from './db.js';
+import { initDb, createOrder, getOrders, updateOrderStatus } from './db.js';
 
 dotenv.config();
 
@@ -47,19 +47,40 @@ app.post('/api/admin/logout', auth, (req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/api/admin/orders', auth, (req, res) => res.json({ orders: getOrders() }));
+app.get('/api/admin/orders', auth, async (req, res) => {
+  try {
+    const orders = await getOrders();
+    res.json({ orders });
+  } catch (error) {
+    console.error('Get orders error:', error);
+    res.status(500).json({ error: 'Failed to load orders.' });
+  }
+});
 
-app.patch('/api/admin/orders/:id/status', auth, (req, res) => {
-  const { status } = req.body || {};
-  if (!allowedStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
-  const order = updateOrderStatus(req.params.id, status);
-  if (!order) return res.status(404).json({ error: 'Order not found' });
-  res.json({ order });
+app.patch('/api/admin/orders/:id/status', auth, async (req, res) => {
+  try {
+    const { status } = req.body || {};
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const order = await updateOrderStatus(req.params.id, status);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.json({ order });
+  } catch (error) {
+    console.error('Update order status error:', error);
+    res.status(500).json({ error: 'Failed to update order status.' });
+  }
 });
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
   const body = req.body || {};
   const { customer, items, deliveryLocation, deliveryFee, subtotal, discount, total, paymentMethod, note } = body;
   if (!customer?.name || !customer?.phone || !customer?.district || !customer?.address) {
@@ -97,14 +118,28 @@ app.post('/api/orders', (req, res) => {
     total: Number(total) || 0
   };
 
-  createOrder(order);
+try {
+  await createOrder(order);
   res.status(201).json({ order });
+} catch (error) {
+  console.error('Create order error:', error);
+  res.status(500).json({ error: 'Failed to create order.' });
+}
 });
-
 app.use(express.static(root, { index: 'index.html' }));
 app.get('/admin', (req, res) => res.sendFile(path.join(root, 'admin', 'index.html')));
+async function startServer() {
+  try {
+    await initDb();
 
-app.listen(PORT, () => {
-  console.log(`Barakah Agro running at http://localhost:${PORT}`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin`);
-});
+    app.listen(PORT, () => {
+      console.log(`Barakah Agro running at http://localhost:${PORT}`);
+      console.log(`Admin panel: http://localhost:${PORT}/admin`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
