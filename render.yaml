@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: barakah-agro
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: APP_URL
+        sync: false

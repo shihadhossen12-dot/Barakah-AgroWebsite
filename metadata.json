@@ -1,0 +1,6 @@
+{
+  "name": "Barakah Agro",
+  "description": "Pure & Natural Products for Your Family - Modern Vanilla HTML/CSS/JS website for Barakah Agro.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
