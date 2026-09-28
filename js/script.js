@@ -480,8 +480,8 @@ function createProductCardHTML(product) {
             ${initialPkg.oldPrice ? `<span class="price-old card-old-price">৳ ${initialPkg.oldPrice}</span>` : ""}
           </div>
           <div class="card-actions">
-            <button class="btn btn-outline btn-sm"  title="অর্ডার করুন">
-             <a href="checkout.html?productId=${product.id}&packageId=${initialPkg.id}" style="text-decoration: none; color: inherit;">অর্ডার করুন</a>
+            <button class="btn btn-outline btn-sm" onclick="buyCardItemNow(${product.id}, this)" title="অর্ডার করুন">
+            অর্ডার করুন
             </button>
             <button class="btn btn-outline btn-sm" onclick="openProductModal(${product.id})" title="বিস্তারিত দেখুন">
               বিস্তারিত
@@ -754,6 +754,17 @@ function buyModalItemNow() {
 
   addToCart(productId, packageId, qty);
   closeProductModal();
+}
+function buyCardItemNow(productId, button) {
+  const card = button.closest(".product-card");
+
+  if (!card) return;
+
+  const packageId = card.getAttribute("data-selected-pkg");
+
+  addToCart(productId, packageId, 1);
+
+  window.location.href = "checkout.html";
 }
 
 // Close modal when clicking on backdrop
