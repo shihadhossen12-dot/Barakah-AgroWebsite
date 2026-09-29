@@ -87,8 +87,8 @@ const BARAKAH_PRODUCTS = [
   },
   {
     id: 3,
-    name: "আজকের স্পেশাল — দেশি হাঁসের মাংস মাত্র ৳৭০০/কেজি!",
-    banglaName: "🌿 গ্রামের স্বাদ এবার আপনার ঘরে — দেশি হাঁসের মাংস ৳৭০০/কেজি",
+    name: "আজকের স্পেশাল — দেশি হাঁসের মাংস মাত্র ৳750/kg!",
+    banglaName: "🌿 গ্রামের স্বাদ এবার আপনার ঘরে — দেশি হাঁসের মাংস ৳750/kg",
     category: "meat",
     categoryName: "Organic Meat",
     banglaCategory: "প্রাকৃতিক মাংস",
@@ -102,7 +102,7 @@ const BARAKAH_PRODUCTS = [
     rating: 5.0,
     reviewCount: 31,
     isOffer: true,
-    shortDescription: "দেশি হাঁসের মাংস মাত্র ৳৭০০/কেজি!",
+    shortDescription: "দেশি হাঁসের মাংস মাত্র ৳750/kg!",
     description: "গ্রামের চারণভূমিতে ঘাস খাওয়া দেশি হাঁসের মাংস সংগ্রহ করে প্রচলিত বিলো পদ্ধতিতে মাখন তোলা হয় এবং অল্প তাপে খাঁটি গাওয়া ঘি তৈরি করা হয়। স্বাদে ঘরোয়া, মানে খাঁটি—আজই অর্ডার করুন! 🌿❤️",
     ingredients: "১০০% দেশি হাঁসের মাংস",
     benefits: [
@@ -470,7 +470,7 @@ function createProductCardHTML(product) {
         <p class="product-short-desc">${product.shortDescription}</p>
 
         <div class="product-package-select">
-          <span class="package-label">সাইজ / পরিমাণ:</span>
+          <span class="package-label">Size / Quantity:</span>
           <div class="package-options">${packagesHTML}</div>
         </div>
 
@@ -480,11 +480,11 @@ function createProductCardHTML(product) {
             ${initialPkg.oldPrice ? `<span class="price-old card-old-price">৳ ${initialPkg.oldPrice}</span>` : ""}
           </div>
           <div class="card-actions">
-            <button class="btn btn-outline btn-sm" onclick="buyCardItemNow(${product.id}, this)" title="অর্ডার করুন">
-            অর্ডার করুন
+            <button class="btn btn-outline btn-sm" onclick="buyCardItemNow(${product.id}, this)" title="Order now">
+            Order now
             </button>
-            <button class="btn btn-outline btn-sm" onclick="openProductModal(${product.id})" title="বিস্তারিত দেখুন">
-              বিস্তারিত
+            <button class="btn btn-outline btn-sm" onclick="openProductModal(${product.id})" title="View Details">
+              Details
             </button>
             
           </div>
@@ -640,7 +640,7 @@ currentProductImageIndex = 0;
           <p class="modal-desc">${product.description}</p>
 
           <div style="margin-bottom: 16px;">
-            <strong style="font-size: 0.88rem; color: #1e293b; display: block; margin-bottom: 6px;">প্যাকেজ সাইজ নির্ধারণ করুন:</strong>
+            <strong style="font-size: 0.88rem; color: #1e293b; display: block; margin-bottom: 6px;">Select Package Size:</strong>
             <div class="package-options" id="modalPkgOptions">${packagesOptions}</div>
           </div>
 
@@ -653,10 +653,10 @@ currentProductImageIndex = 0;
               <button class="qty-btn" type="button" onclick="adjustModalQty(1)">+</button>
             </div>
             <button class="btn btn-primary btn-lg" style="flex-grow: 1;" onclick="addModalItemToCart()">
-              কার্টে যোগ করুন
+              Add to Cart
             </button>
             <a href="checkout.html" class="btn btn-accent btn-lg" onclick="buyModalItemNow()">
-              সরাসরি অর্ডার
+              Buy Now
             </a>
           </div>
         </div>
