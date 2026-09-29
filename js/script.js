@@ -42,9 +42,9 @@ const BARAKAH_PRODUCTS = [
 
     ],
     packages: [
-      { id: "mo-5l", label: "৫ লিটার বোতল", price: 1300, oldPrice: 1500 },
-      { id: "mo-2l", label: "২ লিটার বোতল", price: 520, oldPrice: 600 },
-      { id: "mo-1l", label: "১ লিটার বোতল", price: 260, oldPrice: 300 }
+      { id: "mo-5l", label: "5 liter", price: 1300, oldPrice: 1500 },
+      { id: "mo-2l", label: "2 liter", price: 520, oldPrice: 600 },
+      { id: "mo-1l", label: "1 liter", price: 260, oldPrice: 300 }
     ]
   },
   {
@@ -80,9 +80,9 @@ const BARAKAH_PRODUCTS = [
       "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ ও শুকানো, যা পরিবেশের প্রতি যত্নশীল।"
     ],
     packages: [
-      { id: "pp-250", label: "২৫০ গ্রাম প্যাকেট", price: 300},
-      { id: "pp-500", label: "৫০০ গ্রাম প্যাকেট", price: 580},
-      { id: "pp-1k", label: "১ কেজি প্যাকেট", price: 1020}
+      { id: "pp-250", label: "250 gm packet", price: 300},
+      { id: "pp-500", label: "500 gm packet", price: 580},
+      { id: "pp-1k", label: "1 kg packet", price: 1020}
     ]
   },
   {
@@ -151,9 +151,9 @@ const BARAKAH_PRODUCTS = [
       "শতভাগ প্রাকৃতিক ও অর্গানিক"
     ],
     packages: [
-      { id: "sj-250", label: "২৫০ গ্রাম প্যাকেট", price: 375, oldPrice: 415 },
-      { id: "sj-500", label: "৫০০ গ্রাম প্যাকেট", price: 620, oldPrice: 750 },
-      { id: "sj-1k", label: "১ কেজি প্যাকেট", price: 1150, oldPrice: 1500 }
+      { id: "sj-250", label: "250 gm packet", price: 375, oldPrice: 415 },
+      { id: "sj-500", label: "500 gm packet", price: 620, oldPrice: 750 },
+      { id: "sj-1k", label: "1 kg packet", price: 1150, oldPrice: 1500 }
     ]
   },
   {
@@ -220,8 +220,8 @@ const BARAKAH_PRODUCTS = [
       "সতর্কভাবে বাছাই ও প্যাকেজিং: প্রতিটি খেজুরের মান, পরিচ্ছন্নতা ও প্যাকেজিংয়ে Barakah Agro-এর নিজস্ব তত্ত্বাবধান।"
     ],
     packages: [
-      { id: "aj-500", label: "৫০০ গ্রাম বক্স", price: 680, oldPrice: 780 },
-      { id: "aj-1k", label: "১ কেজি বক্স", price: 1300, oldPrice: 1500 }
+      { id: "aj-500", label: "500 gm box", price: 680, oldPrice: 780 },
+      { id: "aj-1k", label: "1 kg box", price: 1300, oldPrice: 1500 }
     ]
   },
   {
@@ -250,8 +250,8 @@ const BARAKAH_PRODUCTS = [
       "স্বাদে অনন্য — দেশি মুরগির মাংসের নিজস্ব গন্ধ ও স্বাদ খাবারে আলাদা মজাদার অনুভূতি দেয়।"
     ],
     packages: [
-      { id: "murgi-250", label: "২৫০ গ্রাম", price: 350 },
-      { id: "murgi-500", label: "৫০০ গ্রাম", price: 600 }
+      { id: "murgi-250", label: "250 gm", price: 350 },
+      { id: "murgi-500", label: "500 gm", price: 600 }
     ]
   },
   {
