@@ -256,13 +256,18 @@ const BARAKAH_PRODUCTS = [
   },
   {
     id: 8,
-    name: "হিমসাগর আম — মিষ্টি স্বাদ, ঘ্রাণে ভরপুর!",
-    banglaName: "হিমসাগর আম — মিষ্টি স্বাদ, ঘ্রাণে ভরপুর!",
+    name: "হিমসাগর আম — মিষ্টি স্বাদ, ঘ্রাণে ভরপুর!৳200/kg!",
+    banglaName: "হিমসাগর আম — মিষ্টি স্বাদ, ঘ্রাণে ভরপুর! 200৳/kg!",
     category: "fruits",
     categoryName: "Fruits",
     banglaCategory: "ফল",
     sku: "BA-FR-1000",
     image: "images/products/am.jpeg",
+    images: [
+      "images/products/am3.jpeg",
+      "images/products/am2.jpeg",
+      "images/products/am.jpeg"
+    ],
     rating: 4.9,
     reviewCount: 35,
     isOffer: true,
