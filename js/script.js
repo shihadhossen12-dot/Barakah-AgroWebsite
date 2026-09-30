@@ -1210,21 +1210,71 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render Full Products Catalog if on products.html
-  const allProductsContainer = document.getElementById("allProductsGrid");
-  if (allProductsContainer) {
-    renderProductsCatalog("all");
+const allProductsContainer = document.getElementById("allProductsGrid");
 
-    // Category Filter tabs
-    const catTabs = document.querySelectorAll(".cat-tab");
-    catTabs.forEach((tab) => {
-      tab.addEventListener("click", function () {
-        catTabs.forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        const category = tab.getAttribute("data-category");
-        renderProductsCatalog(category);
-      });
+if (allProductsContainer) {
+
+  // Get category from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCategory = urlParams.get("category");
+
+  // Show selected category or all products
+  renderProductsCatalog(urlCategory || "all");
+
+  // Category Filter tabs
+  const catTabs = document.querySelectorAll(".cat-tab");
+
+  catTabs.forEach((tab) => {
+
+    const category = tab.getAttribute("data-category");
+
+    // Make the matching tab active
+    if (category === (urlCategory || "all")) {
+      tab.classList.add("active");
+    }
+
+    tab.addEventListener("click", function () {
+
+      catTabs.forEach((t) => t.classList.remove("active"));
+
+      tab.classList.add("active");
+
+      const selectedCategory = tab.getAttribute("data-category");
+
+      renderProductsCatalog(selectedCategory);
+
+      // Change URL without reloading page
+      if (selectedCategory === "all") {
+        window.history.replaceState({}, "", "products.html");
+      } else {
+        window.history.replaceState(
+          {},
+          "",
+          `products.html?category=${selectedCategory}`
+        );
+      }
+
     });
+
+  });
+
+}
+
+function renderProductsCatalog(category) {
+  if (!allProductsContainer) return;
+
+  let list = BARAKAH_PRODUCTS;
+
+  if (category && category !== "all") {
+    list = BARAKAH_PRODUCTS.filter(
+      (p) => p.category === category
+    );
   }
+
+  allProductsContainer.innerHTML = list
+    .map((p) => createProductCardHTML(p))
+    .join("");
+}
 
   function renderProductsCatalog(category) {
     if (!allProductsContainer) return;
@@ -1361,3 +1411,94 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+
+/* =========================================
+   MOBILE CATEGORY AUTO SCROLL - FINAL
+   ========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const categoryBar = document.querySelector(".category-nav-inner");
+
+  if (!categoryBar) return;
+
+  let isTouching = false;
+  let direction = 1;
+  let pause = false;
+
+  function autoScroll() {
+
+    if (window.innerWidth <= 768 && !isTouching && !pause) {
+
+      const maxScroll =
+        categoryBar.scrollWidth - categoryBar.clientWidth;
+
+      if (maxScroll > 0) {
+
+        // সামনে যাবে
+        if (direction === 1) {
+
+          categoryBar.scrollLeft += 0.5;
+
+          // একদম শেষে পৌঁছালে
+          if (categoryBar.scrollLeft >= maxScroll) {
+
+            categoryBar.scrollLeft = maxScroll;
+
+            direction = -1;
+
+            // 1.5 sec pause
+            pause = true;
+
+            setTimeout(function () {
+              pause = false;
+            }, 1500);
+          }
+
+        }
+
+        // পিছনে আসবে
+        else {
+
+          categoryBar.scrollLeft -= 0.5;
+
+          // একদম শুরুতে পৌঁছালে
+          if (categoryBar.scrollLeft <= 0) {
+
+            categoryBar.scrollLeft = 0;
+
+            direction = 1;
+
+            // আবার 1 sec pause
+            pause = true;
+
+            setTimeout(function () {
+              pause = false;
+            }, 1000);
+          }
+        }
+      }
+    }
+
+    requestAnimationFrame(autoScroll);
+  }
+
+
+  // User নিজে swipe করলে auto-scroll বন্ধ
+  categoryBar.addEventListener("touchstart", function () {
+    isTouching = true;
+  });
+
+
+  categoryBar.addEventListener("touchend", function () {
+
+    setTimeout(function () {
+      isTouching = false;
+    }, 2000);
+
+  });
+
+
+  autoScroll();
+
+});

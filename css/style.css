@@ -2259,3 +2259,236 @@ textarea.form-control {
     line-height: 1.55;
   }
 }
+
+/* ================================
+   BARAKAH AGRO CATEGORY NAV
+   ================================ */
+
+.category-nav {
+  width: 100%;
+  background: #09b970;
+  border-bottom: 1px solid #e5ebe6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.category-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+  padding: 10px 20px;
+}
+
+.category-nav-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 9px 14px;
+
+  background: #055e05;
+  border: 1px solid #e1e9e2;
+  border-radius: 10px;
+
+  color: #f0f2f1;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  background: #ffffff;
+  border-radius: 7px;
+
+  font-size: 15px;
+}
+
+.category-nav-item:hover {
+  background: #eef7f0;
+  border-color: #b9d5bf;
+  color: #14532d;
+  transform: translateY(-1px);
+}
+
+
+/* ================================
+   MOBILE CATEGORY NAV
+   ================================ */
+
+@media (max-width: 768px) {
+
+  .category-nav-inner {
+    justify-content: flex-start;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding: 8px 12px;
+
+    gap: 8px;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+  }
+
+  .category-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-nav-item {
+    flex: 0 0 auto;
+
+    padding: 7px 11px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+  }
+
+  .category-icon {
+    width: 23px;
+    height: 23px;
+
+    font-size: 14px;
+  }
+}
+
+/* ================================
+   MOBILE CATEGORY BAR FIX
+   ================================ */
+
+@media (max-width: 768px) {
+
+  .category-nav {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .category-nav-inner {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center;
+
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    gap: 8px;
+    padding: 8px 12px;
+
+    white-space: nowrap;
+
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .category-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-nav-item {
+    flex: 0 0 auto !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 11px;
+
+    font-size: 12px;
+    white-space: nowrap;
+
+    border-radius: 9px;
+  }
+
+  .category-icon {
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+
+    font-size: 14px;
+  }
+}
+/* =========================================
+   MOBILE CATEGORY HORIZONTAL SCROLL - FIX
+   ========================================= */
+
+@media (max-width: 768px) {
+
+  .category-nav {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .category-nav-inner {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-start !important;
+    align-items: center !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    padding: 8px 12px !important;
+    gap: 8px !important;
+
+    box-sizing: border-box !important;
+
+    /* Mobile finger swipe */
+    touch-action: pan-x !important;
+    -webkit-overflow-scrolling: touch !important;
+
+    /* Hide scrollbar */
+    scrollbar-width: none !important;
+  }
+
+  .category-nav-inner::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .category-nav-item {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+
+    white-space: nowrap !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 7px 12px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .category-icon {
+    flex: 0 0 auto !important;
+  }
+}
