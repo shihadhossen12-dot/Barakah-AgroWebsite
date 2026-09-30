@@ -91,13 +91,13 @@ const BARAKAH_PRODUCTS = [
     banglaName: "🌿 গ্রামের স্বাদ এবার আপনার ঘরে — দেশি হাঁসের মাংস ৳750/kg",
     category: "meat",
     categoryName: "Organic Meat",
-    banglaCategory: "প্রাকৃতিক মাংস",
+    banglaCategory: "দেশি হাঁসের মাংস",
     sku: "BA-GH-0500",
     image: "images/products/has.jpeg",
     images: [
-    "images/products/has2.jpeg",
+    "images/products/has3.jpeg",
     "images/products/has.jpeg",
-    "images/products/has3.jpeg"
+    "images/products/has2.jpeg"
     ],
     rating: 5.0,
     reviewCount: 31,
@@ -162,7 +162,7 @@ const BARAKAH_PRODUCTS = [
     banglaName: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾",
     category: "milk",
     categoryName: "Organic Milk",
-    banglaCategory: "প্রাকৃতিক দুধ",
+    banglaCategory: "দেশি গাভীর দুধ",
     sku: "BA-ML-1000",
     image: "images/products/milk.png",
     rating: 4.9,
@@ -234,6 +234,10 @@ const BARAKAH_PRODUCTS = [
     banglaCategory: "মাংস",
     sku: "BA-MS-0250",
     image: "images/products/murgi.jpeg",
+    images: [
+      "images/products/murgi2.jpeg",
+      "images/products/murgi.jpeg"
+    ],
     rating: 4.9,
     reviewCount: 22,
     isOffer: true,
