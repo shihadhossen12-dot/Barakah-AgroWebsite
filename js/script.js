@@ -463,7 +463,6 @@ const FEATURED_CATEGORIES = [
     id: "meat",
     name: "দেশি হাঁস ও মুরগি",
     enName: "Organic Meat",
-    badge: "ঘাস খাওয়া",
     desc: "১০০% হালাল ও তাজা",
     image: "images/products/has.jpeg",
     url: "products.html?category=meat"
