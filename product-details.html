@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>পণ্যের বিস্তারিত | Barakah Agro - Pure & Organic</title>
+  <meta name="description" content="বারাকাহ এগ্রোর খাঁটি ও প্রাকৃতিক পণ্যের বিস্তারিত তথ্য, উপকারিতা, প্যাকেজ সাইজ এবং গ্রাহক রিভিউ।">
+  <meta property="og:title" content="পণ্যের বিস্তারিত | Barakah Agro">
+  <meta property="og:description" content="ঘরোয়া যত্ন ও শতভাগ বিশুদ্ধতায় প্রস্তুত প্রাকৃতিক পণ্য সরাসরি আপনার ঠিকানায়।">
+  <meta property="og:image" content="images/logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP ANNOUNCEMENT BAR
+       ======================================================================== -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span>🔥 বিশেষ অফার: ২,০০০ টাকার অর্ডারে সমগ্র বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="tel:01786239185" class="top-bar-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Hotline: 01786-239185
+        </a>
+        <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="top-bar-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          WhatsApp Support
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       STICKY NAVBAR & HEADER (DESKTOP & MOBILE)
+       ======================================================================== -->
+  <header class="header">
+    <div class="container navbar">
+      <!-- Brand Logo -->
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Barakah Agro Logo" class="logo-img">
+        <div class="logo-text-wrap">
+          <span class="logo-name">Barakah <span>Agro</span></span>
+          <span class="logo-tagline">বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="products.html" class="nav-link active">Products</a></li>
+          <li><a href="about.html" class="nav-link">Our Story</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Desktop Live Search Box -->
+      <div class="header-search-wrap">
+        <div class="header-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="headerSearchInput" class="header-search-input" placeholder="খাঁটি সরিষার তেল, মধু, খেজুর খুঁজুন..." autocomplete="off">
+        </div>
+        <div class="search-results-dropdown" id="searchResultsDropdown"></div>
+      </div>
+
+      <!-- Actions: Search, Account, Cart, Mobile Menu -->
+      <div class="nav-actions">
+        <!-- Mobile Search Toggle -->
+        <button class="mobile-search-btn" id="mobileSearchToggle" aria-label="পণ্য খুঁজুন">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+
+        <!-- Customer Account Button -->
+        <button class="account-btn" onclick="openAccountModal('login')" title="লগইন বা অ্যাকাউন্ট">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="account-btn-label">লগইন</span>
+        </button>
+
+        <!-- Cart Button -->
+        <a href="cart.html" class="cart-btn" aria-label="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-count">0</span>
+        </a>
+
+        <!-- Mobile Hamburger Toggle -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search Expandable Bar -->
+    <div class="mobile-search-bar" id="mobileSearchBar">
+      <div class="header-search-box" style="width: 100%;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="mobileSearchInput" class="header-search-input" placeholder="পণ্য খুঁজুন..." autocomplete="off">
+      </div>
+      <div class="search-results-dropdown" id="mobileSearchResultsDropdown"></div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       CATEGORY NAVIGATION BAR
+       ======================================================================== -->
+  <nav class="category-nav">
+    <div class="container">
+      <div class="category-nav-inner">
+        <a href="products.html?category=mustard-oil" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span>সরিষার তেল</span>
+        </a>
+        <a href="products.html?category=milk" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8v4H8z"/><path d="M6 6h12v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/></svg>
+          <span>দেশি গরুর দুধ</span>
+        </a>
+        <a href="products.html?category=meat" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>দেশি মুরগি ও হাঁস</span>
+        </a>
+        <a href="products.html?category=leaves" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+          <span>শুকনো পাট ও সাজনা পাতা</span>
+        </a>
+        <a href="products.html?category=superfoods" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>আজওয়া খেজুর</span>
+        </a>
+        <a href="products.html?category=fruits" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span>বাগান তাজা ফল</span>
+        </a>
+        <a href="products.html" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>সকল পণ্য দেখুন</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       BREADCRUMBS
+       ======================================================================== -->
+  <div class="details-breadcrumb-wrap">
+    <div class="container">
+      <nav class="breadcrumb-nav" id="productBreadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">হোম</a>
+        <span class="sep">/</span>
+        <a href="products.html" id="breadcrumbCategoryLink">পণ্য সম্ভার</a>
+        <span class="sep">/</span>
+        <span class="current" id="breadcrumbCurrentTitle">পণ্যের বিস্তারিত</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MAIN PRODUCT DETAILS VIEW CONTAINER
+       Populated dynamically by js/script.js from authentic BARAKAH_PRODUCTS
+       ======================================================================== -->
+  <main class="product-page-main">
+    <div class="container" id="productDetailsContainer">
+      <!-- Injected by js/script.js initProductDetailsPage() -->
+      <div style="text-align: center; padding: 60px 20px;">
+        <div style="width: 48px; height: 48px; border: 4px solid var(--primary-light); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+        <p style="color: var(--text-muted); font-size: 1rem;">পণ্যের বিস্তারিত তথ্য লোড হচ্ছে...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <h3 class="footer-logo-title">Barakah Agro</h3>
+          <p class="footer-tagline">“বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য” — ঘরোয়া যত্ন ও শতভাগ বিশুদ্ধতায় উৎপাদিত প্রাকৃতিক পণ্য সরাসরি আপনার দোরগোড়ায়।</p>
+          <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
+              WhatsApp Support
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="footer-col-title">গুরুত্বপূর্ণ লিংক</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">All Products</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="cart.html">Shopping Cart</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div>
+          <h4 class="footer-col-title">পণ্য বিভাগ</h4>
+          <ul class="footer-links">
+            <li><a href="products.html?category=mustard-oil">কাঠের ঘানির সরিষার তেল</a></li>
+            <li><a href="products.html?category=milk">দেশি গরুর দুধ</a></li>
+            <li><a href="products.html?category=meat">দেশি হাঁস ও মুরগির মাংস</a></li>
+            <li><a href="products.html?category=leaves">শুকনো পাট ও সাজনা পাতা</a></li>
+            <li><a href="products.html?category=superfoods">আজওয়া খেজুর ও সুপারফুড</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div>
+          <h4 class="footer-col-title">যোগাযোগ</h4>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>হটলাইন: <a href="tel:01786239185">01786-239185</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>হোয়াটসঅ্যাপ: <a href="https://wa.me/8801786239185">01786-239185</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>ইমেইল: <a href="mailto:barakahagrofirm@gmail.com">barakahagrofirm@gmail.com</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>ঠিকানা: নরুন্দি বাজার, জামালপুর সদর, ময়মনসিংহ, বাংলাদেশ</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Barakah Agro. All rights reserved.</p>
+        <p>পেমেন্ট: ক্যাশ অন ডেলিভারি | বিকাশ | নগদ</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast" id="toast">
+    <span class="toast-dot"></span>
+    <span id="toastMsg">কার্টে যোগ হয়েছে!</span>
+  </div>
+
+  <!-- Master JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>

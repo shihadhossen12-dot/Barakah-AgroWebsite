@@ -41,7 +41,7 @@
   </div>
 
   <!-- ========================================================================
-       STICKY NAVBAR
+       STICKY NAVBAR & HEADER (DESKTOP & MOBILE)
        ======================================================================== -->
   <header class="header">
     <div class="container navbar">
@@ -54,7 +54,7 @@
         </div>
       </a>
 
-      <!-- Navigation Links -->
+      <!-- Desktop Navigation Links -->
       <nav>
         <ul class="nav-links" id="navLinks">
           <li><a href="index.html" class="nav-link active">Home</a></li>
@@ -64,10 +64,76 @@
         </ul>
       </nav>
 
-      <!-- Actions -->
+      <!-- Desktop Search -->
+<div class="header-search-wrap">
+
+  <!-- Only Search Icon -->
+  <button 
+    class="desktop-search-btn" 
+    id="desktopSearchBtn"
+    aria-label="পণ্য খুঁজুন"
+    title="পণ্য খুঁজুন"
+  >
+    <svg 
+      width="20" 
+      height="20" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  </button>
+
+  <!-- Hidden Search Box -->
+  <div class="header-search-box">
+
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+
+    <input 
+      type="text"
+      id="headerSearchInput"
+      class="header-search-input"
+      placeholder="খাঁটি সরিষার তেল, মধু, খেজুর খুঁজুন..."
+      autocomplete="off"
+    >
+
+  </div>
+
+  <!-- Existing Live Search Results -->
+  <div 
+    class="search-results-dropdown" 
+    id="searchResultsDropdown"
+  ></div>
+
+</div>
+
+      <!-- Actions: Search, Account, Cart, Mobile Menu -->
       <div class="nav-actions">
-        <a href="tel:01786239185" class="nav-phone-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <!-- Mobile Search Toggle -->
+        <button class="mobile-search-btn" id="mobileSearchToggle" aria-label="পণ্য খুঁজুন">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+
+        <!-- Customer Account Button -->
+        <button class="account-btn" onclick="openAccountModal('login')" title="লগইন বা অ্যাকাউন্ট">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="account-btn-label">লগইন</span>
+        </button>
+
+        <!-- Phone Pill on Desktop -->
+        <a href="tel:01786239185" class="nav-phone-pill" title="সরাসরি কল করুন">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span>01786-239185</span>
         </a>
 
@@ -89,69 +155,82 @@
         </button>
       </div>
     </div>
+
+    <!-- Mobile Search Expandable Bar -->
+    <div class="mobile-search-bar" id="mobileSearchBar">
+      <div class="header-search-box" style="width: 100%;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="mobileSearchInput" class="header-search-input" placeholder="পণ্য খুঁজুন..." autocomplete="off">
+      </div>
+      <div class="search-results-dropdown" id="mobileSearchResultsDropdown"></div>
+    </div>
   </header>
 
-<!-- =========================================================
-     CATEGORY NAVIGATION
-     ========================================================= -->
-<nav class="category-nav">
+  <!-- ========================================================================
+       CATEGORY NAVIGATION BAR (Sub-header Horizontal Strip)
+       ======================================================================== -->
+  <nav class="category-nav">
+    <div class="container">
+      <div class="category-nav-inner">
+        <a href="products.html?category=mustard-oil" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span>সরিষার তেল</span>
+        </a>
 
-  <div class="category-nav-inner">
+        <a href="products.html?category=milk" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8v4H8z"/><path d="M6 6h12v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/></svg>
+          <span>দেশি গরুর দুধ</span>
+        </a>
 
-    <a href="products.html?category=mustard-oil" class="category-nav-item">
-    
-      <span>সরিষার তেল</span>
-    </a>
+        <a href="products.html?category=meat" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>দেশি মুরগি ও হাঁস</span>
+        </a>
 
-    <a href="products.html?category=milk" class="category-nav-item">
-  
-      <span>দেশি গরুর দুধ</span>
-    </a>
+        <a href="products.html?category=leaves" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+          <span>শুকনো পাট ও সাজনা পাতা</span>
+        </a>
 
-    <a href="products.html?category=meat" class="category-nav-item">
-    
-      <span>দেশি মুরগি ও হাঁস এর মাংস</span>
-    </a>
+        <a href="products.html?category=superfoods" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>আজওয়া খেজুর</span>
+        </a>
 
-    <a href="products.html?category=leaves" class="category-nav-item">
-    
-      <span>শুকনো পাট পাতা ও সাজনা পাতা</span>
-    </a>
+        <a href="products.html?category=fruits" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span>তাজা ফল</span>
+        </a>
 
-    <a href="products.html?category=superfoods" class="category-nav-item">
-
-      <span>খেজুর</span>
-    </a>
-
-    <a href="products.html?category=fruits" class="category-nav-item">
-      <span>ফল</span>
-    </a>
-
-    <a href="products.html" class="category-nav-item">
-      <span>সকল পণ্য</span>
-    </a>
-
-  </div>
-
-</nav>
+        <a href="products.html" class="category-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>সকল পণ্য দেখুন</span>
+        </a>
+      </div>
+    </div>
+  </nav>
 
   <!-- ========================================================================
-       HERO SECTION
+       HERO SECTION (DYNAMIC MULTI-SLIDE AUTOPLAY SLIDER)
        ======================================================================== -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <span>১০০% খাঁটি ও অর্গানিক পণ্যের বিশ্বস্ত প্রতিষ্ঠান</span>
-        </div>
-        <h1 class="hero-title">বিশুদ্ধ খাবার, সুস্থ জীবনের প্রতিশ্রুতি</h1>
-        <p class="hero-description">
-          কাঠের ঘানিতে ভাঙ্গা খাঁটি সরিষার তেল ও পুষ্টিকর সুপারফুড সরাসরি আপনার ঘরে পৌঁছে দিচ্ছে বারাকাহ এগ্রো। সুস্থ থাকুন পরিবারের প্রতিটি সদস্যকে নিয়ে।
-        </p>
-        <div class="hero-actions">
-          <a href="products.html" class="btn btn-primary btn-lg">View Products</a>
-    
+  <section class="hero-slider-wrap">
+    <div class="hero-slider" id="heroSlider">
+      <!-- Injected by js/script.js with smooth transitions and existing images -->
+      <div class="hero-slide active" style="background-image: url('images/hero.jpg');">
+        <div class="hero-slide-overlay"></div>
+        <div class="container" style="position: relative; z-index: 3;">
+          <div class="hero-slide-content">
+            <span class="hero-slide-badge">🌿 ১০০% খাঁটি ও অর্গানিক পণ্যের বিশ্বস্ত প্রতিষ্ঠান</span>
+            <h1 class="hero-slide-title">বিশুদ্ধ খাবার, সুস্থ জীবনের প্রতিশ্রুতি</h1>
+            <p class="hero-slide-desc">
+             খাঁটি ও মানসম্মত খাবারের নিশ্চয়তায়, যত্নসহকারে সংগ্রহ ও প্রস্তুত করা পণ্য পৌঁছে দিচ্ছি আপনার ঘরে।
+আপনার পরিবারের প্রতিদিনের খাবারে থাকুক প্রকৃতির স্বাদ ও বিশুদ্ধতার ছোঁয়া।
+            </p>
+            <div class="hero-slide-actions">
+              <a href="products.html" class="btn btn-primary btn-lg">View Products</a>
+              <a href="about.html" class="btn btn-secondary btn-lg">Our Story</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -169,7 +248,7 @@
           </div>
           <div class="trust-info">
             <h4>১০০% অর্গানিক ও খাঁটি</h4>
-            <p>ভেজাল ও কেমিক্যাল মুক্ত</p>
+            <p>ভেজাল ও কেমিক্যাল মুক্ত পণ্য</p>
           </div>
         </div>
 
@@ -207,29 +286,288 @@
   </div>
 
   <!-- ========================================================================
-       FEATURED PRODUCTS SECTION
+       FEATURED CATEGORIES (SHOP BY CATEGORY)
        ======================================================================== -->
-  <section class="section">
+  <section class="section" style="padding-bottom: 20px;">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">সেরা পণ্য সম্ভার</span>
-        <h2 class="section-title">আমাদের জনপ্রিয় ও বিশেষ পণ্যসমূহ</h2>
-        <p class="section-subtitle">সনাতন কাঠের ঘানিতে প্রস্তুত তেল, প্রাকৃতিক বুনো মধু এবং স্বাস্থ্যকর ভেষজ সুপারফুড</p>
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">ক্যাটাগরি ব্রাউজ করুন</span>
+          <h2 class="carousel-title">পণ্য বিভাগ অনুসারে কেনাকাটা করুন</h2>
+          <p class="carousel-desc">আপনার পরিবারের স্বাস্থ্য ও দৈনন্দিন সুষম আহারের জন্য প্রস্তুত খাঁটি খাদ্য বিভাগসমূহ</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html" class="carousel-view-all">সকল পণ্য →</a>
+        </div>
       </div>
 
-      <!-- Products Grid loaded by script.js -->
-      <div class="products-grid" id="featuredProductsGrid"></div>
-
-      <div style="text-align: center; margin-top: 48px;">
-        <a href="products.html" class="btn btn-outline btn-lg">সকল পণ্য একনজরে দেখুন →</a>
+      <!-- Categories Grid / Mobile Horizontal Carousel -->
+      <div class="categories-grid" id="featuredCategoriesGrid">
+        <!-- Rendered dynamically from FEATURED_CATEGORIES in js/script.js -->
       </div>
     </div>
   </section>
 
   <!-- ========================================================================
-       ABOUT PREVIEW SECTION
+       BEST SELLING PRODUCTS SECTION (HORIZONTAL CAROUSEL)
        ======================================================================== -->
-  <section class="section" style="background-color: #ffffff; border-top: 1px solid var(--border-light);">
+  <section class="carousel-section">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">গ্রাহকদের সবচেয়ে পছন্দের</span>
+          <h2 class="carousel-title">সেরা বিক্রিত পণ্য সম্ভার (Best Selling)</h2>
+          <p class="carousel-desc">কাঠের ঘানির খাঁটি সরিষার তেল, দেশি হাঁসের মাংস ও পুষ্টিকর সুপারফুড</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html" class="carousel-view-all">সবগুলো দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('bestSellingCarousel', -1)" aria-label="পূর্ববর্তী পণ্য">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('bestSellingCarousel', 1)" aria-label="পরবর্তী পণ্য">❯</button>
+        </div>
+      </div>
+
+      <!-- Horizontal Product Carousel Track -->
+      <div class="product-carousel-track" id="bestSellingCarousel">
+        <!-- Injected by js/script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PROMOTIONAL OFFER BANNER SECTION
+       ======================================================================== -->
+  <section class="section" style="padding: 20px 0;">
+    <div class="container">
+      <div class="promo-banner">
+        <div class="promo-grid">
+          <div>
+            <span class="promo-tag">🔥 বিশেষ সুযোগ</span>
+            <h2 class="promo-title">২,০০০ টাকার অর্ডারে সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!</h2>
+            <p class="promo-subtitle">
+              ঘানির খাঁটি তেল ও স্বাস্থ্যকর পারিবারিক খাদ্য এখন আরও সাশ্রয়ে। কোনো প্রকার প্রিজারভেটিভ ছাড়াই শতভাগ ফ্রেশ পণ্য পৌঁছে দিচ্ছি আপনার ঠিকানায়।
+            </p>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+              <a href="products.html" class="btn btn-accent btn-lg">এখনই অর্ডার করুন</a>
+              <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                হোয়াটসঅ্যাপে অর্ডার দিন
+              </a>
+            </div>
+          </div>
+          <div class="promo-features">
+            <div class="promo-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>১০০% দেশি মাঘী সরিষা থেকে ঘানিভাঙা তেল</span>
+            </div>
+            <div class="promo-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>মদিনার আসল আজওয়া খেজুর ও প্রাকৃতিক মধু</span>
+            </div>
+            <div class="promo-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ক্যাশ অন ডেলিভারি ও দেখে নেওয়ার নিশ্চয়তা</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 1: সরিষার তেল (WOOD-PRESSED MUSTARD OIL CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">কোল্ড-প্রেসড ঘানিভাঙা</span>
+          <h2 class="carousel-title">কাঠের ঘানির খাঁটি সরিষার তেল</h2>
+          <p class="carousel-desc">সনাতন কোল্ড-প্রেসড পদ্ধতিতে প্রস্তুত খাঁটি ঝাঁঝালো মাঘী সরিষার তেল</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=mustard-oil" class="carousel-view-all">সকল তেল দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('mustardOilCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('mustardOilCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="mustardOilCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 2: দেশি গরুর দুধ (ORGANIC COW MILK CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section" style="background: #ffffff; padding: 48px 0;">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">তাজা পুষ্টির উৎস</span>
+          <h2 class="carousel-title">গ্রামবাংলার খাঁটি দেশি গাভীর দুধ</h2>
+          <p class="carousel-desc">চারণভূমিতে ঘাস খাওয়া গাভীর খাঁটি দুধ, কোনো কৃত্রিম কেমিক্যাল বা প্রিজারভেটিভ মুক্ত</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=milk" class="carousel-view-all">দুধের প্যাকেজ দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('milkCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('milkCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="milkCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 3: দেশি হাঁস ও মুরগির মাংস (MEAT CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">গ্রামের আসল স্বাদ</span>
+          <h2 class="carousel-title">দেশি হাঁস ও মুরগির তাজা মাংস</h2>
+          <p class="carousel-desc">ঘরোয়া স্বাদের নিশ্চয়তা, স্বাস্থ্যসম্মতভাবে প্রক্রিয়াজাত শতভাগ হালাল মাংস</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=meat" class="carousel-view-all">সকল মাংস দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('meatCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('meatCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="meatCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 4: শুকনো পাট পাতা ও সাজনা পাতা (HERBS & LEAVES CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section" style="background: #ffffff; padding: 48px 0;">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">ঐতিহ্যবাহী পাট পাতা</span>  
+          <h2 class="carousel-title">শুকনো পাট পাতা ও সাজনা পাতা</h2>
+          <p class="carousel-desc">ধুলোবালিমুক্ত পরিচ্ছন্ন পরিবেশে রোদে শুকানো উচ্চ পুষ্টিগুণসম্পন্ন পাতা</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=leaves" class="carousel-view-all">পাতা ও ভেষজ দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('leavesCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('leavesCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="leavesCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 5: খেজুর ও সুপারফুড (DATES & SUPERFOODS CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">মদিনার পবিত্র ভূমি থেকে</span>
+          <h2 class="carousel-title">প্রিমিয়াম আজওয়া খেজুর ও সুপারফুড</h2>
+          <p class="carousel-desc">স্বতন্ত্র রঙ, কোমল টেক্সচার ও প্রাকৃতিক মিষ্টতায় ভরপুর গ্রেড-১ আসল খেজুর</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=superfoods" class="carousel-view-all">খেজুর সম্ভার দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('superfoodsCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('superfoodsCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="superfoodsCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CATEGORY 6: তাজা বাগান ফল (FRUITS CAROUSEL)
+       ======================================================================== -->
+  <section class="carousel-section" style="background: #ffffff; padding: 48px 0;">
+    <div class="container">
+      <div class="carousel-header">
+        <div class="carousel-title-box">
+          <span class="carousel-badge">নিজস্ব বাগানের যত্ন</span>
+          <h2 class="carousel-title">নিজস্ব বাগানের রসালো টাটকা ফল</h2>
+          <p class="carousel-desc">প্রাকৃতিকভাবে পাকা হিমসাগর আম ও মিষ্টি রসালো লিচু সরাসরি বাগান থেকে</p>
+        </div>
+        <div class="carousel-actions">
+          <a href="products.html?category=fruits" class="carousel-view-all">সকল ফল দেখুন →</a>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('fruitsCarousel', -1)" aria-label="পূর্ববর্তী">❮</button>
+          <button class="carousel-nav-btn" onclick="scrollCarousel('fruitsCarousel', 1)" aria-label="পরবর্তী">❯</button>
+        </div>
+      </div>
+      <div class="product-carousel-track" id="fruitsCarousel"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CUSTOMER REVIEWS / TESTIMONIALS CAROUSEL
+       ======================================================================== -->
+  <section class="section reviews-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">সম্মানিত গ্রাহকদের বাস্তব অভিজ্ঞতা</span>
+        <h2 class="section-title">গ্রাহকরা বারাকাহ এগ্রো নিয়ে কী বলছেন</h2>
+        <p class="section-subtitle">আমাদের সততা ও বিশুদ্ধতায় সন্তুষ্ট গ্রাহকদের মূল্যবান রিভিউ ও মতামত</p>
+      </div>
+
+      <!-- Horizontal Continuous Scrolling Reviews Carousel Track -->
+      <div class="reviews-carousel-track" id="customerReviewsCarousel">
+        <!-- Injected by js/script.js from CUSTOMER_REVIEWS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       WHY CHOOSE US (TRUST & BRAND VALUE)
+       ======================================================================== -->
+  <section class="section why-us-section" style="background: #ffffff;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">আমাদের বিশেষত্ব</span>
+        <h2 class="section-title">কেন বারাকাহ এগ্রো বেছে নেবেন?</h2>
+        <p class="section-subtitle">আমরা শুধু পণ্য বিক্রি করি না, আপনার পরিবারের প্রতিটি সদস্যের সুস্বাস্থ্য নিশ্চিত করি</p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>১০০% প্রাকৃতিক ও নির্ভেজাল</h3>
+          <p>কোনো ক্ষতিকর রাসায়নিক উপাদান, আর্টিফিশিয়াল রঙ বা পাম অয়েল মেশানো হয় না।</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+          </div>
+          <h3>কাঠের ঘানির কোল্ড-প্রেসড</h3>
+          <p>সনাতন কাঠের ঘানিতে তাপমাত্রা না বাড়িয়ে নিষ্কাশন করায় প্রাকৃতিক পুষ্টি অক্ষত থাকে।</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          </div>
+          <h3>সারা দেশে দ্রুত ডেলিভারি</h3>
+          <p>ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা এবং ঢাকার বাইরে ২-৩ কার্যদিবসে ক্যাশ অন ডেলিভারি।</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+          </div>
+          <h3>দেখে নেওয়ার রিটার্ন সুবিধা</h3>
+          <p>ডেলিভারি রাইডারের সামনে পার্সেল দেখে পছন্দ না হলে সাথে সাথে ফেরত দেওয়ার সুবিধা।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       ABOUT PREVIEW & STORY
+       ======================================================================== -->
+  <section class="section" style="background-color: #fbfbf9; border-top: 1px solid var(--border-light);">
     <div class="container">
       <div class="about-card-box" style="margin-bottom: 0;">
         <div style="max-width: 820px; margin: 0 auto; text-align: center;">
@@ -240,9 +578,6 @@
           </p>
           <p>
             বর্তমান সময়ে বাজারে প্রক্রিয়াজাত ও কেমিক্যালযুক্ত ভেজাল খাদ্যের ভিড়ে নিজের ও পরিবারের জন্য শতভাগ বিশুদ্ধ খাবার খুঁজে পাওয়া একটি বড় চ্যালেঞ্জ। এই প্রয়োজন থেকেই বারাকাহ এগ্রোর জন্ম।
-          </p>
-          <p>
-            আমরা বিশ্বাস করি, সুস্থ ও নিরোগ জীবনের প্রধান শর্ত হলো প্রতিদিনের বিশুদ্ধ আহার। এজন্য আমরা প্রাচীন সনাতন কাঠের ঘানিতে কোনো প্রকার কৃত্রিম তাপ ছাড়াই মাঘী সরিষা থেকে তেল উৎপাদন করি। এতে সরিষার আসল ঝাঁঝ, অ্যান্টিঅক্সিডেন্ট ও পুষ্টি উপাদান সম্পূর্ণ অটুট থাকে।
           </p>
           
           <div class="about-stats-grid">
@@ -272,135 +607,29 @@
   </section>
 
   <!-- ========================================================================
-       WHY CHOOSE US
+       NEWSLETTER & WHATSAPP SUPPORT CTA
        ======================================================================== -->
-  <section class="section why-us-section">
+  <section class="section" style="background: var(--primary); color: #ffffff; padding: 48px 0;">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">আমাদের বিশেষত্ব</span>
-        <h2 class="section-title">কেন বারাকাহ এগ্রো বেছে নেবেন?</h2>
-        <p class="section-subtitle">আমরা শুধুমাত্র পণ্য বিক্রি করি না, আপনার পরিবারকে সুস্থ রাখার দায়িত্ব গ্রহণ করি</p>
-      </div>
-
-      <div class="why-grid">
-        <div class="why-card">
-          <div class="why-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <h3>১০০% প্রাকৃতিক ও নির্ভেজাল</h3>
-          <p>কোনো ক্ষতিকর রাসায়নিক উপাদান, আর্টিফিশিয়াল রঙ বা পাম অয়েল মেশানো হয় না।</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+        <div style="max-width: 580px;">
+          <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">যেকোনো প্রশ্ন বা সরাসরি অর্ডারে যোগাযোগ করুন</h3>
+          <p style="color: #e2f2e6; font-size: 1rem;">আমাদের হটলাইন বা সরাসরি হোয়াটসঅ্যাপে মেসেজ পাঠিয়ে আপনার কাঙ্ক্ষিত পণ্য নিশ্চিত করুন।</p>
         </div>
-
-        <div class="why-card">
-          <div class="why-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-          </div>
-          <h3>কাঠের ঘানির কোল্ড-প্রেসড</h3>
-          <p>সনাতন কাঠের ঘানিতে তাপমাত্রা না বাড়িয়ে নিষ্কাশন করায় প্রাকৃতিক পুষ্টি অক্ষত থাকে।</p>
-        </div>
-
-        <div class="why-card">
-          <div class="why-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-          </div>
-          <h3>সারা দেশে দ্রুত ডেলিভারি</h3>
-          <p>ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা এবং ঢাকার বাইরে ২-৩ কার্যদিবসে ক্যাশ অন ডেলিভারি।</p>
-        </div>
-
-        <div class="why-card">
-          <div class="why-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-          </div>
-          <h3>দেখে নেওয়ার রিটার্ন গ্যারান্টি</h3>
-          <p>ডেলিভারি রাইডারের সামনে পার্সেল দেখে পছন্দ না হলে সরাসরি ফেরত দেওয়ার সুবিধা।</p>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="tel:01786239185" class="btn btn-secondary btn-lg" style="background: #ffffff; color: var(--primary);">
+            📞 01786-239185
+          </a>
+          <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="btn btn-whatsapp btn-lg">
+            WhatsApp এ চ্যাট করুন
+          </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ========================================================================
-       CUSTOMER REVIEWS / TESTIMONIALS
-       ======================================================================== -->
-  <section class="section reviews-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">সম্মানিত গ্রাহকদের মতামত</span>
-        <h2 class="section-title">গ্রাহকরা বারাকাহ এগ্রো নিয়ে কী বলছেন</h2>
-        <p class="section-subtitle">আমাদের সততা ও বিশুদ্ধতায় সন্তুষ্ট গ্রাহকদের বাস্তব অভিজ্ঞতা</p>
-      </div>
-
-      <div class="reviews-grid">
-        <!-- Review 1 -->
-        <div class="review-card">
-          <div class="review-header">
-            <img src="images/reviews/customer1.png" alt="মোহাম্মদ রফিকুল ইসলাম" class="reviewer-img">
-            <div class="reviewer-info">
-              <h4>মোহাম্মদ রফিকুল ইসলাম</h4>
-              <p>মিরপুর, ঢাকা</p>
-            </div>
-          </div>
-          <div class="review-stars">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="review-comment">“বারাকাহ এগ্রোর কাঠের ঘানির সরিষার তেল আসলেই অতুলনীয়। তেলের আসল ঝাঁঝ এবং ভর্তা রান্নার সুবাস অসাধারণ। আমি নিয়মিত কাস্টমার হয়ে গেছি!”</p>
-          <div class="review-footer">
-            <span class="verified-pill">✓ ভেরিফাইড ক্রেতা</span>
-            <span>কাঠের ঘানির খাঁটি সরিষার তেল</span>
-          </div>
-        </div>
-
-        <!-- Review 2 -->
-        <div class="review-card">
-          <div class="review-header">
-            <img src="images/reviews/customer2.png" alt="ফারহানা আহমেদ" class="reviewer-img">
-            <div class="reviewer-info">
-              <h4>ফারহানা আহমেদ</h4>
-              <p>ধানমন্ডি, ঢাকা</p>
-            </div>
-          </div>
-          <div class="review-stars">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="review-comment">“সুন্দরবনের খাঁটি মধু ও সাজনা পাতা অর্ডার করেছিলাম। দুই দিনের মধ্যে ঢাকাতে ক্যাশ অন ডেলিভারি পেয়েছি। মধুর স্বাদ শতভাগ প্রাকৃতিক। ধন্যবাদ বারাকাহ এগ্রো!”</p>
-          <div class="review-footer">
-            <span class="verified-pill">✓ ভেরিফাইড ক্রেতা</span>
-            <span>সুন্দরবনের খাঁটি বুনো মধু</span>
-          </div>
-        </div>
-
-        <!-- Review 3 -->
-        <div class="review-card">
-          <div class="review-header">
-            <img src="images/reviews/customer3.png" alt="আরিফুল হক" class="reviewer-img">
-            <div class="reviewer-info">
-              <h4>আরিফুল হক</h4>
-              <p>উত্তরা, ঢাকা</p>
-            </div>
-          </div>
-          <div class="review-stars">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="review-comment">“দেশি গাওয়া ঘির ঘ্রাণ পুরো ঘরকে মোহিত করে। বাচ্চাদের জন্য এমন খাঁটি খাবার পেয়ে অনেক নিশ্চিন্ত বোধ করছি। সততার সাথে কাজ চালিয়ে যান।”</p>
-          <div class="review-footer">
-            <span class="verified-pill">✓ ভেরিফাইড ক্রেতা</span>
-            <span>খাঁটি দেশি গাওয়া ঘি</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Backward compatibility anchor -->
+  <div id="featuredProductsGrid" style="display:none;"></div>
 
   <!-- ========================================================================
        FOOTER
@@ -414,7 +643,7 @@
           <p class="footer-tagline">“বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য” — ঘরোয়া যত্ন ও শতভাগ বিশুদ্ধতায় উৎপাদিত প্রাকৃতিক পণ্য সরাসরি আপনার দোরগোড়ায়।</p>
           <div style="display: flex; gap: 12px; margin-top: 16px;">
             <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
-              whatsapp
+              WhatsApp Support
             </a>
           </div>
         </div>
@@ -435,11 +664,11 @@
         <div>
           <h4 class="footer-col-title">পণ্য বিভাগ</h4>
           <ul class="footer-links">
-            <li><a href="products.html">কাঠের ঘানির সরিষার তেল</a></li>
-            <li><a href="products.html">সুন্দরবনের খাঁটি মধু</a></li>
-            <li><a href="products.html">শুকনো সাজনা পাতা</a></li>
-            <li><a href="products.html">শুকনো পাট পাতা</a></li>
-            <li><a href="products.html">আজওয়া খেজুর</a></li>
+            <li><a href="products.html?category=mustard-oil">কাঠের ঘানির সরিষার তেল</a></li>
+            <li><a href="products.html?category=milk">দেশি গরুর দুধ</a></li>
+            <li><a href="products.html?category=meat">দেশি হাঁস ও মুরগির মাংস</a></li>
+            <li><a href="products.html?category=leaves">শুকনো পাট ও সাজনা পাতা</a></li>
+            <li><a href="products.html?category=superfoods">আজওয়া খেজুর ও সুপারফুড</a></li>
           </ul>
         </div>
 
@@ -474,28 +703,17 @@
     </div>
   </footer>
 
-  <!-- Toast Container -->
+  <!-- Toast Notification Container -->
   <div class="toast" id="toast">
     <span class="toast-dot"></span>
     <span id="toastMsg">কার্টে যোগ হয়েছে!</span>
   </div>
 
-
-
   <!-- Advertisement Popup -->
   <div class="ad-popup-overlay" id="adPopup">
     <div class="ad-popup">
-    <!-- Close Button -->
-    <button class="ad-popup-close" id="adPopupClose">
-      &times;
-    </button>
-
-    <!-- Advertisement Image -->
-    <img
-      src="images/ad.jpeg"
-      alt="Barakah Agro Advertisement"
-      class="ad-popup-image"
-    >
+      <button class="ad-popup-close" id="adPopupClose">&times;</button>
+      <img src="images/ad.jpeg" alt="Barakah Agro Advertisement" class="ad-popup-image">
     </div>
   </div>
 
