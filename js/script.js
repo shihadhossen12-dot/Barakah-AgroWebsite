@@ -2680,14 +2680,14 @@ function renderReviewPhotosCarousel(reviews, product) {
     });
   }
 
-  // Fallback default review photos if needed
-  if (photos.length < 3) {
-    photos.push(
-      { url: "images/reviews/customer1.png", caption: "কাস্টমার রসিদ ও ডেলিভারি", product: product.banglaName },
-      { url: "images/reviews/customer2.png", caption: "সুরক্ষিত ইকো প্যাকেজিং", product: product.banglaName },
-      { url: "images/reviews/customer3.png", caption: "ঘরোয়া যত্ন ও বিশুদ্ধতা", product: product.banglaName }
-    );
-  }
+  if (photos.length === 0) {
+  track.innerHTML = `
+    <p style="text-align:center; padding:20px; color:#64748b;">
+      এখনো কোনো রিভিউ ছবি আপলোড করা হয়নি।
+    </p>
+  `;
+  return;
+}
 
   track.innerHTML = photos.map((p, idx) => `
     <div class="review-photo-card" onclick="openImageLightbox('${p.url}', '${p.caption} — ${p.product}')" title="বড় করে দেখতে ক্লিক করুন">
@@ -2955,7 +2955,7 @@ function handleProductReviewSubmit(e) {
     date: "আজকে",
     product: product.banglaName,
     text: comment,
-    image: detailsState.uploadedPhotoBase64 || "images/reviews/customer1.png",
+    image: detailsState.uploadedPhotoBase64 || null,
     verified: true
   };
 
