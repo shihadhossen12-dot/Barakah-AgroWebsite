@@ -1403,7 +1403,10 @@ async function handleCheckoutSubmit(e) {
   try {
     const response = await fetch("/api/orders", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+            headers: {
+        "Content-Type": "application/json",
+        ...(getLoggedInCustomer()?.token ? { Authorization: "Bearer " + getLoggedInCustomer().token } : {})
+      },
       body: JSON.stringify(payload)
     });
     const data = await response.json();
@@ -1951,7 +1954,8 @@ function renderCustomerReviewsCarousel() {
 function getLoggedInCustomer() {
   try {
     const data = localStorage.getItem("barakah_customer");
-    return data ? JSON.parse(data) : null;
+    const user = data ? JSON.parse(data) : null;
+    return user && user.token ? user : null;
   } catch {
     return null;
   }
@@ -2062,29 +2066,54 @@ function switchAccountTab(tab) {
 
 window.switchAccountTab = switchAccountTab;
 
-function handleCustomerAuthSubmit(e, mode) {
+async function handleCustomerAuthSubmit(e, mode) {
   e.preventDefault();
   const phone = document.getElementById("custAuthPhone")?.value.trim();
-  const name = mode === "register" ? document.getElementById("custAuthName")?.value.trim() : (phone ? "গ্রাহক " + phone.slice(-4) : "গ্রাহক");
+  const password = document.getElementById("custAuthPassword")?.value || "";
+  const name = document.getElementById("custAuthName")?.value.trim();
 
-  if (!phone) {
-    showToast("মোবাইল নম্বর প্রদান করুন");
+  if (!phone || !password) {
+    showToast("মোবাইল নম্বর ও পাসওয়ার্ড দিন");
     return;
   }
 
-  const customerObj = {
-    name: name || "সম্মানিত গ্রাহক",
-    phone: phone,
-    loggedInAt: new Date().toISOString()
-  };
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
 
-  localStorage.setItem("barakah_customer", JSON.stringify(customerObj));
-  updateCustomerAccountUI();
-  showToast(`স্বাগতম, ${customerObj.name}!`);
-  closeAccountModal();
+  try {
+    const url = mode === "register" ? "/api/user/register" : "/api/user/login";
+    const body = mode === "register"
+      ? { name, phone, password }
+      : { identifier: phone, password };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "লগইন করা যায়নি।");
+
+    localStorage.setItem("barakah_customer", JSON.stringify({ ...data.user, token: data.token }));
+    updateCustomerAccountUI();
+    showToast(`স্বাগতম, ${data.user.name}!`);
+    closeAccountModal();
+  } catch (error) {
+    showToast(error.message || "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।");
+    if (submitBtn) submitBtn.disabled = false;
+  }
 }
 
-function logoutCustomer() {
+async function logoutCustomer() {
+  const user = getLoggedInCustomer();
+  try {
+    if (user?.token) {
+      await fetch("/api/user/logout", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + user.token }
+      });
+    }
+  } catch {}
   localStorage.removeItem("barakah_customer");
   updateCustomerAccountUI();
   showToast("সফলভাবে লগআউট হয়েছে");
