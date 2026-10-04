@@ -422,6 +422,45 @@ const BARAKAH_PRODUCTS = [
       { id: "am-20kg", label: "20 kg", price: 1400 }
     ]
   },
+  {
+    id: 12,
+    name: "Pure Honey",                          
+    banglaName: "বারাকাহ অ্যাগ্রোতে সংগ্রহ করা খাঁটি চাকের মধু",          
+    category: "honey",
+    categoryName: "Honey",
+    banglaCategory: "খাঁটি মধু",
+    sku: "BA-HN-1000",                                       
+    image: "images/products/modhu1.jpeg",         
+    images: [
+      "images/products/modhu1.jpeg",
+      "images/products/modhu2.jpeg",
+      "images/products/modhu3.jpeg"
+                    
+    ],
+    rating: 5,                                   
+    reviewCount: 10,                             
+    shortDescription: "১০০% খাঁটি ও প্রাকৃতিক মধু। বারাকাহ অ্যাগ্রোর খাঁটি চাকের মধু",      
+    description: "বারাকাহ অ্যাগ্রোতে সংগ্রহ করা খাঁটি চাকের মধু। প্রাকৃতিকভাবে সংগ্রহ করা এই মধুতে কোনো প্রিজারভেটিভ, কৃত্রিম রঙ বা ফ্লেভার নেই। এটি সম্পূর্ণ ভেজালমুক্ত এবং খাঁটি। প্রতিদিনের খাদ্যতালিকায় এটি প্রাকৃতিক মিষ্টি হিসেবে ব্যবহার করা যায়।প্রকৃতির এক অপূর্ব উপহার—মৌচাক থেকে সংগ্রহ করা প্রাকৃতিক চাকের মধু।",     
+    ingredients: "১০০% খাঁটি মধু",
+    benefits: [
+      "কেনো বারাকাহ অ্যাগ্রোর খাঁটি মধু?",
+      "মধুর উপকারিতা",                           
+      "প্রাকৃতিক মিষ্টি — চিনির ভালো বিকল্প।",
+      "ভেজালমুক্ত ও খাঁটি।",
+      "শরীরের রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি করে।",
+      "হজমে সহায়ক।",
+      "ত্বক ও চুলের স্বাস্থ্য ভালো রাখে।",
+      "শরীরের শক্তি বৃদ্ধি করে।"
+
+    ],
+    packages: [
+      { id: "hn-250gm", label: " 250gm", price: 425, oldPrice: 500 },
+      { id: "hn-500gm", label: "500 gm", price: 850, oldPrice: 1000 },
+      { id: "hn-1kg", label: "1 kg", price: 1700, oldPrice: 2000 }
+    ]
+  }
+
+
   
 ];
 
@@ -573,6 +612,14 @@ const FEATURED_CATEGORIES = [
     desc: "হিমসাগর আম ও লিচু",
     image: "images/products/am.jpeg",
     url: "products.html?category=fruits"
+  },
+  {
+    id: "honey",
+    name: "খাঁটি মধু",
+    enName: "Pure Honey",
+    desc: "১০০% প্রাকৃতিক মধু",
+    image: "images/products/modhu1.jpeg",
+    url: "products.html?category=honey"
   }
 ];
 
