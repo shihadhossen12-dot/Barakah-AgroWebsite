@@ -349,3 +349,20 @@ export async function updateOrderStatus(id, status) {
   return null;
 }
 
+export async function deleteOrder(id) {
+  if (pool && !useMock) {
+    try {
+      const result = await pool.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+      return result.rowCount > 0;
+    } catch (err) {
+      console.warn('PostgreSQL deleteOrder failed:', err);
+      return false;
+    }
+  }
+
+  const index = inMemoryOrders.findIndex(o => o.id === id);
+  if (index === -1) return false;
+  inMemoryOrders.splice(index, 1);
+  return true;
+}
+

@@ -9,6 +9,7 @@ import {
   getOrders,
   getOrdersByUserId,
   updateOrderStatus,
+  deleteOrder,
   createUser,
   findUserByPhone,
   findUserByEmail,
@@ -250,6 +251,21 @@ app.patch('/api/admin/orders/:id/status', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Update order status error:', error);
     res.status(500).json({ error: 'Failed to update order status.' });
+  }
+});
+
+app.delete('/api/admin/orders/:id', adminAuth, async (req, res) => {
+  try {
+    const deleted = await deleteOrder(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Delete order error:', error);
+    res.status(500).json({ error: 'Failed to delete order.' });
   }
 });
 
