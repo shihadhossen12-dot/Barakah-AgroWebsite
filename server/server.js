@@ -20,7 +20,11 @@ import {
   getSessionUserId,
   deleteSession,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  addChatMessage,
+  getChatMessages,
+  markChatReadByAdmin,
+  getChatThreads
 } from './db.js';
 
 dotenv.config();
@@ -368,6 +372,99 @@ app.delete('/api/admin/orders/:id', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Delete order error:', error);
     res.status(500).json({ error: 'Failed to delete order.' });
+  }
+});
+
+// --------------------------------------------------------------------------
+// CHAT (customer <-> admin)
+// --------------------------------------------------------------------------
+const chatRate = new Map();
+function chatRateOk(userId) {
+  const now = Date.now();
+  const list = (chatRate.get(userId) || []).filter(t => now - t < 10 * 60 * 1000);
+  if (list.length >= 20) { chatRate.set(userId, list); return false; }
+  list.push(now);
+  chatRate.set(userId, list);
+  return true;
+}
+
+// Sends a notification to the owner's phone through a Telegram bot
+async function notifyOwner(text) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true })
+    });
+  } catch (error) {
+    console.error('Telegram notify failed:', error.message);
+  }
+}
+
+app.get('/api/user/chat', customerAuth, async (req, res) => {
+  try {
+    const after = Number(req.query.after) || 0;
+    const messages = await getChatMessages(req.customer.userId, after);
+    res.json({ messages });
+  } catch (error) {
+    console.error('Get chat error:', error);
+    res.status(500).json({ error: 'মেসেজ লোড করা যায়নি।' });
+  }
+});
+
+app.post('/api/user/chat', customerAuth, async (req, res) => {
+  try {
+    const text = String(req.body?.text || '').trim().slice(0, 1000);
+    if (!text) return res.status(400).json({ error: 'মেসেজ লিখুন।' });
+    if (!chatRateOk(req.customer.userId)) {
+      return res.status(429).json({ error: 'অনেক বেশি মেসেজ পাঠানো হয়েছে, একটু পরে চেষ্টা করুন।' });
+    }
+    const message = await addChatMessage(req.customer.userId, 'customer', text);
+    const base = process.env.APP_URL || '';
+    notifyOwner(`💬 নতুন মেসেজ\n👤 ${req.customer.name} (${req.customer.phone})\n\n${text}\n\n👉 ${base}/admin`);
+    res.status(201).json({ message });
+  } catch (error) {
+    console.error('Send chat error:', error);
+    res.status(500).json({ error: 'মেসেজ পাঠানো যায়নি।' });
+  }
+});
+
+app.get('/api/admin/chat', adminAuth, async (req, res) => {
+  try {
+    const threads = await getChatThreads();
+    res.json({ threads });
+  } catch (error) {
+    console.error('Admin chat threads error:', error);
+    res.status(500).json({ error: 'Failed to load chats.' });
+  }
+});
+
+app.get('/api/admin/chat/:userId', adminAuth, async (req, res) => {
+  try {
+    const after = Number(req.query.after) || 0;
+    const messages = await getChatMessages(req.params.userId, after);
+    await markChatReadByAdmin(req.params.userId);
+    res.json({ messages });
+  } catch (error) {
+    console.error('Admin chat load error:', error);
+    res.status(500).json({ error: 'Failed to load messages.' });
+  }
+});
+
+app.post('/api/admin/chat/:userId', adminAuth, async (req, res) => {
+  try {
+    const text = String(req.body?.text || '').trim().slice(0, 1000);
+    if (!text) return res.status(400).json({ error: 'Message is empty.' });
+    const user = await findUserById(req.params.userId);
+    if (!user) return res.status(404).json({ error: 'Customer not found.' });
+    const message = await addChatMessage(req.params.userId, 'admin', text);
+    res.status(201).json({ message });
+  } catch (error) {
+    console.error('Admin chat send error:', error);
+    res.status(500).json({ error: 'Failed to send message.' });
   }
 });
 

@@ -62,6 +62,15 @@ export async function initDb() {
           updated_at TIMESTAMPTZ NOT NULL
         );
 
+          CREATE TABLE IF NOT EXISTS chat_messages (
+          id SERIAL PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          sender TEXT NOT NULL,
+          text TEXT NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL,
+          read_by_admin BOOLEAN NOT NULL DEFAULT FALSE
+        );
+
         CREATE TABLE IF NOT EXISTS customer_sessions (
           token_hash TEXT PRIMARY KEY,
           user_id TEXT NOT NULL,
@@ -536,3 +545,100 @@ export async function updateUserProfile(id, data) {
   return getUserProfile(id);
 }
 
+
+// ==========================================================================
+// CHAT METHODS (customer <-> admin messages)
+// ==========================================================================
+const inMemoryChat = [];
+let inMemoryChatSeq = 0;
+
+export async function addChatMessage(userId, sender, text) {
+  const createdAt = new Date().toISOString();
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query(
+        `INSERT INTO chat_messages (user_id, sender, text, created_at, read_by_admin)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, user_id AS "userId", sender, text, created_at AS "createdAt"`,
+        [userId, sender, text, createdAt, sender === 'admin']
+      );
+      return res.rows[0];
+    } catch (err) {
+      console.warn('PostgreSQL addChatMessage failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const msg = { id: ++inMemoryChatSeq, userId, sender, text, createdAt, readByAdmin: sender === 'admin' };
+  inMemoryChat.push(msg);
+  return { id: msg.id, userId, sender, text, createdAt };
+}
+
+export async function getChatMessages(userId, afterId = 0) {
+  if (!userId) return [];
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query(
+        `SELECT id, user_id AS "userId", sender, text, created_at AS "createdAt"
+         FROM chat_messages WHERE user_id = $1 AND id > $2 ORDER BY id ASC LIMIT 300`,
+        [userId, afterId]
+      );
+      return res.rows;
+    } catch (err) {
+      console.warn('PostgreSQL getChatMessages failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  return inMemoryChat
+    .filter(m => m.userId === userId && m.id > afterId)
+    .map(m => ({ id: m.id, userId: m.userId, sender: m.sender, text: m.text, createdAt: m.createdAt }));
+}
+
+export async function markChatReadByAdmin(userId) {
+  if (pool && !useMock) {
+    try {
+      await pool.query(
+        `UPDATE chat_messages SET read_by_admin = TRUE WHERE user_id = $1 AND sender = 'customer' AND read_by_admin = FALSE`,
+        [userId]
+      );
+      return;
+    } catch (err) {
+      console.warn('PostgreSQL markChatReadByAdmin failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  inMemoryChat.forEach(m => { if (m.userId === userId && m.sender === 'customer') m.readByAdmin = true; });
+}
+
+export async function getChatThreads() {
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query(`
+        SELECT u.id AS "userId", u.name, u.phone,
+               m.text AS "lastText", m.sender AS "lastSender", m.created_at AS "lastAt",
+               (SELECT COUNT(*) FROM chat_messages c
+                 WHERE c.user_id = u.id AND c.sender = 'customer' AND c.read_by_admin = FALSE)::int AS unread
+        FROM users u
+        JOIN LATERAL (
+          SELECT text, sender, created_at FROM chat_messages
+          WHERE user_id = u.id ORDER BY id DESC LIMIT 1
+        ) m ON TRUE
+        ORDER BY m.created_at DESC
+      `);
+      return res.rows;
+    } catch (err) {
+      console.warn('PostgreSQL getChatThreads failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const ids = [...new Set(inMemoryChat.map(m => m.userId))];
+  return ids.map(id => {
+    const msgs = inMemoryChat.filter(m => m.userId === id);
+    const last = msgs[msgs.length - 1];
+    const u = inMemoryUsers.find(x => x.id === id) || {};
+    return {
+      userId: id, name: u.name || '', phone: u.phone || '',
+      lastText: last.text, lastSender: last.sender, lastAt: last.createdAt,
+      unread: msgs.filter(m => m.sender === 'customer' && !m.readByAdmin).length
+    };
+  }).sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
+}
