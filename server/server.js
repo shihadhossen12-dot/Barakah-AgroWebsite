@@ -12,8 +12,15 @@ import {
   deleteOrder,
   createUser,
   findUserByPhone,
-  findUserByEmail,
-  findUserById
+    findUserByEmail,
+  findUserById,
+  getCartByUserId,
+  saveCartForUser,
+  createSession,
+  getSessionUserId,
+  deleteSession,
+  getUserProfile,
+  updateUserProfile
 } from './db.js';
 
 dotenv.config();
@@ -26,7 +33,6 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const adminSessions = new Set();
-const customerSessions = new Map();
 const allowedStatuses = ['pending', 'processing', 'confirmed', 'shipped', 'delivered', 'cancelled'];
 
 app.use(express.json({ limit: '1mb' }));
@@ -43,19 +49,42 @@ function adminAuth(req, res, next) {
   next();
 }
 
-function customerAuth(req, res, next) {
+async function loadCustomerFromToken(req) {
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (!token || !customerSessions.has(token)) {
-    return res.status(401).json({ error: 'অনুগ্রহ করে লগইন করুন।' });
-  }
-  req.customer = customerSessions.get(token);
-  next();
+  if (!token) return null;
+  const userId = await getSessionUserId(token);
+  if (!userId) return null;
+  const user = await getUserProfile(userId);
+  if (!user) return null;
+  return {
+    userId: user.id,
+    name: user.name,
+    phone: user.phone,
+    email: user.email,
+    district: user.district,
+    address: user.address,
+    createdAt: user.createdAt
+  };
 }
 
-function optionalCustomerAuth(req, res, next) {
-  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (token && customerSessions.has(token)) {
-    req.customer = customerSessions.get(token);
+async function customerAuth(req, res, next) {
+  try {
+    const customer = await loadCustomerFromToken(req);
+    if (!customer) return res.status(401).json({ error: 'অনুগ্রহ করে লগইন করুন।' });
+    req.customer = customer;
+    next();
+  } catch (error) {
+    console.error('customerAuth error:', error);
+    res.status(500).json({ error: 'সার্ভারে সমস্যা হয়েছে।' });
+  }
+}
+
+async function optionalCustomerAuth(req, res, next) {
+  try {
+    const customer = await loadCustomerFromToken(req);
+    if (customer) req.customer = customer;
+  } catch (error) {
+    console.error('optionalCustomerAuth error:', error);
   }
   next();
 }
@@ -126,7 +155,7 @@ app.post('/api/user/register', async (req, res) => {
       email: newUser.email,
       createdAt: newUser.createdAt
     };
-    customerSessions.set(token, sessionData);
+    await createSession(token, sessionData.userId);
 
     res.status(201).json({
       token,
@@ -171,7 +200,7 @@ app.post('/api/user/login', async (req, res) => {
       email: user.email,
       createdAt: user.createdAt
     };
-    customerSessions.set(token, sessionData);
+    await createSession(token, sessionData.userId);
 
     res.json({
       token,
@@ -187,9 +216,9 @@ app.get('/api/user/me', customerAuth, (req, res) => {
   res.json({ user: req.customer });
 });
 
-app.post('/api/user/logout', customerAuth, (req, res) => {
+app.post('/api/user/logout', customerAuth, async (req, res) => {
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (token) customerSessions.delete(token);
+  if (token) await deleteSession(token);
   res.json({ ok: true });
 });
 
@@ -206,6 +235,79 @@ app.get('/api/user/orders', customerAuth, async (req, res) => {
 // --------------------------------------------------------------------------
 // ADMIN AUTHENTICATION & MANAGEMENT
 // --------------------------------------------------------------------------
+
+// --- Saved cart (one per logged-in customer) ---
+app.get('/api/user/cart', customerAuth, async (req, res) => {
+  try {
+    const items = await getCartByUserId(req.customer.userId);
+    res.json({ items });
+  } catch (error) {
+    console.error('Get cart error:', error);
+    res.status(500).json({ error: 'কার্ট লোড করা যায়নি।' });
+  }
+});
+
+app.put('/api/user/cart', customerAuth, async (req, res) => {
+  try {
+    const raw = Array.isArray(req.body?.items) ? req.body.items.slice(0, 50) : [];
+    const items = raw
+      .map(item => ({
+        productId: String(item.productId ?? ''),
+        packageId: String(item.packageId ?? ''),
+        name: String(item.name ?? ''),
+        banglaName: String(item.banglaName ?? ''),
+        packageLabel: String(item.packageLabel ?? ''),
+        price: Number(item.price) || 0,
+        image: String(item.image ?? ''),
+        quantity: Math.min(99, Math.max(1, Number(item.quantity) || 1))
+      }))
+      .filter(item => item.productId);
+    await saveCartForUser(req.customer.userId, items);
+    res.json({ items });
+  } catch (error) {
+    console.error('Save cart error:', error);
+    res.status(500).json({ error: 'কার্ট সেভ করা যায়নি।' });
+  }
+});
+
+// --- Customer profile ---
+app.put('/api/user/profile', customerAuth, async (req, res) => {
+  try {
+    const { name, email, district, address } = req.body || {};
+    const cleanName = String(name || '').trim();
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    if (cleanName.length < 2) {
+      return res.status(400).json({ error: 'সঠিক পূর্ণ নাম প্রদান করুন।' });
+    }
+    if (cleanEmail) {
+      const existing = await findUserByEmail(cleanEmail);
+      if (existing && existing.id !== req.customer.userId) {
+        return res.status(409).json({ error: 'এই ইমেইল ঠিকানাটি ইতোমধ্যে ব্যবহৃত হয়েছে।' });
+      }
+    }
+    const user = await updateUserProfile(req.customer.userId, {
+      name: cleanName,
+      email: cleanEmail,
+      district,
+      address
+    });
+    res.json({
+      user: {
+        userId: user.id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+        district: user.district,
+        address: user.address,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'প্রোফাইল আপডেট করা যায়নি।' });
+  }
+});
+
 app.post('/api/admin/login', (req, res) => {
   if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'Admin password is not configured. Set ADMIN_PASSWORD in .env.' });
   const { username, password } = req.body || {};
@@ -293,7 +395,7 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
 
   const order = {
     id: makeOrderId(),
-    userId: req.customer ? req.customer.userId : (body.userId || null),
+    userId: req.customer ? req.customer.userId : null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     status: 'pending',

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import pg from 'pg';
+import crypto from 'crypto';
 
 const { Pool } = pg;
 
@@ -54,6 +55,21 @@ export async function initDb() {
           delivery_fee NUMERIC NOT NULL DEFAULT 0,
           total NUMERIC NOT NULL DEFAULT 0
         );
+
+          CREATE TABLE IF NOT EXISTS carts (
+          user_id TEXT PRIMARY KEY,
+          items JSONB NOT NULL DEFAULT '[]'::jsonb,
+          updated_at TIMESTAMPTZ NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS customer_sessions (
+          token_hash TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          expires_at TIMESTAMPTZ NOT NULL
+        );
+
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS district TEXT;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT;
 
         -- Add user_id column if table was previously created without it
         DO $$
@@ -364,5 +380,159 @@ export async function deleteOrder(id) {
   if (index === -1) return false;
   inMemoryOrders.splice(index, 1);
   return true;
+}
+
+// ==========================================================================
+// CART + SESSION + PROFILE METHODS
+// ==========================================================================
+const inMemoryCarts = new Map();
+const inMemorySessions = new Map();
+
+function sessionKey(token) {
+  return crypto.createHash('sha256').update(String(token)).digest('hex');
+}
+
+// ---- Cart (one saved cart per logged-in customer) ----
+export async function getCartByUserId(userId) {
+  if (!userId) return [];
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query('SELECT items FROM carts WHERE user_id = $1', [userId]);
+      return res.rows[0]?.items || [];
+    } catch (err) {
+      console.warn('PostgreSQL getCartByUserId failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  return inMemoryCarts.get(userId) || [];
+}
+
+export async function saveCartForUser(userId, items) {
+  if (!userId) return [];
+  const cleanItems = Array.isArray(items) ? items : [];
+  if (pool && !useMock) {
+    try {
+      await pool.query(
+        `
+        INSERT INTO carts (user_id, items, updated_at)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (user_id)
+        DO UPDATE SET items = EXCLUDED.items, updated_at = EXCLUDED.updated_at
+        `,
+        [userId, JSON.stringify(cleanItems), new Date().toISOString()]
+      );
+      return cleanItems;
+    } catch (err) {
+      console.warn('PostgreSQL saveCartForUser failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  inMemoryCarts.set(userId, cleanItems);
+  return cleanItems;
+}
+
+// ---- Login sessions (saved in DB, so a server restart does not log users out) ----
+export async function createSession(token, userId, days = 30) {
+  const key = sessionKey(token);
+  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  if (pool && !useMock) {
+    try {
+      await pool.query(
+        'INSERT INTO customer_sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)',
+        [key, userId, expiresAt]
+      );
+      return;
+    } catch (err) {
+      console.warn('PostgreSQL createSession failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  inMemorySessions.set(key, { userId, expiresAt });
+}
+
+export async function getSessionUserId(token) {
+  if (!token) return null;
+  const key = sessionKey(token);
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query(
+        'SELECT user_id FROM customer_sessions WHERE token_hash = $1 AND expires_at > NOW()',
+        [key]
+      );
+      return res.rows[0]?.user_id || null;
+    } catch (err) {
+      console.warn('PostgreSQL getSessionUserId failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const s = inMemorySessions.get(key);
+  if (!s || new Date(s.expiresAt) < new Date()) return null;
+  return s.userId;
+}
+
+export async function deleteSession(token) {
+  if (!token) return;
+  const key = sessionKey(token);
+  if (pool && !useMock) {
+    try {
+      await pool.query('DELETE FROM customer_sessions WHERE token_hash = $1', [key]);
+      return;
+    } catch (err) {
+      console.warn('PostgreSQL deleteSession failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  inMemorySessions.delete(key);
+}
+
+// ---- Customer profile (name, phone, email, district, address) ----
+export async function getUserProfile(id) {
+  if (!id) return null;
+  if (pool && !useMock) {
+    try {
+      const res = await pool.query(
+        `SELECT id, name, phone, email, district, address,
+                created_at AS "createdAt", updated_at AS "updatedAt"
+         FROM users WHERE id = $1`,
+        [id]
+      );
+      return res.rows[0] || null;
+    } catch (err) {
+      console.warn('PostgreSQL getUserProfile failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const u = inMemoryUsers.find(user => user.id === id);
+  if (!u) return null;
+  return {
+    id: u.id, name: u.name, phone: u.phone, email: u.email,
+    district: u.district || null, address: u.address || null,
+    createdAt: u.createdAt, updatedAt: u.updatedAt
+  };
+}
+
+export async function updateUserProfile(id, data) {
+  const name = String(data.name || '').trim();
+  const email = data.email ? String(data.email).trim().toLowerCase() : null;
+  const district = data.district ? String(data.district).trim() : null;
+  const address = data.address ? String(data.address).trim() : null;
+  const now = new Date().toISOString();
+
+  if (pool && !useMock) {
+    try {
+      await pool.query(
+        `UPDATE users SET name = $1, email = $2, district = $3, address = $4, updated_at = $5 WHERE id = $6`,
+        [name, email, district, address, now, id]
+      );
+      return getUserProfile(id);
+    } catch (err) {
+      console.warn('PostgreSQL updateUserProfile failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const u = inMemoryUsers.find(user => user.id === id);
+  if (!u) return null;
+  Object.assign(u, { name, email, district, address, updatedAt: now });
+  return getUserProfile(id);
 }
 
