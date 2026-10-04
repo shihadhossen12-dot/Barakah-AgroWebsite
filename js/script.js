@@ -168,6 +168,7 @@ const BARAKAH_PRODUCTS = [
     categoryName: "Organic Milk",
     banglaCategory: "দেশি গাভীর দুধ",
     sku: "BA-ML-1000",
+    badge: "📍 শুধু জামালপুরে",
     image: "images/products/milk.png",
     images: [
       "images/products/milk.png"
@@ -175,7 +176,7 @@ const BARAKAH_PRODUCTS = [
     rating: 4.9,
     reviewCount: 42,
     isOffer: true,
-    shortDescription: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾",
+    shortDescription: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾 📍 শুধুমাত্র জামালপুর এলাকায় ডেলিভারি।",
     description: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾 বারাকাহ এগ্রো গ্রামবাংলার চারণভূমিতে ঘাস খাওয়া দেশি গাভীর খাঁটি দুধ সংগ্রহ করে সরাসরি গ্রাহকের কাছে পৌঁছে দেয়। কোনো প্রকার কেমিক্যাল বা প্রিজারভেটিভ ছাড়াই প্রতিদিনের তাজা দুধ সরবরাহ করা হয়। এতে রয়েছে প্রচুর পরিমাণে প্রোটিন, ক্যালসিয়াম, ভিটামিন এবং অন্যান্য পুষ্টিগুণ যা শরীরের জন্য অত্যন্ত উপকারী। “প্রোটিন, ক্যালসিয়াম ও প্রয়োজনীয় পুষ্টি উপাদানে সমৃদ্ধ—প্রতিদিনের সুষম খাদ্যাভ্যাসে খাঁটি দুধ হতে পারে পরিবারের পুষ্টির একটি সহজ ও সুস্বাদু অংশ।” 🥛🤍",
     ingredients: "১০০% দেশি গাভীর দুধ (Pure Deshi Cow Milk)",
     benefits: [
@@ -1278,6 +1279,31 @@ function renderCheckoutSummary() {
   calculateAndRenderTotals();
 }
 
+// দুধ শুধু জামালপুর জেলায় বিক্রি হবে
+const LOCAL_ONLY_PRODUCT_IDS = [5];
+
+function isJamalpurDistrict(district) {
+  const d = (district || "").toLowerCase();
+  return d.includes("জামালপুর") || d.includes("jamalpur");
+}
+
+function removeLocalOnlyItems(district) {
+  if (isJamalpurDistrict(district)) return false;
+
+  const cart = getCart();
+  const filtered = cart.filter((item) => !LOCAL_ONLY_PRODUCT_IDS.includes(Number(item.productId)));
+  if (filtered.length === cart.length) return false;
+
+  saveCart(filtered);
+  renderCheckoutSummary();
+  alert(
+    filtered.length === 0
+      ? "দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে।"
+      : "দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে। বাকি পণ্য দিয়ে আবার অর্ডার নিশ্চিত করুন।"
+  );
+  return true;
+}
+
 async function handleCheckoutSubmit(e) {
   if (e) e.preventDefault();
 
@@ -1291,6 +1317,8 @@ async function handleCheckoutSubmit(e) {
     showToast("অনুগ্রহ করে আপনার নাম, ফোন নম্বর, জেলা ও ঠিকানা পূরণ করুন।");
     return;
   }
+
+    if (removeLocalOnlyItems(district)) return;
 
   const cart = getCart();
   if (cart.length === 0) {
@@ -1356,6 +1384,7 @@ function orderViaWhatsApp() {
     showToast("অনুগ্রহ করে আপনার নাম, ফোন নম্বর ও সম্পূর্ণ ঠিকানা লিখুন।");
     return;
   }
+    if (removeLocalOnlyItems(district)) return;
 
   const cart = getCart();
   if (cart.length === 0) {
