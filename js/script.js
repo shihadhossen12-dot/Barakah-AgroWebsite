@@ -641,6 +641,7 @@ function saveCart(cart) {
   try {
     localStorage.setItem("barakah_cart", JSON.stringify(cart));
     updateCartCount();
+        pushCartToServer();
   } catch (e) {
     console.error("Cart save error:", e);
   }
@@ -1413,7 +1414,7 @@ async function handleCheckoutSubmit(e) {
     if (!response.ok) throw new Error(data.error || "Order save failed");
 
     showOrderSuccessModal(data.order.id, name, phone, address);
-    localStorage.removeItem("barakah_cart");
+    clearCart();
     updateCartCount();
   } catch (error) {
     console.error("Order submit error:", error);
@@ -1482,7 +1483,7 @@ ${itemsText}------------------------------
   window.open(waURL, "_blank");
 
   // Clear cart and show notification
-  localStorage.removeItem("barakah_cart");
+  clearCart();
   updateCartCount();
   showToast("হোয়াটসঅ্যাপে আপনার অর্ডারের তথ্য পাঠানো হয়েছে!");
 }
@@ -1961,6 +1962,107 @@ function getLoggedInCustomer() {
   }
 }
 
+// ---- Cart sync with the server (works only when a customer is logged in) ----
+function pushCartToServer() {
+  const user = getLoggedInCustomer();
+  if (!user) return Promise.resolve();
+  return fetch("/api/user/cart", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + user.token },
+    body: JSON.stringify({ items: getCart() }),
+    keepalive: true
+  }).catch(() => {});
+}
+
+function clearCart() {
+  localStorage.removeItem("barakah_cart");
+  updateCartCount();
+  pushCartToServer();
+}
+
+function refreshCartViews() {
+  updateCartCount();
+  if (typeof renderCartPage === "function") renderCartPage();
+  if (typeof renderCheckoutSummary === "function") renderCheckoutSummary();
+}
+
+// Server stores ids as text, so rebuild each item from the product list
+// (same shape as addToCart creates). This also keeps prices/names up to date.
+function normalizeServerCartItems(items) {
+  const result = [];
+  items.forEach((item) => {
+    const product = BARAKAH_PRODUCTS.find((p) => String(p.id) === String(item.productId));
+    if (!product) return;
+    const pkg =
+      product.packages.find((p) => String(p.id) === String(item.packageId)) || product.packages[0];
+    const qty = Math.max(1, Number(item.quantity) || 1);
+    const existing = result.find((r) => r.productId === product.id && r.packageId === pkg.id);
+    if (existing) {
+      existing.quantity += qty;
+      return;
+    }
+    result.push({
+      productId: product.id,
+      packageId: pkg.id,
+      name: product.name,
+      banglaName: product.banglaName,
+      packageLabel: pkg.label,
+      price: pkg.price,
+      image: product.image,
+      quantity: qty
+    });
+  });
+  return result;
+}
+
+// Returns the saved cart, or null if it could not be loaded.
+async function fetchServerCart() {
+  const user = getLoggedInCustomer();
+  if (!user) return null;
+  try {
+    const res = await fetch("/api/user/cart", {
+      headers: { Authorization: "Bearer " + user.token }
+    });
+    if (res.status === 401) {
+      // login expired: log out on this device
+      localStorage.removeItem("barakah_customer");
+      updateCustomerAccountUI();
+      return null;
+    }
+    if (!res.ok) return null;
+    const data = await res.json();
+    return normalizeServerCartItems(Array.isArray(data.items) ? data.items : []);
+  } catch (e) {
+    console.error("Cart load error:", e);
+    return null;
+  }
+}
+
+// Right after login/register: merge the guest cart with the saved cart
+async function mergeCartAfterLogin() {
+  const serverItems = await fetchServerCart();
+  if (serverItems === null) return; // never overwrite the saved cart if loading failed
+  const merged = serverItems.slice();
+  getCart().forEach((localItem) => {
+    const found = merged.find(
+      (i) => i.productId === localItem.productId && i.packageId === localItem.packageId
+    );
+    if (found) found.quantity = Math.max(found.quantity, localItem.quantity);
+    else merged.push(localItem);
+  });
+  saveCart(merged); // saves on this device and on the server
+  refreshCartViews();
+}
+
+// On every page load: if logged in, show the saved cart
+document.addEventListener("DOMContentLoaded", async function () {
+  if (!getLoggedInCustomer()) return;
+  const items = await fetchServerCart();
+  if (items === null) return;
+  localStorage.setItem("barakah_cart", JSON.stringify(items));
+  refreshCartViews();
+});
+
 function updateCustomerAccountUI() {
   const user = getLoggedInCustomer();
   const accountLabels = document.querySelectorAll(".account-btn-label");
@@ -2095,6 +2197,7 @@ async function handleCustomerAuthSubmit(e, mode) {
     if (!response.ok) throw new Error(data.error || "লগইন করা যায়নি।");
 
     localStorage.setItem("barakah_customer", JSON.stringify({ ...data.user, token: data.token }));
+        await mergeCartAfterLogin();
     updateCustomerAccountUI();
     showToast(`স্বাগতম, ${data.user.name}!`);
     closeAccountModal();
@@ -2108,6 +2211,7 @@ async function logoutCustomer() {
   const user = getLoggedInCustomer();
   try {
     if (user?.token) {
+      await pushCartToServer(); // make sure the latest cart is saved first
       await fetch("/api/user/logout", {
         method: "POST",
         headers: { Authorization: "Bearer " + user.token }
@@ -2115,6 +2219,8 @@ async function logoutCustomer() {
     }
   } catch {}
   localStorage.removeItem("barakah_customer");
+  localStorage.removeItem("barakah_cart"); // next person on this device must not see it
+  refreshCartViews();
   updateCustomerAccountUI();
   showToast("সফলভাবে লগআউট হয়েছে");
   closeAccountModal();
