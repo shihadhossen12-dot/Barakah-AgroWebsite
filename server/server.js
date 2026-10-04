@@ -424,7 +424,7 @@ app.post('/api/user/chat', customerAuth, async (req, res) => {
     }
     const message = await addChatMessage(req.customer.userId, 'customer', text);
     const base = process.env.APP_URL || '';
-    notifyOwner(`💬 নতুন মেসেজ\n👤 ${req.customer.name} (${req.customer.phone})\n\n${text}\n\n👉 ${base}/admin`);
+        notifyOwner(`💬 নতুন মেসেজ\n🆔 ${req.customer.userId}\n👤 ${req.customer.name} (${req.customer.phone})\n\n${text}\n\n↩️ এই মেসেজে Reply করে সরাসরি উত্তর দিন\n👉 ${base}/admin`);
     res.status(201).json({ message });
   } catch (error) {
     console.error('Send chat error:', error);
@@ -465,6 +465,61 @@ app.post('/api/admin/chat/:userId', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Admin chat send error:', error);
     res.status(500).json({ error: 'Failed to send message.' });
+  }
+});
+
+// --------------------------------------------------------------------------
+// TELEGRAM REPLY: owner replies to a notification inside Telegram -> goes to the customer's chat
+// --------------------------------------------------------------------------
+function telegramSecret() {
+  return crypto.createHash('sha256').update('barakah-tg:' + (process.env.TELEGRAM_BOT_TOKEN || '')).digest('hex').slice(0, 48);
+}
+
+async function setupTelegramWebhook() {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const base = process.env.APP_URL;
+  if (!botToken || !process.env.TELEGRAM_CHAT_ID || !base) return;
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: base.replace(/\/+$/, '') + '/api/telegram/webhook',
+        secret_token: telegramSecret(),
+        allowed_updates: ['message']
+      })
+    });
+    const d = await r.json();
+    console.log('Telegram webhook:', d.ok ? 'set' : d.description);
+  } catch (error) {
+    console.error('Telegram webhook setup failed:', error.message);
+  }
+}
+
+app.post('/api/telegram/webhook', async (req, res) => {
+  res.sendStatus(200);
+  try {
+    if (!process.env.TELEGRAM_BOT_TOKEN) return;
+    if (req.headers['x-telegram-bot-api-secret-token'] !== telegramSecret()) return;
+    const msg = req.body?.message;
+    if (!msg || !msg.text) return;
+    if (String(msg.chat?.id) !== String(process.env.TELEGRAM_CHAT_ID)) return;
+
+    const found = (msg.reply_to_message?.text || '').match(/^🆔 (USR-[A-Z0-9-]+)$/m);
+    if (!found) {
+      await notifyOwner('↩️ কাস্টমারকে উত্তর দিতে হলে তার মেসেজের উপর Reply চেপে লিখুন।');
+      return;
+    }
+    const user = await findUserById(found[1]);
+    if (!user) {
+      await notifyOwner('⚠️ এই কাস্টমারকে খুঁজে পাওয়া যায়নি।');
+      return;
+    }
+    await addChatMessage(user.id, 'admin', msg.text.trim().slice(0, 1000));
+    await markChatReadByAdmin(user.id);
+    await notifyOwner(`✅ ${user.name}-কে পাঠানো হয়েছে`);
+  } catch (error) {
+    console.error('Telegram webhook error:', error);
   }
 });
 
@@ -543,6 +598,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`Barakah Agro running at http://localhost:${PORT}`);
       console.log(`Admin panel: http://localhost:${PORT}/admin`);
+            setupTelegramWebhook();
     });
   } catch (error) {
     console.error('Failed to start server:', error);
