@@ -1514,6 +1514,7 @@ function showOrderSuccessModal(orderId, name, phone, address) {
       <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 24px;">
         আমাদের প্রতিনিধি খুব শীঘ্রই কল করে আপনার অর্ডারটি কনফার্ম করবেন এবং দ্রুত ডেলিভারি সম্পন্ন করবেন।
       </p>
+            ${getLoggedInCustomer() ? '<a href="account.html" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">আমার অর্ডার দেখুন</a>' : ""}
       <a href="index.html" class="btn btn-primary" style="width: 100%;">
         হোমে ফিরে যান
       </a>
@@ -2063,6 +2064,30 @@ document.addEventListener("DOMContentLoaded", async function () {
   refreshCartViews();
 });
 
+// ---- Checkout: fill name/phone/address from the customer's account ----
+async function prefillCheckoutFromAccount() {
+  const nameInput = document.getElementById("custName");
+  if (!nameInput || !getLoggedInCustomer()) return; // not the checkout page, or not logged in
+  try {
+    const res = await fetch("/api/user/me", {
+      headers: { Authorization: "Bearer " + getLoggedInCustomer().token }
+    });
+    if (!res.ok) return;
+    const { user } = await res.json();
+    const fill = (id, value) => {
+      const el = document.getElementById(id);
+      if (el && value && !el.value) el.value = value; // never overwrite what the person already typed
+    };
+    fill("custName", user.name);
+    fill("custPhone", user.phone);
+    fill("custDistrict", user.district);
+    fill("custAddress", user.address);
+  } catch (e) {
+    console.error("Checkout prefill error:", e);
+  }
+}
+document.addEventListener("DOMContentLoaded", prefillCheckoutFromAccount);
+
 function updateCustomerAccountUI() {
   const user = getLoggedInCustomer();
   const accountLabels = document.querySelectorAll(".account-btn-label");
@@ -2072,6 +2097,11 @@ function updateCustomerAccountUI() {
 }
 
 function openAccountModal(initialTab = "login") {
+    // Already logged in: go to the full account page instead of the small popup
+  if (getLoggedInCustomer()) {
+    window.location.href = "account.html";
+    return;
+  }
   let modal = document.getElementById("customerAccountModal");
   if (!modal) {
     modal = document.createElement("div");

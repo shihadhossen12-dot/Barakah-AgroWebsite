@@ -417,6 +417,20 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
 
   try {
     await createOrder(order);
+    
+    // First order: remember the delivery details in the customer's account
+    if (req.customer && (!req.customer.district || !req.customer.address)) {
+      try {
+        await updateUserProfile(req.customer.userId, {
+          name: req.customer.name,
+          email: req.customer.email,
+          district: req.customer.district || order.customer.district,
+          address: req.customer.address || order.customer.address
+        });
+      } catch (e) {
+        console.error('Auto-save profile failed:', e);
+      }
+    }
     res.status(201).json({ order });
   } catch (error) {
     console.error('Create order error:', error);

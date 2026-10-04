@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>আমার অ্যাকাউন্ট | Barakah Agro</title>
+  <meta name="description" content="বারাকাহ এগ্রো - আপনার অ্যাকাউন্ট, তথ্য ও অর্ডারের অবস্থা।">
+  <meta property="og:title" content="আমার অ্যাকাউন্ট | Barakah Agro">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Account page only (account.html) */
+    .acc-layout { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .acc-layout[hidden], .acc-gate[hidden] { display: none; }
+    .acc-side { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 90px; }
+    .acc-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; }
+    .acc-card h3 { font-size: 1.05rem; font-weight: 800; margin: 0 0 14px; }
+    .acc-profile-top { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
+    .acc-avatar { width: 56px; height: 56px; flex: none; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .acc-name { font-size: 1.1rem; font-weight: 800; line-height: 1.3; word-break: break-word; }
+    .acc-meta { color: var(--text-muted); font-size: 0.86rem; margin-top: 2px; }
+    .acc-field { margin-bottom: 12px; }
+    .acc-field label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 5px; color: var(--text-main); }
+    .acc-field input, .acc-field textarea, .acc-field select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: 10px; font: inherit; font-size: 0.93rem; background: #fff; color: var(--text-main); }
+    .acc-field input:focus, .acc-field textarea:focus, .acc-field select:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+    .acc-field input[readonly] { background: var(--bg-card-alt); color: var(--text-muted); }
+    .acc-field textarea { min-height: 70px; resize: vertical; }
+    .acc-hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
+    .acc-cart-line { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 12px; }
+    .acc-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .acc-actions .btn { flex: 1; text-align: center; justify-content: center; }
+
+    .acc-orders-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .acc-orders-head h2 { font-size: 1.35rem; font-weight: 800; margin: 0; }
+    .acc-refresh-wrap { display: flex; align-items: center; gap: 10px; color: var(--text-light); font-size: 0.82rem; }
+    .acc-refresh-btn { border: 1px solid var(--border-light); background: #fff; color: var(--primary); border-radius: 10px; padding: 7px 12px; font: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+    .acc-refresh-btn:hover { background: var(--primary-subtle); }
+
+    .acc-order { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .acc-order-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+    .acc-order-id { font-weight: 800; font-size: 1rem; color: var(--primary-dark); word-break: break-all; }
+    .acc-order-date { color: var(--text-muted); font-size: 0.84rem; margin-top: 2px; }
+    .acc-badge { padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+    .acc-badge.pending { background: #fff4d6; color: #8a5a00; }
+    .acc-badge.processing { background: #e3effd; color: #1b4f9c; }
+    .acc-badge.confirmed { background: #dff3e6; color: #166534; }
+    .acc-badge.shipped { background: #e8e6fb; color: #4338a8; }
+    .acc-badge.delivered { background: #166534; color: #fff; }
+    .acc-badge.cancelled { background: #fde4e1; color: #a8261a; }
+
+    .acc-steps { list-style: none; display: flex; margin: 20px 0 6px; padding: 0; }
+    .acc-steps li { flex: 1; text-align: center; position: relative; font-size: 0.78rem; color: var(--text-light); }
+    .acc-steps li::before { content: ""; position: absolute; top: 9px; left: -50%; width: 100%; height: 3px; background: var(--border-light); }
+    .acc-steps li:first-child::before { display: none; }
+    .acc-steps li.done::before, .acc-steps li.current::before { background: var(--primary); }
+    .acc-steps .dot { position: relative; z-index: 1; display: block; width: 21px; height: 21px; margin: 0 auto 6px; border-radius: 50%; background: #fff; border: 3px solid var(--border-light); }
+    .acc-steps li.done .dot { background: var(--primary); border-color: var(--primary); }
+    .acc-steps li.current .dot { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px var(--primary-light); }
+    .acc-steps li.done, .acc-steps li.current { color: var(--text-main); font-weight: 700; }
+    .acc-cancelled { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #fff1ef; color: #a8261a; font-size: 0.9rem; }
+
+    .acc-items { margin-top: 16px; border-top: 1px solid var(--border-card); }
+    .acc-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-card); }
+    .acc-item img { width: 46px; height: 46px; border-radius: 8px; object-fit: cover; flex: none; background: var(--bg-card-alt); }
+    .acc-item-name { font-weight: 700; font-size: 0.93rem; }
+    .acc-item-sub { color: var(--text-muted); font-size: 0.82rem; }
+    .acc-item-price { margin-left: auto; font-weight: 700; white-space: nowrap; }
+    .acc-order-foot { display: grid; grid-template-columns: 1fr minmax(210px, 260px); gap: 18px; margin-top: 14px; }
+    .acc-ship { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
+    .acc-ship strong { color: var(--text-main); }
+    .acc-sum-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 0.9rem; color: var(--text-muted); }
+    .acc-sum-row.total { border-top: 1px solid var(--border-card); margin-top: 6px; padding-top: 9px; font-size: 1.05rem; font-weight: 800; color: var(--text-main); }
+
+    .acc-empty, .acc-gate { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 44px 20px; text-align: center; color: var(--text-muted); }
+    .acc-gate { max-width: 520px; margin: 0 auto; }
+    .acc-gate h2 { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 0 0 8px; }
+    .acc-gate p { margin: 0 0 22px; }
+
+    @media (max-width: 900px) {
+      .acc-layout { grid-template-columns: 1fr; }
+      .acc-side { position: static; }
+    }
+    @media (max-width: 560px) {
+      .acc-order-foot { grid-template-columns: 1fr; }
+      .acc-steps li { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span>🔥 বিশেষ অফার: ২,০০০ টাকার অর্ডারে সমগ্র বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="tel:01786239185" class="top-bar-link">হটলাইন: 01786-239185</a>
+        <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="top-bar-link">হোয়াটসঅ্যাপ সাপোর্ট</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="header">
+    <div class="container navbar">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Barakah Agro Logo" class="logo-img">
+        <div class="logo-text-wrap">
+          <span class="logo-name">Barakah <span>Agro</span></span>
+          <span class="logo-tagline">বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="nav-link">হোম</a></li>
+          <li><a href="products.html" class="nav-link">পণ্য সম্ভার</a></li>
+          <li><a href="about.html" class="nav-link">আমাদের গল্প</a></li>
+          <li><a href="contact.html" class="nav-link">যোগাযোগ</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="account-btn" onclick="openAccountModal('login')" title="লগইন বা অ্যাকাউন্ট">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="account-btn-label">লগইন</span>
+        </button>
+
+        <a href="tel:01786239185" class="nav-phone-pill">
+          <span>01786-239185</span>
+        </a>
+
+        <a href="cart.html" class="cart-btn" aria-label="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-count">0</span>
+        </a>
+
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="page-hero-title">আমার অ্যাকাউন্ট</h1>
+      <p class="page-hero-subtitle">আপনার তথ্য ও অর্ডারের বর্তমান অবস্থা এখানে দেখুন।</p>
+    </div>
+  </div>
+
+  <!-- ACCOUNT SECTION -->
+  <section class="section">
+    <div class="container">
+
+      <!-- Shown when not logged in -->
+      <div id="accLoggedOut" class="acc-gate" hidden>
+        <h2>অ্যাকাউন্ট দেখতে লগইন করুন</h2>
+        <p>লগইন করলে আপনার তথ্য, কার্ট এবং সব অর্ডারের স্ট্যাটাস এক জায়গায় দেখতে পাবেন।</p>
+        <button type="button" class="btn btn-primary btn-lg" onclick="openAccountModal('login')">লগইন করুন</button>
+      </div>
+
+      <!-- Shown when logged in -->
+      <div id="accMain" class="acc-layout" hidden>
+        <aside class="acc-side">
+          <div class="acc-card">
+            <div class="acc-profile-top">
+              <div class="acc-avatar" id="accAvatar">?</div>
+              <div>
+                <div class="acc-name" id="accName"></div>
+                <div class="acc-meta" id="accPhoneView"></div>
+                <div class="acc-meta" id="accSince"></div>
+              </div>
+            </div>
+            <form id="accProfileForm" novalidate>
+              <div class="acc-field">
+                <label for="accInName">নাম</label>
+                <input type="text" id="accInName" autocomplete="name" required>
+              </div>
+              <div class="acc-field">
+                <label for="accInPhone">মোবাইল নম্বর</label>
+                <input type="text" id="accInPhone" readonly>
+                <div class="acc-hint">মোবাইল নম্বর দিয়েই লগইন হয়, তাই এটি বদলানো যায় না।</div>
+              </div>
+              <div class="acc-field">
+                <label for="accInEmail">ইমেইল (ঐচ্ছিক)</label>
+                <input type="email" id="accInEmail" autocomplete="email">
+              </div>
+              <div class="acc-field">
+                <label for="accInDistrict">জেলা</label>
+                <select id="accInDistrict" class="form-control">
+  <option value="">-- জেলা বেছে নিন --</option>
+  <optgroup label="ঢাকা বিভাগ">
+    <option value="ঢাকা">ঢাকা</option>
+    <option value="গাজীপুর">গাজীপুর</option>
+    <option value="নারায়ণগঞ্জ">নারায়ণগঞ্জ</option>
+    <option value="নরসিংদী">নরসিংদী</option>
+    <option value="মানিকগঞ্জ">মানিকগঞ্জ</option>
+    <option value="মুন্সিগঞ্জ">মুন্সিগঞ্জ</option>
+    <option value="কিশোরগঞ্জ">কিশোরগঞ্জ</option>
+    <option value="টাঙ্গাইল">টাঙ্গাইল</option>
+    <option value="ফরিদপুর">ফরিদপুর</option>
+    <option value="গোপালগঞ্জ">গোপালগঞ্জ</option>
+    <option value="মাদারীপুর">মাদারীপুর</option>
+    <option value="রাজবাড়ী">রাজবাড়ী</option>
+    <option value="শরীয়তপুর">শরীয়তপুর</option>
+  </optgroup>
+  <optgroup label="ময়মনসিংহ বিভাগ">
+    <option value="ময়মনসিংহ">ময়মনসিংহ</option>
+    <option value="জামালপুর">জামালপুর</option>
+    <option value="নেত্রকোনা">নেত্রকোনা</option>
+    <option value="শেরপুর">শেরপুর</option>
+  </optgroup>
+  <optgroup label="চট্টগ্রাম বিভাগ">
+    <option value="চট্টগ্রাম">চট্টগ্রাম</option>
+    <option value="কক্সবাজার">কক্সবাজার</option>
+    <option value="কুমিল্লা">কুমিল্লা</option>
+    <option value="ফেনী">ফেনী</option>
+    <option value="ব্রাহ্মণবাড়িয়া">ব্রাহ্মণবাড়িয়া</option>
+    <option value="রাঙ্গামাটি">রাঙ্গামাটি</option>
+    <option value="নোয়াখালী">নোয়াখালী</option>
+    <option value="চাঁদপুর">চাঁদপুর</option>
+    <option value="লক্ষ্মীপুর">লক্ষ্মীপুর</option>
+    <option value="খাগড়াছড়ি">খাগড়াছড়ি</option>
+    <option value="বান্দরবান">বান্দরবান</option>
+  </optgroup>
+  <optgroup label="রাজশাহী বিভাগ">
+    <option value="রাজশাহী">রাজশাহী</option>
+    <option value="বগুড়া">বগুড়া</option>
+    <option value="জয়পুরহাট">জয়পুরহাট</option>
+    <option value="নওগাঁ">নওগাঁ</option>
+    <option value="নাটোর">নাটোর</option>
+    <option value="চাঁপাইনবাবগঞ্জ">চাঁপাইনবাবগঞ্জ</option>
+    <option value="পাবনা">পাবনা</option>
+    <option value="সিরাজগঞ্জ">সিরাজগঞ্জ</option>
+  </optgroup>
+  <optgroup label="খুলনা বিভাগ">
+    <option value="খুলনা">খুলনা</option>
+    <option value="বাগেরহাট">বাগেরহাট</option>
+    <option value="চুয়াডাঙ্গা">চুয়াডাঙ্গা</option>
+    <option value="যশোর">যশোর</option>
+    <option value="ঝিনাইদহ">ঝিনাইদহ</option>
+    <option value="কুষ্টিয়া">কুষ্টিয়া</option>
+    <option value="মাগুরা">মাগুরা</option>
+    <option value="মেহেরপুর">মেহেরপুর</option>
+    <option value="নড়াইল">নড়াইল</option>
+    <option value="সাতক্ষীরা">সাতক্ষীরা</option>
+  </optgroup>
+  <optgroup label="বরিশাল বিভাগ">
+    <option value="বরিশাল">বরিশাল</option>
+    <option value="বরগুনা">বরগুনা</option>
+    <option value="ভোলা">ভোলা</option>
+    <option value="ঝালকাঠি">ঝালকাঠি</option>
+    <option value="পটুয়াখালী">পটুয়াখালী</option>
+    <option value="পিরোজপুর">পিরোজপুর</option>
+  </optgroup>
+  <optgroup label="সিলেট বিভাগ">
+    <option value="সিলেট">সিলেট</option>
+    <option value="হবিগঞ্জ">হবিগঞ্জ</option>
+    <option value="মৌলভীবাজার">মৌলভীবাজার</option>
+    <option value="সুনামগঞ্জ">সুনামগঞ্জ</option>
+  </optgroup>
+  <optgroup label="রংপুর বিভাগ">
+    <option value="রংপুর">রংপুর</option>
+    <option value="দিনাজপুর">দিনাজপুর</option>
+    <option value="কুড়িগ্রাম">কুড়িগ্রাম</option>
+    <option value="লালমনিরহাট">লালমনিরহাট</option>
+    <option value="নীলফামারী">নীলফামারী</option>
+    <option value="গাইবান্ধা">গাইবান্ধা</option>
+    <option value="ঠাকুরগাঁও">ঠাকুরগাঁও</option>
+    <option value="পঞ্চগড়">পঞ্চগড়</option>
+  </optgroup>
+</select>
+              </div>
+              <div class="acc-field">
+                <label for="accInAddress">সম্পূর্ণ ঠিকানা</label>
+                <textarea id="accInAddress" autocomplete="street-address"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" id="accSaveBtn" style="width: 100%;">তথ্য সেভ করুন</button>
+            </form>
+          </div>
+
+          <div class="acc-card">
+            <h3>আমার কার্ট</h3>
+            <p class="acc-cart-line" id="accCartLine"></p>
+            <div class="acc-actions">
+              <a href="cart.html" class="btn btn-secondary">কার্ট দেখুন</a>
+              <a href="checkout.html" class="btn btn-primary">চেকআউট</a>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-secondary" id="accLogoutBtn" style="width: 100%;">লগআউট</button>
+        </aside>
+
+        <div>
+          <div class="acc-orders-head">
+            <h2>আমার অর্ডার</h2>
+            <div class="acc-refresh-wrap">
+              <span id="accUpdated"></span>
+              <button type="button" class="acc-refresh-btn" id="accRefreshBtn">রিফ্রেশ</button>
+            </div>
+          </div>
+          <div id="accOrders"><div class="acc-empty">অর্ডার লোড হচ্ছে...</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3 class="footer-logo-title">Barakah Agro</h3>
+          <p class="footer-tagline">“বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য” — ঘরোয়া যত্ন ও শতভাগ বিশুদ্ধতায় উৎপাদিত প্রাকৃতিক পণ্য সরাসরি আপনার দোরগোড়ায়।</p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">গুরুত্বপূর্ণ লিংক</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">হোম পেজ</a></li>
+            <li><a href="products.html">সকল পণ্য</a></li>
+            <li><a href="about.html">আমাদের গল্প</a></li>
+            <li><a href="contact.html">যোগাযোগ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">পণ্য বিভাগ</h4>
+          <ul class="footer-links">
+            <li><a href="products.html">কাঠের ঘানির সরিষার তেল</a></li>
+            <li><a href="products.html">সুন্দরবনের খাঁটি মধু</a></li>
+            <li><a href="products.html">দেশি গাওয়া ঘি</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">যোগাযোগ</h4>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>হটলাইন: 01786-239185</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>হোয়াটসঅ্যাপ: 01786-239185</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Barakah Agro. All rights reserved.</p>
+        <p>পেমেন্ট: ক্যাশ অন ডেলিভারি | বিকাশ | নগদ</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">
+    <span class="toast-dot"></span>
+    <span id="toastMsg">কার্টে যোগ হয়েছে!</span>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var esc = function (s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      };
+      var money = function (n) { return "৳" + Number(n || 0).toLocaleString("en-US"); };
+
+      var STATUS = {
+        pending:    { label: "অর্ডার গ্রহণ করা হয়েছে", step: "গ্রহণ" },
+        processing: { label: "প্রসেসিং চলছে",          step: "প্রসেসিং" },
+        confirmed:  { label: "অর্ডার কনফার্ম হয়েছে",    step: "কনফার্ম" },
+        shipped:    { label: "পাঠানো হয়েছে",           step: "শিপিং" },
+        delivered:  { label: "ডেলিভারি সম্পন্ন",        step: "ডেলিভারি" },
+        cancelled:  { label: "অর্ডার বাতিল",           step: "বাতিল" }
+      };
+      var STEPS = ["pending", "processing", "confirmed", "shipped", "delivered"];
+
+      var lastStatuses = null;
+      var pollTimer = null;
+      var waitLoginTimer = null;
+
+      function statusInfo(s) { return STATUS[s] || { label: s || "অজানা", step: s || "" }; }
+
+      async function api(url, opts) {
+        opts = opts || {};
+        var user = getLoggedInCustomer();
+        var headers = Object.assign(
+          { "Content-Type": "application/json" },
+          user ? { Authorization: "Bearer " + user.token } : {},
+          opts.headers || {}
+        );
+        var res = await fetch(url, Object.assign({}, opts, { headers: headers }));
+        if (res.status === 401) {
+          localStorage.removeItem("barakah_customer");
+          updateCustomerAccountUI();
+          var e = new Error("অনুগ্রহ করে আবার লগইন করুন।");
+          e.code = 401;
+          throw e;
+        }
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || "কিছু একটা সমস্যা হয়েছে।");
+        return data;
+      }
+
+      // ---------- Profile ----------
+      function fillProfile(u) {
+        $("accAvatar").textContent = (u.name || "?").trim().charAt(0).toUpperCase();
+        $("accName").textContent = u.name || "";
+        $("accPhoneView").textContent = "📞 " + (u.phone || "");
+        $("accSince").textContent = u.createdAt
+          ? "সদস্য হয়েছেন: " + new Date(u.createdAt).toLocaleDateString("bn-BD", { year: "numeric", month: "long", day: "numeric" })
+          : "";
+        $("accInName").value = u.name || "";
+        $("accInPhone").value = u.phone || "";
+        $("accInEmail").value = u.email || "";
+        $("accInDistrict").value = u.district || "";
+        $("accInAddress").value = u.address || "";
+      }
+
+      function fillCartLine() {
+        var count = getCart().reduce(function (s, i) { return s + i.quantity; }, 0);
+        $("accCartLine").textContent = count > 0
+          ? "আপনার কার্টে " + count + "টি পণ্য সেভ করা আছে।"
+          : "আপনার কার্ট এখন খালি।";
+      }
+
+      $("accProfileForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var btn = $("accSaveBtn");
+        btn.disabled = true;
+        try {
+          var data = await api("/api/user/profile", {
+            method: "PUT",
+            body: JSON.stringify({
+              name: $("accInName").value,
+              email: $("accInEmail").value,
+              district: $("accInDistrict").value,
+              address: $("accInAddress").value
+            })
+          });
+          var old = getLoggedInCustomer() || {};
+          localStorage.setItem("barakah_customer", JSON.stringify(Object.assign({}, old, data.user, { token: old.token })));
+          updateCustomerAccountUI();
+          fillProfile(data.user);
+          showToast("তথ্য সেভ হয়েছে");
+        } catch (err) {
+          if (err.code !== 401) showToast(err.message);
+          else init();
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      // ---------- Orders ----------
+      function timeline(status) {
+        if (status === "cancelled") {
+          return '<div class="acc-cancelled">এই অর্ডারটি বাতিল করা হয়েছে। কোনো প্রশ্ন থাকলে হটলাইনে কল করুন: 01786-239185</div>';
+        }
+        var cur = STEPS.indexOf(status);
+        return '<ol class="acc-steps">' + STEPS.map(function (s, i) {
+          var cls = i < cur ? "done" : i === cur ? "current" : "";
+          return '<li class="' + cls + '"><span class="dot"></span>' + esc(STATUS[s].step) + "</li>";
+        }).join("") + "</ol>";
+      }
+
+      function orderCard(o) {
+        var info = statusInfo(o.status);
+        var c = o.customer || {};
+        var items = (o.items || []).map(function (i) {
+          var img = typeof i.image === "string" && i.image.indexOf("images/") === 0
+            ? '<img src="' + esc(i.image) + '" alt="">' : "";
+          return '<div class="acc-item">' + img +
+            '<div><div class="acc-item-name">' + esc(i.name) + '</div>' +
+            '<div class="acc-item-sub">' + esc(i.packageLabel) + " × " + esc(i.quantity) + "</div></div>" +
+            '<div class="acc-item-price">' + money(Number(i.price) * Number(i.quantity)) + "</div></div>";
+        }).join("");
+        var dateText = new Date(o.createdAt).toLocaleString("bn-BD", {
+          day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
+        });
+        return '<article class="acc-order">' +
+          '<div class="acc-order-top"><div>' +
+            '<div class="acc-order-id">অর্ডার ' + esc(o.id) + "</div>" +
+            '<div class="acc-order-date">' + esc(dateText) + "</div></div>" +
+            '<span class="acc-badge ' + esc(o.status) + '">' + esc(info.label) + "</span></div>" +
+          timeline(o.status) +
+          '<div class="acc-items">' + items + "</div>" +
+          '<div class="acc-order-foot">' +
+            '<div class="acc-ship"><strong>ডেলিভারি ঠিকানা</strong><br>' +
+              esc(c.name) + " · " + esc(c.phone) + "<br>" +
+              esc(c.address) + (c.district ? ", " + esc(c.district) : "") +
+              "<br><strong>পেমেন্ট:</strong> " + esc(o.paymentMethod || "Cash on Delivery") +
+              (o.note ? "<br><strong>নোট:</strong> " + esc(o.note) : "") + "</div>" +
+            "<div>" +
+              '<div class="acc-sum-row"><span>সাবটোটাল</span><span>' + money(o.subtotal) + "</span></div>" +
+              (Number(o.discount) ? '<div class="acc-sum-row"><span>ছাড়</span><span>- ' + money(o.discount) + "</span></div>" : "") +
+              '<div class="acc-sum-row"><span>ডেলিভারি চার্জ</span><span>' + (Number(o.deliveryFee) ? money(o.deliveryFee) : "ফ্রি") + "</span></div>" +
+              '<div class="acc-sum-row total"><span>সর্বমোট</span><span>' + money(o.total) + "</span></div>" +
+            "</div></div></article>";
+      }
+
+      function renderOrders(orders) {
+        if (!orders.length) {
+          $("accOrders").innerHTML = '<div class="acc-empty">আপনি এখনো কোনো অর্ডার করেননি।<br><br><a href="products.html" class="btn btn-primary">পণ্য দেখুন</a></div>';
+          return;
+        }
+        $("accOrders").innerHTML = orders.map(orderCard).join("");
+      }
+
+      async function loadOrders(isPoll) {
+        try {
+          var data = await api("/api/user/orders");
+          var orders = data.orders || [];
+          if (lastStatuses) {
+            orders.forEach(function (o) {
+              if (lastStatuses[o.id] && lastStatuses[o.id] !== o.status) {
+                showToast("অর্ডার " + o.id + ": " + statusInfo(o.status).label);
+              }
+            });
+          }
+          lastStatuses = {};
+          orders.forEach(function (o) { lastStatuses[o.id] = o.status; });
+          renderOrders(orders);
+          $("accUpdated").textContent = "সর্বশেষ আপডেট: " +
+            new Date().toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" });
+        } catch (err) {
+          if (err.code === 401) return init();
+          if (!isPoll) {
+            $("accOrders").innerHTML = '<div class="acc-empty">অর্ডার লোড করা যায়নি। "রিফ্রেশ" চেপে আবার চেষ্টা করুন।</div>';
+          }
+        }
+      }
+
+      $("accRefreshBtn").addEventListener("click", function () { loadOrders(false); });
+
+      $("accLogoutBtn").addEventListener("click", async function () {
+        await logoutCustomer();
+        lastStatuses = null;
+        init();
+      });
+
+      // Update statuses when the customer comes back to this tab
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && getLoggedInCustomer()) loadOrders(true);
+      });
+
+      // ---------- Start ----------
+      async function init() {
+        clearInterval(pollTimer);
+        clearInterval(waitLoginTimer);
+
+        if (!getLoggedInCustomer()) {
+          $("accMain").hidden = true;
+          $("accLoggedOut").hidden = false;
+          // the login popup lives in script.js, so check now and then if the person logged in
+          waitLoginTimer = setInterval(function () {
+            if (getLoggedInCustomer()) init();
+          }, 700);
+          return;
+        }
+
+        $("accLoggedOut").hidden = true;
+        $("accMain").hidden = false;
+        fillCartLine();
+
+        try {
+          var me = await api("/api/user/me");
+          fillProfile(me.user);
+        } catch (err) {
+          if (err.code === 401) return init();
+        }
+        await loadOrders(false);
+        pollTimer = setInterval(function () { if (!document.hidden) loadOrders(true); }, 30000);
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>
