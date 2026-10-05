@@ -2037,7 +2037,7 @@ function renderCustomerReviewsCarousel() {
     }
   }
 
-  autoScrollTimer = setInterval(stepReviewScroll, 40);
+ // autoScrollTimer = setInterval(stepReviewScroll, 40);
 
   track.addEventListener("mouseenter", () => { isInteracting = true; });
   track.addEventListener("mouseleave", () => { isInteracting = false; });

@@ -2924,9 +2924,22 @@ textarea.form-control {
    FEATURED CATEGORIES SECTION
    -------------------------------------------------------------------------- */
 .categories-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
   gap: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 4px 16px;
+  cursor: grab;
+}
+
+.categories-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.categories-grid .category-card {
+  flex: 0 0 170px;
 }
 
 .category-card {
