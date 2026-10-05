@@ -458,6 +458,94 @@ const BARAKAH_PRODUCTS = [
       { id: "hn-500gm", label: "500 gm", price: 850, oldPrice: 1000 },
       { id: "hn-1kg", label: "1 kg", price: 1700, oldPrice: 2000 }
     ]
+  },
+  
+  {
+    id: 13,
+    name: "Chili Powder",
+    banglaName: "মরিচের গুঁড়া",
+    category: "spices",
+    categoryName: "Spices",
+    banglaCategory: "মসলা",
+    sku: "BA-SP-001",
+    image: "images/products/morich.jpeg",
+    images: [
+      "images/products/morich.jpeg"
+    ],
+    rating: 5,
+    reviewCount: 4.9,
+    shortDescription: "বারাকাহ এগ্রোর মরিচের গুঁড়া। দৈনন্দিন রান্নায় ঝাল ও রঙের জন্য।",
+    description: "বারাকাহ এগ্রোর মরিচের গুঁড়া। সবজি, ডাল, মাছ ও মাংসসহ দৈনন্দিন রান্নায় ঝাল ও সুন্দর রঙ আনতে এটি ব্যবহার করা যায়।",
+    ingredients: "শুকনো মরিচ",
+    benefits: [
+      "মরিচের গুঁড়া ব্যবহারের সুবিধা",
+      "রান্নায় ঝাল ও সুন্দর রঙ আনে।",
+      "সবজি, ডাল, মাছ ও মাংস সব রান্নায় ব্যবহার করা যায়।",
+      "বারাকাহ এগ্রোর নিজস্ব সংগ্রহ।"
+    ],
+    packages: [
+      { id: "mc-200gm", label: "200 gm", price: 150 },
+      { id: "mc-250gm", label: "250 gm", price: 350 },
+      { id: "mc-500gm", label: "500 gm", price: 650 }
+    ]
+  },
+  {
+    id: 14,
+    name: "Turmeric Powder",
+    banglaName: "হলুদের গুঁড়া",
+    category: "spices",
+    categoryName: "Spices",
+    banglaCategory: "মসলা",
+    sku: "BA-SP-002",
+    image: "images/products/holud.jpeg",
+    images: [
+      "images/products/holud.jpeg"
+    ],
+    rating: 5,
+    reviewCount: 5,
+    shortDescription: "বারাকাহ এগ্রোর হলুদের গুঁড়া। রান্নায় সুন্দর রঙ ও ঘ্রাণের জন্য।",
+    description: "বারাকাহ এগ্রোর হলুদের গুঁড়া। প্রতিদিনের রান্নায় সুন্দর হলুদ রঙ ও ঘ্রাণ আনতে সবজি, ডাল, মাছ ও মাংসের রান্নায় এটি ব্যবহার করা যায়।",
+    ingredients: "হলুদ",
+    benefits: [
+      "হলুদের গুঁড়া ব্যবহারের সুবিধা",
+      "রান্নায় সুন্দর হলুদ রঙ ও ঘ্রাণ আনে।",
+      "সবজি, ডাল, মাছ ও মাংস সব রান্নায় ব্যবহার করা যায়।",
+      "বারাকাহ এগ্রোর নিজস্ব সংগ্রহ।"
+    ],
+    packages: [
+      { id: "hd-200gm", label: "200 gm", price: 120 },
+      { id: "hd-500gm", label: "500 gm", price: 280 },
+      { id: "hd-1kg", label: "1 kg", price: 500 }
+    ]
+  },
+  {
+    id: 15,
+    name: "Coriander Powder",
+    banglaName: "ধনিয়ার গুঁড়া",
+    category: "spices",
+    categoryName: "Spices",
+    banglaCategory: "মসলা",
+    sku: "BA-SP-003",
+    image: "images/products/dhonia.jpeg",
+    images: [
+      "images/products/dhonia.jpeg"
+    ],
+    rating: 5,
+    reviewCount: 4.8,
+    shortDescription: "বারাকাহ এগ্রোর ধনিয়ার গুঁড়া। রান্নায় ঘ্রাণ ও স্বাদের জন্য।",
+    description: "বারাকাহ এগ্রোর ধনিয়ার গুঁড়া। রান্নায় সুন্দর ঘ্রাণ ও স্বাদ আনতে সবজি, ডাল, মাছ ও মাংসের রান্নায় এটি ব্যবহার করা যায়।",
+    ingredients: "ধনিয়া",
+    benefits: [
+      "ধনিয়ার গুঁড়া ব্যবহারের সুবিধা",
+      "রান্নায় সুন্দর ঘ্রাণ ও স্বাদ আনে।",
+      "সবজি, ডাল, মাছ ও মাংস সব রান্নায় ব্যবহার করা যায়।",
+      "বারাকাহ এগ্রোর নিজস্ব সংগ্রহ।"
+    ],
+    packages: [
+      { id: "dh-200gm", label: "200 gm", price: 120 },
+      { id: "dh-500gm", label: "500 gm", price: 280 },
+      { id: "dh-1kg", label: "1 kg", price: 500 }
+    ]
   }
 
 
@@ -620,6 +708,15 @@ const FEATURED_CATEGORIES = [
     desc: "১০০% প্রাকৃতিক মধু",
     image: "images/products/modhu1.jpeg",
     url: "products.html?category=honey"
+  },
+  
+  {
+    id: "spices",
+    name: "মসলা",
+    enName: "Spices",
+    desc: "মরিচ, হলুদ ও ধনিয়ার গুঁড়া",
+    image: "images/products/morich.jpeg",
+    url: "products.html?category=spices"
   }
 ];
 
