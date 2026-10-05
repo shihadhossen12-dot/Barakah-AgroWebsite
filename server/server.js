@@ -227,6 +227,47 @@ app.post('/api/user/logout', customerAuth, async (req, res) => {
   res.json({ ok: true });
 });
 
+// Customer: change own password (needs the current password)
+app.post('/api/user/change-password', customerAuth, async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body || {};
+    const newPass = String(newPassword || '');
+    if (newPass.length < 6) {
+      return res.status(400).json({ error: 'নতুন পাসওয়ার্ড সর্বনিম্ন ৬ অক্ষরের হতে হবে।' });
+    }
+    const user = await findUserByPhone(req.customer.phone);
+    // status 400 (not 401) on purpose, so a wrong old password does not log the user out
+    if (!user || hashPassword(String(oldPassword || ''), user.salt) !== user.passwordHash) {
+      return res.status(400).json({ error: 'বর্তমান পাসওয়ার্ড ঠিক নয়।' });
+    }
+    const salt = crypto.randomBytes(16).toString('hex');
+    await updateUserPassword(user.id, hashPassword(newPass, salt), salt);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ error: 'পাসওয়ার্ড বদলানো যায়নি।' });
+  }
+});
+
+// Admin: set a new password for a customer who forgot theirs
+app.post('/api/admin/reset-customer-password', adminAuth, async (req, res) => {
+  try {
+    const phone = String(req.body?.phone || '').trim();
+    const newPass = String(req.body?.newPassword || '');
+    if (newPass.length < 6) {
+      return res.status(400).json({ error: 'পাসওয়ার্ড সর্বনিম্ন ৬ অক্ষরের হতে হবে।' });
+    }
+    const user = await findUserByPhone(phone);
+    if (!user) return res.status(404).json({ error: 'এই নম্বরে কোনো অ্যাকাউন্ট নেই।' });
+    const salt = crypto.randomBytes(16).toString('hex');
+    await updateUserPassword(user.id, hashPassword(newPass, salt), salt);
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Admin reset password error:', error);
+    res.status(500).json({ error: 'রিসেট করা যায়নি।' });
+  }
+});
+
 app.get('/api/user/orders', customerAuth, async (req, res) => {
   try {
     const orders = await getOrdersByUserId(req.customer.userId);
