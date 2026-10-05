@@ -6,38 +6,68 @@
   if (document.getElementById("bcFab")) return;          // already on this page
   if (typeof getLoggedInCustomer !== "function") return; // script.js not loaded
 
-  var css = [
-    ".bc-fab[hidden], .bc-panel[hidden], .bc-badge[hidden] { display: none; }",
-    ".bc-fab { position: fixed; right: 20px; bottom: 20px; z-index: 9000; border: 0; border-radius: 999px; padding: 14px 20px; background: var(--primary, #166534); color: #fff; font: inherit; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,.25); }",
-    ".bc-fab:hover { background: var(--primary-hover, #14532d); }",
-    ".bc-badge { display: inline-block; background: #dc2626; color: #fff; border-radius: 999px; font-size: 12px; padding: 1px 8px; margin-left: 6px; }",
-    ".bc-panel { position: fixed; right: 20px; bottom: 20px; z-index: 9001; width: min(380px, calc(100vw - 24px)); height: min(560px, calc(100vh - 40px)); background: #fff; border: 1px solid var(--border-light, #e4ece5); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.28); display: flex; flex-direction: column; overflow: hidden; }",
-    ".bc-head { background: var(--primary, #166534); color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }",
-    ".bc-head small { display: block; opacity: .85; font-size: 12px; margin-top: 2px; }",
-    ".bc-x { border: 0; background: rgba(255,255,255,.18); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; }",
-    ".bc-msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: #f6f8f5; }",
-    ".bc-hello { background: #fff; border: 1px solid var(--border-light, #e4ece5); border-radius: 12px; padding: 12px; font-size: 14px; line-height: 1.6; color: var(--text-muted, #536458); }",
-    ".bc-bubble { max-width: 80%; padding: 9px 12px; border-radius: 14px; line-height: 1.5; font-size: 14px; white-space: pre-wrap; word-break: break-word; }",
-    ".bc-bubble small { display: block; font-size: 10px; opacity: .65; margin-top: 4px; }",
-    ".bc-bubble.me { align-self: flex-end; background: var(--primary, #166534); color: #fff; }",
-    ".bc-bubble.them { align-self: flex-start; background: #fff; border: 1px solid var(--border-light, #e4ece5); }",
-    ".bc-err { color: #b42318; font-size: 12px; padding: 0 14px; }",
-    ".bc-send { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border-light, #e4ece5); }",
-    ".bc-send input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--border-light, #e4ece5); border-radius: 10px; font: inherit; font-size: 14px; }",
-    ".bc-send button { border: 0; border-radius: 10px; padding: 0 16px; background: var(--primary, #166534); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }",
-    ".bc-panel.bc-login { height: auto; }",
-    ".bc-loginbody { padding: 22px 20px 24px; text-align: center; }",
-    ".bc-loginicon { font-size: 34px; margin-bottom: 6px; }",
-    ".bc-loginbody p { margin: 0 0 16px; line-height: 1.7; font-size: 14px; color: var(--text-muted, #536458); }",
-    ".bc-loginbtn { display: inline-block; background: var(--primary, #166534); color: #fff; text-decoration: none; font-weight: 700; padding: 12px 20px; border-radius: 10px; }",
-    "@media (max-width: 560px) { .bc-panel { right: 8px; bottom: 8px; height: min(70vh, 560px); } .bc-fab { right: 12px; bottom: 12px; } }"
-  ].join("\n");
+    var css = `
+.bc-fab[hidden], .bc-panel[hidden], .bc-badge[hidden] { display: none; }
+
+/* ---- Button on the right edge, vertically centered ---- */
+.bc-fab { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 9000; width: 80px; padding: 16px 8px 14px; border: 0; border-radius: 22px 0 0 22px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; background: linear-gradient(160deg, #22a559 0%, #166534 55%, #0f391e 100%); color: #fff; font: inherit; font-size: 15px; font-weight: 800; line-height: 1.3; text-align: center; box-shadow: -8px 10px 32px rgba(15,57,30,.5); animation: bcNudge 6s ease-in-out infinite; }
+.bc-fab::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; animation: bcPulse 2.4s ease-out infinite; }
+.bc-fab:hover { animation: none; transform: translateY(-50%) translateX(-5px); }
+.bc-fab-ico { position: relative; width: 46px; height: 46px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+.bc-fab-ico::after { content: ''; position: absolute; right: 1px; bottom: 1px; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; border: 2px solid #fff; }
+.bc-badge { position: absolute; top: -8px; left: -8px; min-width: 26px; height: 26px; padding: 0 7px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #ef4444; color: #fff; font-size: 13px; font-weight: 800; border: 2px solid #fff; }
+
+@keyframes bcPulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); } 70% { box-shadow: 0 0 0 18px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+@keyframes bcNudge { 0%, 86%, 100% { transform: translateY(-50%); } 90% { transform: translateY(-50%) translateX(-8px); } 94% { transform: translateY(-50%); } 97% { transform: translateY(-50%) translateX(-5px); } }
+@keyframes bcPop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes bcIn { from { opacity: 0; transform: translateY(-50%) translateX(30px); } to { opacity: 1; transform: translateY(-50%); } }
+
+/* ---- Chat box ---- */
+.bc-panel { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 9001; width: min(420px, calc(100vw - 24px)); height: min(640px, calc(100vh - 32px)); background: #fff; border-radius: 22px; box-shadow: 0 25px 70px rgba(0,0,0,.35); display: flex; flex-direction: column; overflow: hidden; animation: bcIn .25s ease-out; }
+.bc-panel.bc-login { height: auto; }
+.bc-head { background: linear-gradient(135deg, #1f8f4a, #166534 60%, #0f391e); color: #fff; padding: 18px; display: flex; align-items: center; gap: 12px; }
+.bc-head::before { content: '🌿'; flex: none; width: 46px; height: 46px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.bc-head > div { flex: 1; min-width: 0; }
+.bc-head b { font-size: 17px; }
+.bc-head small { display: block; margin-top: 3px; font-size: 13px; opacity: .92; }
+.bc-head small::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: 6px; }
+.bc-x { flex: none; border: 0; background: rgba(255,255,255,.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 22px; line-height: 1; cursor: pointer; }
+.bc-x:hover { background: rgba(255,255,255,.35); }
+.bc-msgs { flex: 1; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 10px; background: #eef5ef; }
+.bc-hello { background: #fff; border-radius: 16px; padding: 14px 16px; font-size: 15px; line-height: 1.7; color: #2f3e33; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.bc-bubble { max-width: 82%; padding: 11px 14px; border-radius: 18px; line-height: 1.55; font-size: 15px; white-space: pre-wrap; word-break: break-word; animation: bcPop .2s ease-out; box-shadow: 0 2px 6px rgba(0,0,0,.07); }
+.bc-bubble small { display: block; font-size: 11px; opacity: .65; margin-top: 5px; }
+.bc-bubble.me { align-self: flex-end; background: linear-gradient(135deg, #1f8f4a, #166534); color: #fff; border-bottom-right-radius: 5px; }
+.bc-bubble.them { align-self: flex-start; background: #fff; color: #1f2a22; border-bottom-left-radius: 5px; }
+.bc-err { color: #b42318; font-size: 13px; padding: 8px 16px 0; background: #fff; }
+.bc-err:empty { display: none; }
+.bc-send { display: flex; gap: 10px; padding: 14px; background: #fff; border-top: 1px solid #e4ece5; }
+.bc-send input { flex: 1; min-width: 0; padding: 13px 16px; border: 2px solid #dbe6dd; border-radius: 999px; font: inherit; font-size: 15px; outline: none; }
+.bc-send input:focus { border-color: #22a559; }
+.bc-send button { border: 0; border-radius: 999px; padding: 0 22px; background: linear-gradient(135deg, #22a559, #166534); color: #fff; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
+.bc-send button:hover { filter: brightness(1.08); }
+
+/* ---- Login prompt (visitor not logged in) ---- */
+.bc-loginbody { padding: 28px 24px 30px; text-align: center; background: #eef5ef; }
+.bc-loginicon { font-size: 44px; margin-bottom: 8px; }
+.bc-loginbody p { margin: 0 0 20px; line-height: 1.8; font-size: 15px; color: #2f3e33; }
+.bc-loginbtn { display: inline-block; background: linear-gradient(135deg, #22a559, #166534); color: #fff; text-decoration: none; font-weight: 800; padding: 14px 26px; border-radius: 999px; box-shadow: 0 8px 20px rgba(22,101,52,.35); }
+
+/* ---- Mobile ---- */
+@media (max-width: 560px) {
+  .bc-fab { width: 66px; padding: 12px 6px 10px; font-size: 13px; }
+  .bc-fab-ico { width: 38px; height: 38px; font-size: 21px; }
+  .bc-panel { left: 8px; right: 8px; width: auto; top: auto; bottom: 8px; transform: none; height: min(78vh, 640px); animation-name: bcPop; }
+  .bc-panel.bc-login { height: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .bc-fab, .bc-fab::before, .bc-panel, .bc-bubble { animation: none; } }
+`;
   var style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
 
   var html =
-    '<button type="button" id="bcFab" class="bc-fab" hidden>💬 চ্যাট <span id="bcBadge" class="bc-badge" hidden></span></button>' +
+        '<button type="button" id="bcFab" class="bc-fab" hidden><span class="bc-fab-ico">💬</span><span>চ্যাট<br>করুন</span><span id="bcBadge" class="bc-badge" hidden></span></button>' +
     '<div id="bcPanel" class="bc-panel" hidden>' +
       '<div class="bc-head">' +
         '<div><b>বারাকাহ এগ্রো সাপোর্ট</b><small>মেসেজ লিখুন, আমরা উত্তর দেব</small></div>' +
@@ -184,7 +214,7 @@
     if (!user()) { $("bcFab").hidden = true; $("bcLogin").hidden = false; return; }
     openPanel();
   });
-  
+
   $("bcLoginClose").addEventListener("click", function () { $("bcLogin").hidden = true; $("bcFab").hidden = false; });
   $("bcClose").addEventListener("click", closePanel);
   $("bcSend").addEventListener("click", send);
