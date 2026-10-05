@@ -91,7 +91,7 @@
     }
         </style>
 </head>
-<body>
+<body class="account-3d">
 
   <!-- TOP BAR -->
   <div class="top-bar">
@@ -301,6 +301,26 @@
               <a href="checkout.html" class="btn btn-primary">চেকআউট</a>
             </div>
           </div>
+                    <div class="acc-card">
+            <h3>🔒 পাসওয়ার্ড বদলান</h3>
+            <form id="accPassForm" novalidate>
+              <div class="acc-field">
+                <label for="accOldPass">বর্তমান পাসওয়ার্ড</label>
+                <div class="pw-wrap">
+                  <input type="password" id="accOldPass" autocomplete="current-password">
+                  <button type="button" class="pw-eye" onclick="togglePw(this)" aria-label="পাসওয়ার্ড দেখুন">👁️</button>
+                </div>
+              </div>
+              <div class="acc-field">
+                <label for="accNewPass">নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+                <div class="pw-wrap">
+                  <input type="password" id="accNewPass" autocomplete="new-password">
+                  <button type="button" class="pw-eye" onclick="togglePw(this)" aria-label="পাসওয়ার্ড দেখুন">👁️</button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" id="accPassBtn" style="width:100%">পাসওয়ার্ড সেভ করুন</button>
+            </form>
+          </div>
 
           <button type="button" class="btn btn-secondary" id="accLogoutBtn" style="width: 100%;">লগআউট</button>
         </aside>
@@ -469,6 +489,24 @@
         } catch (err) {
           if (err.code !== 401) showToast(err.message);
           else init();
+        } finally {
+          btn.disabled = false;
+        }
+      });
+            // ---------- Change password ----------
+      $("accPassForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var btn = $("accPassBtn");
+        btn.disabled = true;
+        try {
+          await api("/api/user/change-password", {
+            method: "POST",
+            body: JSON.stringify({ oldPassword: $("accOldPass").value, newPassword: $("accNewPass").value })
+          });
+          $("accPassForm").reset();
+          showToast("পাসওয়ার্ড বদলানো হয়েছে");
+        } catch (err) {
+          showToast(err.message);
         } finally {
           btn.disabled = false;
         }

@@ -102,4 +102,20 @@ async function pollOpenChat(){
 setTimeout(refreshChatBadge,1500);
 setInterval(refreshChatBadge,10000);
 if(token)dashboard();else login();
+async function resetCustomerPassword(){
+  const phone = prompt('গ্রাহকের মোবাইল নম্বর (01XXXXXXXXX):'); if(!phone) return;
+  const newPassword = prompt('নতুন অস্থায়ী পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর):'); if(!newPassword) return;
+  try{
+    await api('/api/admin/reset-customer-password',{method:'POST',body:JSON.stringify({phone,newPassword})});
+    alert('✅ পাসওয়ার্ড রিসেট হয়েছে। গ্রাহককে নতুন পাসওয়ার্ডটি জানিয়ে দিন।');
+  }catch(e){ alert(e.message); }
+}
+setInterval(function(){
+  const a=document.querySelector('.actions');
+  if(a&&!document.getElementById('pwResetBtn')){
+    const b=document.createElement('button');
+    b.id='pwResetBtn';b.className='btn secondary';b.textContent='🔑 Password Reset';
+    b.onclick=resetCustomerPassword;a.prepend(b);
+  }
+},1000);
 </script></body></html>

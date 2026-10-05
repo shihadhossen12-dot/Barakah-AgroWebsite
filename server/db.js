@@ -545,6 +545,26 @@ export async function updateUserProfile(id, data) {
   return getUserProfile(id);
 }
 
+export async function updateUserPassword(id, passwordHash, salt) {
+  const now = new Date().toISOString();
+  if (pool && !useMock) {
+    try {
+      await pool.query(
+        `UPDATE users SET password_hash = $1, salt = $2, updated_at = $3 WHERE id = $4`,
+        [passwordHash, salt, now, id]
+      );
+      return true;
+    } catch (err) {
+      console.warn('PostgreSQL updateUserPassword failed, fallback to in-memory:', err);
+      useMock = true;
+    }
+  }
+  const u = inMemoryUsers.find(user => user.id === id);
+  if (!u) return false;
+  Object.assign(u, { passwordHash, salt, updatedAt: now });
+  return true;
+}
+
 
 // ==========================================================================
 // CHAT METHODS (customer <-> admin messages)

@@ -2225,11 +2225,49 @@ document.addEventListener("DOMContentLoaded", prefillCheckoutFromAccount);
 
 function updateCustomerAccountUI() {
   const user = getLoggedInCustomer();
-  const accountLabels = document.querySelectorAll(".account-btn-label");
-  accountLabels.forEach(el => {
+  document.querySelectorAll(".account-btn-label").forEach(el => {
     el.textContent = user ? (user.name.split(" ")[0] || "অ্যাকাউন্ট") : "লগইন";
   });
+
+  // Navbar logout button: shown only when logged in
+  document.querySelectorAll(".nav-actions").forEach(box => {
+    let btn = box.querySelector(".nav-logout-btn");
+    if (user && !btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "nav-logout-btn";
+      btn.title = "লগআউট";
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>লগআউট</span>';
+      btn.onclick = async () => {
+        await logoutCustomer();
+        if (location.pathname.endsWith("account.html")) location.reload();
+      };
+      const accBtn = box.querySelector(".account-btn");
+      if (accBtn) accBtn.after(btn); else box.prepend(btn);
+    } else if (!user && btn) {
+      btn.remove();
+    }
+  });
 }
+
+// 👁️ show/hide password
+function togglePw(btn) {
+  const input = btn.parentElement.querySelector("input");
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  btn.textContent = show ? "🙈" : "👁️";
+  btn.setAttribute("aria-label", show ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখুন");
+}
+window.togglePw = togglePw;
+
+// Forgot password: opens WhatsApp with a ready message
+function forgotPassword(e) {
+  e.preventDefault();
+  const phone = document.getElementById("custAuthPhone")?.value.trim() || "";
+  const msg = `আসসালামু আলাইকুম, আমি আমার Barakah Agro অ্যাকাউন্টের পাসওয়ার্ড ভুলে গেছি। আমার মোবাইল নম্বর: ${phone}। অনুগ্রহ করে নতুন পাসওয়ার্ড সেট করে দিন।`;
+  window.open("https://wa.me/8801927976460?text=" + encodeURIComponent(msg), "_blank");
+}
+window.forgotPassword = forgotPassword;
 
 function openAccountModal(initialTab = "login") {
     // Already logged in: go to the full account page instead of the small popup
@@ -2299,7 +2337,11 @@ function openAccountModal(initialTab = "login") {
             </div>
             <div class="account-form-group">
               <label>পাসওয়ার্ড *</label>
-              <input type="password" id="custAuthPassword" placeholder="আপনার গোপন পাসওয়ার্ড" required>
+              <div class="pw-wrap">
+                <input type="password" id="custAuthPassword" placeholder="আপনার গোপন পাসওয়ার্ড" required>
+                <button type="button" class="pw-eye" onclick="togglePw(this)" aria-label="পাসওয়ার্ড দেখুন">👁️</button>
+              </div>
+              ${initialTab === "login" ? `<a href="#" class="forgot-link" onclick="forgotPassword(event)">পাসওয়ার্ড ভুলে গেছেন?</a>` : ""}
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
               ${initialTab === "login" ? "সাইন ইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}

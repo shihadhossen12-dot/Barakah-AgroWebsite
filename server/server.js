@@ -21,6 +21,7 @@ import {
   deleteSession,
   getUserProfile,
   updateUserProfile,
+  updateUserPassword,
   addChatMessage,
   getChatMessages,
   markChatReadByAdmin,
