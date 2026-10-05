@@ -206,7 +206,7 @@
         resetChat();
       }
       // visitor is not logged in: show the button, it asks them to log in
-      if ($("bcLogin").hidden) $("bcFab").hidden = false;
+            if ($("bcLogin").hidden && !/account\.html/.test(location.pathname)) $("bcFab").hidden = false;
     }
   }
 
