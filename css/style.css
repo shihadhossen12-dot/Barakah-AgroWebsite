@@ -6413,10 +6413,17 @@ body.account-3d .acc-gate:hover {
 /* ---------- ACCOUNT TEXT BLACK ---------- */
 
 body.account-3d .acc-card *,
-body.account-3d .acc-order *,
 body.account-3d .acc-gate * {
-
     color: #000000;
+}
+
+body.account-3d .acc-order * {
+  background: rgba(5, 45, 22, 0.72) !important;
+    color: #ffffff !important;
+    padding: 6px 8px;
+}
+.acc-orders-head {
+  color:#09b970;
 }
 
 
@@ -6432,7 +6439,7 @@ body.account-3d .btn-primary {
             #16a34a
         ) !important;
 
-    color: #ffffff !important;
+    color: #f6fcfa !important;
 
     border-radius: 14px;
 
