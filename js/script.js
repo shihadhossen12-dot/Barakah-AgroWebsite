@@ -1407,6 +1407,7 @@ function calculateAndRenderTotals() {
   }
 
   if (totalEl) totalEl.textContent = `৳ ${grandTotal}`;
+    syncPaymentAmount();
 }
 
 function applyCoupon() {
@@ -1487,6 +1488,123 @@ function removeLocalOnlyItems(district) {
   return true;
 }
 
+// --------------------------------------------------------------------------
+// PAYMENT METHODS (COD / bKash / Nagad / Bank)
+// --------------------------------------------------------------------------
+const PAYMENT_METHODS = {
+  cod:   { label: "ক্যাশ অন ডেলিভারি", dbName: "Cash on Delivery", button: "অর্ডার নিশ্চিত করুন (Cash on Delivery)" },
+  bkash: { label: "বিকাশ", dbName: "bKash", button: "পেমেন্ট দিয়েছি, অর্ডার নিশ্চিত করুন", senderId: "bkashSender", trxId: "bkashTrx" },
+  nagad: { label: "নগদ", dbName: "Nagad", button: "পেমেন্ট দিয়েছি, অর্ডার নিশ্চিত করুন", senderId: "nagadSender", trxId: "nagadTrx" },
+  bank:  { label: "ব্যাংক ট্রান্সফার", dbName: "Bank Transfer", button: "পেমেন্ট দিয়েছি, অর্ডার নিশ্চিত করুন", senderId: "bankSender", trxId: "bankRef" }
+};
+
+function getSelectedPaymentMethod() {
+  const checked = document.querySelector('input[name="paymentMethod"]:checked');
+  return checked && PAYMENT_METHODS[checked.value] ? checked.value : "cod";
+}
+
+function getSubmitButtonLabel() {
+  return PAYMENT_METHODS[getSelectedPaymentMethod()].button;
+}
+
+function showPaymentError(message) {
+  const box = document.getElementById("paymentError");
+  if (box) {
+    box.textContent = message;
+    box.style.display = "block";
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  showToast(message);
+}
+
+function clearPaymentError() {
+  const box = document.getElementById("paymentError");
+  if (box) box.style.display = "none";
+}
+
+// Returns { ok, error?, method, label, sender, trxId, summary }
+function getPaymentInfo() {
+  const method = getSelectedPaymentMethod();
+  const cfg = PAYMENT_METHODS[method];
+
+  if (method === "cod") {
+    return { ok: true, method, label: cfg.label, sender: "", trxId: "", summary: cfg.dbName };
+  }
+
+  const sender = (document.getElementById(cfg.senderId)?.value || "").replace(/\|/g, "").trim().slice(0, 60);
+  const trxId = (document.getElementById(cfg.trxId)?.value || "").replace(/\s+/g, "").toUpperCase();
+
+  if (!sender) {
+    return { ok: false, error: method === "bank"
+      ? "অনুগ্রহ করে যে অ্যাকাউন্ট থেকে টাকা জমা দিয়েছেন তার নাম/ব্যাংক লিখুন।"
+      : "অনুগ্রহ করে যে নম্বর থেকে টাকা পাঠিয়েছেন সেটি লিখুন।" };
+  }
+  if (method !== "bank" && !/^01[3-9]\d{8}$/.test(sender.replace(/[-\s]/g, ""))) {
+    return { ok: false, error: "সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (যেমন: 01786-239185)।" };
+  }
+  if (!/^[A-Z0-9]{6,20}$/.test(trxId)) {
+    return { ok: false, error: "সঠিক Transaction ID / রেফারেন্স নম্বর লিখুন (ইংরেজি অক্ষর ও সংখ্যা, কমপক্ষে ৬ অক্ষর)।" };
+  }
+
+  return {
+    ok: true, method, label: cfg.label, sender, trxId,
+    summary: `${cfg.dbName} | Sender: ${sender} | TrxID: ${trxId}`
+  };
+}
+
+// "পাঠাতে হবে" অংশে সর্বমোট বিল দেখায়
+function syncPaymentAmount() {
+  const total = document.getElementById("summaryGrandTotal");
+  if (!total) return;
+  document.querySelectorAll("[data-pay-amount]").forEach((el) => {
+    el.textContent = total.textContent;
+  });
+}
+
+function updatePaymentUI() {
+  const method = getSelectedPaymentMethod();
+  Object.keys(PAYMENT_METHODS).forEach((key) => {
+    const panel = document.getElementById("pay-" + key);
+    if (panel) panel.classList.toggle("active", key === method);
+  });
+  const btn = document.getElementById("submitOrderBtn");
+  if (btn && !btn.disabled) btn.textContent = getSubmitButtonLabel();
+  clearPaymentError();
+  syncPaymentAmount();
+}
+
+function initPaymentUI() {
+  document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+    radio.addEventListener("change", updatePaymentUI);
+  });
+
+  document.querySelectorAll(".copy-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(btn.getAttribute("data-copy"));
+      if (!target) return;
+      const text = target.textContent.trim();
+      const done = () => {
+        const old = btn.textContent;
+        btn.textContent = "কপি হয়েছে ✓";
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => {});
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+
+  updatePaymentUI();
+}
+
 async function handleCheckoutSubmit(e) {
   if (e) e.preventDefault();
 
@@ -1506,6 +1624,12 @@ async function handleCheckoutSubmit(e) {
   const cart = getCart();
   if (cart.length === 0) {
     showToast("আপনার কার্ট খালি! অনুগ্রহ করে পণ্য যুক্ত করুন।");
+    return;
+  }
+
+    const paymentInfo = getPaymentInfo();
+  if (!paymentInfo.ok) {
+    showPaymentError(paymentInfo.error);
     return;
   }
 
@@ -1530,7 +1654,7 @@ async function handleCheckoutSubmit(e) {
     customer: { name, phone, district, address },
     note, deliveryLocation: location, items: cart,
     subtotal, discount: discountAmount, deliveryFee, total: grandTotal,
-    paymentMethod: "Cash on Delivery"
+    paymentMethod: paymentInfo.summary
   };
 
   const submitButton = document.querySelector('#checkoutForm button[type="submit"]');
@@ -1546,6 +1670,10 @@ async function handleCheckoutSubmit(e) {
       body: JSON.stringify(payload)
     });
     const data = await response.json();
+        if (response.status === 409) {
+      showToast(data.error || "এই Transaction ID দিয়ে আগেই অর্ডার করা হয়েছে।");
+      return;
+    }
     if (!response.ok) throw new Error(data.error || "Order save failed");
 
     showOrderSuccessModal(data.order.id, name, phone, address);
@@ -1555,7 +1683,7 @@ async function handleCheckoutSubmit(e) {
     console.error("Order submit error:", error);
     showToast("অর্ডার সংরক্ষণ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।");
   } finally {
-    if (submitButton) { submitButton.disabled = false; submitButton.textContent = "অর্ডার নিশ্চিত করুন (Cash on Delivery)"; }
+        if (submitButton) { submitButton.disabled = false; submitButton.textContent = getSubmitButtonLabel();  }
   }
 }
 
@@ -1610,7 +1738,7 @@ ${itemsText}------------------------------
 🚚 *ডেলিভারি চার্জ:* ৳${deliveryFee} ${deliveryFee === 0 ? "(ফ্রি ডেলিভারি)" : ""}
 💰 *সর্বমোট প্রদেয় বিল:* ৳${total}
 ------------------------------
-পেমেন্ট মেথড: ক্যাশ অন ডেলিভারি (Cash on Delivery)
+পেমেন্ট মেথড: ${PAYMENT_METHODS[getSelectedPaymentMethod()].label}
 অনুগ্রহ করে দ্রুত অর্ডারটি কনফার্ম করুন। ধন্যবাদ!`;
 
   const encodedMsg = encodeURIComponent(message);

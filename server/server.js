@@ -577,6 +577,19 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
     return res.status(400).json({ error: 'Customer information is incomplete.' });
   }
   if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'Cart is empty.' });
+    // Payment method validation + duplicate TrxID block
+  const payStr = String(paymentMethod || 'Cash on Delivery');
+  const payRegex = /^(Cash on Delivery|((bKash|Nagad|Bank Transfer) \| Sender: .{1,60} \| TrxID: [A-Z0-9]{6,20}))$/;
+  if (!payRegex.test(payStr)) {
+    return res.status(400).json({ error: 'Invalid payment information.' });
+  }
+  const trxMatch = /TrxID: ([A-Z0-9]+)$/.exec(payStr);
+  if (trxMatch) {
+    const existingOrders = await getOrders();
+    if (existingOrders.some(o => String(o.paymentMethod || '').endsWith('TrxID: ' + trxMatch[1]))) {
+      return res.status(409).json({ error: 'এই Transaction ID দিয়ে আগেই অর্ডার করা হয়েছে।' });
+    }
+  }
 
   const cleanItems = items.map(item => ({
     id: String(item.id ?? ''),
