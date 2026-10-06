@@ -6592,3 +6592,29 @@ body.account-3d .btn-primary:hover {
         animation: none !important;
     }
 }
+
+
+/* Navbar Logout Button */
+.nav-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Logout icon ছোট করা */
+.nav-logout-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: red;
+
+}
+.nav-logout-btn:hover {
+  background: var(--border-light);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
