@@ -1471,7 +1471,7 @@ function isJamalpurDistrict(district) {
   return d.includes("জামালপুর") || d.includes("jamalpur");
 }
 
-function removeLocalOnlyItems(district) {
+function removeLocalOnlyItems(district, silent) {
   if (isJamalpurDistrict(district)) return false;
 
   const cart = getCart();
@@ -1480,6 +1480,7 @@ function removeLocalOnlyItems(district) {
 
   saveCart(filtered);
   renderCheckoutSummary();
+    if (silent) return true;
   alert(
     filtered.length === 0
       ? "দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে।"
@@ -1605,6 +1606,41 @@ function initPaymentUI() {
   updatePaymentUI();
 }
 
+// ---- ধাপ ১: তথ্য নিয়ে পেমেন্ট পেজে যাওয়া ----
+function goToPaymentPage(e) {
+  if (e) e.preventDefault();
+
+  const name = document.getElementById("custName")?.value.trim();
+  const phone = document.getElementById("custPhone")?.value.trim();
+  const district = document.getElementById("custDistrict")?.value.trim();
+  const address = document.getElementById("custAddress")?.value.trim();
+  const note = document.getElementById("custNote")?.value.trim() || "কোনো বিশেষ নোট নেই";
+
+  if (!name || !phone || !district || !address) {
+    showToast("অনুগ্রহ করে আপনার নাম, ফোন নম্বর, জেলা ও ঠিকানা পূরণ করুন।");
+    return;
+  }
+
+  // জামালপুরের বাইরে হলে দুধ নিজে নিজে সরে যাবে (এখানে থামবে না)
+  const removedMilk = removeLocalOnlyItems(district, true);
+
+  if (getCart().length === 0) {
+    alert("দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে। এখন আপনার কার্ট খালি, অনুগ্রহ করে অন্য পণ্য যুক্ত করুন।");
+    window.location.href = "products.html";
+    return;
+  }
+
+  let location = "inside";
+  document.querySelectorAll('input[name="deliveryLocation"]').forEach(r => { if (r.checked) location = r.value; });
+
+  sessionStorage.setItem("barakah_checkout", JSON.stringify({ name, phone, district, address, note, location }));
+
+  if (removedMilk) {
+    alert("দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে। বাকি পণ্য নিয়ে পেমেন্ট পেজে যাচ্ছেন।");
+  }
+  window.location.href = "payment.html";
+}
+
 async function handleCheckoutSubmit(e) {
   if (e) e.preventDefault();
 
@@ -1677,6 +1713,7 @@ async function handleCheckoutSubmit(e) {
     if (!response.ok) throw new Error(data.error || "Order save failed");
 
     showOrderSuccessModal(data.order.id, name, phone, address);
+    sessionStorage.removeItem("barakah_checkout");
     clearCart();
     updateCartCount();
   } catch (error) {
@@ -2383,7 +2420,7 @@ function togglePw(btn) {
   const input = btn.parentElement.querySelector("input");
   const show = input.type === "password";
   input.type = show ? "text" : "password";
-  btn.textContent = show ? "🙈" : "👁️";
+  btn.classList.toggle("is-on", show);
   btn.setAttribute("aria-label", show ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখুন");
 }
 window.togglePw = togglePw;
@@ -2467,7 +2504,7 @@ function openAccountModal(initialTab = "login") {
               <label>পাসওয়ার্ড *</label>
               <div class="pw-wrap">
                 <input type="password" id="custAuthPassword" placeholder="আপনার গোপন পাসওয়ার্ড" required>
-                <button type="button" class="pw-eye" onclick="togglePw(this)" aria-label="পাসওয়ার্ড দেখুন">👁️</button>
+                <button type="button" class="pw-eye" onclick="togglePw(this)" aria-label="পাসওয়ার্ড দেখুন"></button>
               </div>
               ${initialTab === "login" ? `<a href="#" class="forgot-link" onclick="forgotPassword(event)">পাসওয়ার্ড ভুলে গেছেন?</a>` : ""}
             </div>

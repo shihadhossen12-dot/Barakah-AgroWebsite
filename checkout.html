@@ -94,7 +94,7 @@
   <!-- CHECKOUT SECTION -->
   <section class="co-section">
     <div class="container">
-      <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)">
+      <form id="checkoutForm" onsubmit="goToPaymentPage(event)">
         <div class="co-layout">
 
           <!-- LEFT: FORM -->
@@ -113,7 +113,7 @@
               <div class="co-grid-2">
                 <div class="form-group">
                   <label class="form-label" for="custName">আপনার পুরো নাম *</label>
-                  <input type="text" id="custName" class="form-control" placeholder="যেমন: হাসিবুর রহমান" autocomplete="name" required>
+                  <input type="text" id="custName" class="form-control" placeholder="আপনার পুরো নাম" autocomplete="name" required>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="custPhone">মোবাইল নম্বর *</label>
@@ -251,232 +251,11 @@
               </div>
             </div>
 
-            <!-- 3. Payment -->
-            <div class="co-card">
-              <div class="co-card-head">
-                <span class="co-card-num">৩</span>
-                <div>
-                  <h2 class="co-card-title">পেমেন্ট পদ্ধতি</h2>
-                  <p class="co-card-sub">আপনার সুবিধামতো একটি বেছে নিন</p>
-                </div>
-              </div>
-
-              <div class="co-pay-grid" role="radiogroup" aria-label="পেমেন্ট পদ্ধতি">
-                <label class="co-pay-tile">
-                  <input type="radio" name="paymentMethod" value="cod" checked>
-                  <span class="co-pay-body">
-                    <span class="co-pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-                    <span class="co-pay-badge cod"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
-                    <span class="co-pay-name">ক্যাশ অন ডেলিভারি</span>
-                    <span class="co-pay-sub">পণ্য হাতে পেয়ে টাকা দিন</span>
-                  </span>
-                </label>
-
-                <label class="co-pay-tile">
-                  <input type="radio" name="paymentMethod" value="bkash">
-                  <span class="co-pay-body">
-                    <span class="co-pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-                    <span class="co-pay-badge bkash">bKash</span>
-                    <span class="co-pay-name">বিকাশ</span>
-                    <span class="co-pay-sub">সেন্ড মানি</span>
-                  </span>
-                </label>
-
-                <label class="co-pay-tile">
-                  <input type="radio" name="paymentMethod" value="nagad">
-                  <span class="co-pay-body">
-                    <span class="co-pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-                    <span class="co-pay-badge nagad">Nagad</span>
-                    <span class="co-pay-name">নগদ</span>
-                    <span class="co-pay-sub">সেন্ড মানি</span>
-                  </span>
-                </label>
-
-                <label class="co-pay-tile">
-                  <input type="radio" name="paymentMethod" value="bank">
-                  <span class="co-pay-body">
-                    <span class="co-pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-                    <span class="co-pay-badge bank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6z"/></svg></span>
-                    <span class="co-pay-name">ব্যাংক ট্রান্সফার</span>
-                    <span class="co-pay-sub">ডিপোজিট / ট্রান্সফার</span>
-                  </span>
-                </label>
-              </div>
-
-              <!-- COD -->
-              <div class="co-pay-panel active" id="pay-cod">
-                <div class="co-pay-box">
-                  <div class="co-pay-box-top cod">
-                    <p class="co-cod-text"><strong>অগ্রিম কোনো টাকা দিতে হবে না।</strong> ডেলিভারি রাইডারের কাছ থেকে পণ্য হাতে পেয়ে, দেখে বুঝে মূল্য পরিশোধ করুন।</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- bKash -->
-              <div class="co-pay-panel" id="pay-bkash">
-                <div class="co-pay-box">
-                  <div class="co-pay-box-top bkash">
-                    <div class="co-amount-row">
-                      <span class="co-amount-label">বিকাশে পাঠাতে হবে</span>
-                      <span class="co-amount-value" data-pay-amount>৳ 0</span>
-                    </div>
-                  </div>
-                  <ul class="co-account-list">
-                    <li class="co-account-row">
-                      <span class="co-account-key">বিকাশ নম্বর (Personal)</span>
-                      <span class="co-account-right">
-                        <!-- নিচের নম্বরটি আপনার নিজের বিকাশ নম্বর দিয়ে বদলান -->
-                        <span class="co-account-val" id="bkashNumber">01786239185</span>
-                        <button type="button" class="copy-btn" data-copy="bkashNumber">কপি</button>
-                      </span>
-                    </li>
-                  </ul>
-                  <div class="co-howto">
-                    <p class="co-howto-title">কীভাবে পেমেন্ট করবেন</p>
-                    <ol>
-                      <li>বিকাশ অ্যাপ বা <strong>*247#</strong> ডায়াল করে <strong>Send Money</strong> বেছে নিন</li>
-                      <li>উপরের নম্বরে ঠিক <strong data-pay-amount>৳ 0</strong> পাঠান</li>
-                      <li>পাঠানো শেষে পাওয়া <strong>Transaction ID (TrxID)</strong> নিচে লিখুন</li>
-                    </ol>
-                  </div>
-                  <div class="co-pay-fields">
-                    <div class="co-grid-2">
-                      <div class="form-group">
-                        <label class="form-label" for="bkashSender">যে বিকাশ নম্বর থেকে পাঠিয়েছেন *</label>
-                        <input type="tel" id="bkashSender" class="form-control" placeholder="01XXX-XXXXXX">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" for="bkashTrx">Transaction ID *</label>
-                        <input type="text" id="bkashTrx" class="form-control" placeholder="যেমন: 9A7B6C5D4E" autocapitalize="characters">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Nagad -->
-              <div class="co-pay-panel" id="pay-nagad">
-                <div class="co-pay-box">
-                  <div class="co-pay-box-top nagad">
-                    <div class="co-amount-row">
-                      <span class="co-amount-label">নগদে পাঠাতে হবে</span>
-                      <span class="co-amount-value" data-pay-amount>৳ 0</span>
-                    </div>
-                  </div>
-                  <ul class="co-account-list">
-                    <li class="co-account-row">
-                      <span class="co-account-key">নগদ নম্বর (Personal)</span>
-                      <span class="co-account-right">
-                        <!-- নিচের নম্বরটি আপনার নিজের নগদ নম্বর দিয়ে বদলান -->
-                        <span class="co-account-val" id="nagadNumber">01786239185</span>
-                        <button type="button" class="copy-btn" data-copy="nagadNumber">কপি</button>
-                      </span>
-                    </li>
-                  </ul>
-                  <div class="co-howto">
-                    <p class="co-howto-title">কীভাবে পেমেন্ট করবেন</p>
-                    <ol>
-                      <li>নগদ অ্যাপ বা <strong>*167#</strong> ডায়াল করে <strong>Send Money</strong> বেছে নিন</li>
-                      <li>উপরের নম্বরে ঠিক <strong data-pay-amount>৳ 0</strong> পাঠান</li>
-                      <li>পাঠানো শেষে পাওয়া <strong>Transaction ID</strong> নিচে লিখুন</li>
-                    </ol>
-                  </div>
-                  <div class="co-pay-fields">
-                    <div class="co-grid-2">
-                      <div class="form-group">
-                        <label class="form-label" for="nagadSender">যে নগদ নম্বর থেকে পাঠিয়েছেন *</label>
-                        <input type="tel" id="nagadSender" class="form-control" placeholder="01XXX-XXXXXX">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" for="nagadTrx">Transaction ID *</label>
-                        <input type="text" id="nagadTrx" class="form-control" placeholder="যেমন: 7C4D2E9F1A" autocapitalize="characters">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bank -->
-              <div class="co-pay-panel" id="pay-bank">
-                <div class="co-pay-box">
-                  <div class="co-pay-box-top bank">
-                    <div class="co-amount-row">
-                      <span class="co-amount-label">ব্যাংকে জমা দিতে হবে</span>
-                      <span class="co-amount-value" data-pay-amount>৳ 0</span>
-                    </div>
-                  </div>
-                  <ul class="co-account-list">
-                    <!-- নিচের ব্যাংকের তথ্যগুলো আপনার আসল তথ্য দিয়ে বদলান -->
-                    <li class="co-account-row">
-                      <span class="co-account-key">ব্যাংকের নাম</span>
-                      <span class="co-account-val">City Bank</span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">অ্যাকাউন্টের নাম</span>
-                      <span class="co-account-val">MD HASIBUR RAHMAN</span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">অ্যাকাউন্ট নম্বর</span>
-                      <span class="co-account-right">
-                        <span class="co-account-val" id="bankAccNo">2304927986001</span>
-                        <button type="button" class="copy-btn" data-copy="bankAccNo">কপি</button>
-                      </span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">ব্রাঞ্চ</span>
-                      <span class="co-account-val">City Bank Branch</span>
-                    </li>
-                  </ul>
-                    <ul class="co-account-list" style="border-top: 1px solid var(--border-card);">
-                    <li class="co-account-row">
-                      <span class="co-account-key">দ্বিতীয় ব্যাংকের নাম</span>
-                      <span class="co-account-val">Islami Bank Bangladesh</span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">অ্যাকাউন্টের নাম</span>
-                      <span class="co-account-val">MD HASIBUR RAHMAN</span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">অ্যাকাউন্ট নম্বর</span>
-                      <span class="co-account-right">
-                        <span class="co-account-val" id="bankAccNo2">20507770233334571</span>
-                        <button type="button" class="copy-btn" data-copy="bankAccNo2">কপি</button>
-                      </span>
-                    </li>
-                    <li class="co-account-row">
-                      <span class="co-account-key">ব্রাঞ্চ</span>
-                      <span class="co-account-val">Islami Bank Branch</span>
-                    </li>
-                  </ul>
-                  <div class="co-howto">
-                    <p class="co-howto-title">কীভাবে পেমেন্ট করবেন</p>
-                    <ol>
-                      <li>উপরের অ্যাকাউন্টে মোট বিলের টাকা ট্রান্সফার বা ডিপোজিট করুন</li>
-                      <li>ট্রান্সফারের <strong>রেফারেন্স / ট্রানজেকশন নম্বর</strong> সংগ্রহ করুন</li>
-                      <li>নিচের ঘরে আপনার অ্যাকাউন্ট ও রেফারেন্স নম্বর লিখুন</li>
-                    </ol>
-                  </div>
-                  <div class="co-pay-fields">
-                    <div class="co-grid-2">
-                      <div class="form-group">
-                        <label class="form-label" for="bankSender">যে অ্যাকাউন্ট/ব্যাংক থেকে পাঠিয়েছেন *</label>
-                        <input type="text" id="bankSender" class="form-control" placeholder="যেমন: ডাচ-বাংলা, হাসিব">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" for="bankRef">রেফারেন্স / Transaction নম্বর *</label>
-                        <input type="text" id="bankRef" class="form-control" placeholder="যেমন: TXN20260412" autocapitalize="characters">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="co-error" id="paymentError" role="alert"></div>
-            </div>
+            
 
             <!-- Submit -->
             <div class="co-actions">
-              <button type="submit" id="submitOrderBtn" class="co-submit">অর্ডার নিশ্চিত করুন (Cash on Delivery)</button>
+              <button type="submit" id="submitOrderBtn" class="co-submit">পেমেন্ট পেজে যান →</button>
               <p class="co-secure">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 আপনার তথ্য সম্পূর্ণ নিরাপদ ও গোপন থাকবে
@@ -593,6 +372,6 @@
 
   <script src="js/script.js"></script>
     <script src="js/chat.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", initPaymentUI);</script>
+  
 </body>
 </html>
