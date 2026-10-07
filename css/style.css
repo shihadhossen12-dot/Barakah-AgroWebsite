@@ -3429,7 +3429,7 @@ textarea.form-control {
 .account-modal-header h3 {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--primary);
+  color: black;
   margin: 0;
 }
 
@@ -6006,11 +6006,9 @@ html, body {
 }
 
 .account-modal-header h3 {
-    color: #eef3f0 !important;
+    color: #05837d !important;
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
     font-weight: 900;
-
-    text-shadow:
-        0 1px 0 rgba(255,255,255,0.8);
 }
 
 

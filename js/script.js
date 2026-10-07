@@ -2467,7 +2467,7 @@ function openAccountModal(initialTab = "login") {
   modal.innerHTML = `
     <div class="account-modal-box">
       <div class="account-modal-header">
-        <h3>${user ? "আমার অ্যাকাউন্ট" : "গ্রাহক লগইন / রেজিস্ট্রেশন"}</h3>
+        <h3>${user ? "আমার অ্যাকাউন্ট" : "Login or Register"}</h3>
         <button class="account-modal-close" onclick="closeAccountModal()">&times;</button>
       </div>
 
@@ -2493,8 +2493,8 @@ function openAccountModal(initialTab = "login") {
         </div>
       ` : `
         <div class="account-modal-tabs">
-          <button class="account-tab-btn ${initialTab === "login" ? "active" : ""}" onclick="switchAccountTab('login')">লগইন</button>
-          <button class="account-tab-btn ${initialTab === "register" ? "active" : ""}" onclick="switchAccountTab('register')">নতুন অ্যাকাউন্ট</button>
+          <button class="account-tab-btn ${initialTab === "login" ? "active" : ""}" onclick="switchAccountTab('login')">Login</button>
+          <button class="account-tab-btn ${initialTab === "register" ? "active" : ""}" onclick="switchAccountTab('register')">Create Account</button>
         </div>
 
         <div class="account-modal-body">
@@ -2518,7 +2518,7 @@ function openAccountModal(initialTab = "login") {
               ${initialTab === "login" ? `<a href="#" class="forgot-link" onclick="forgotPassword(event)">পাসওয়ার্ড ভুলে গেছেন?</a>` : ""}
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
-              ${initialTab === "login" ? "সাইন ইন করুন" : "অ্যাকাউন্ট তৈরি করুন"}
+              ${initialTab === "login" ? "Sign In" : "Register"}
             </button>
           </form>
           <p style="font-size: 0.82rem; color: #64748b; text-align: center; margin-top: 14px;">
