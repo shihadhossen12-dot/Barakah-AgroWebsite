@@ -46,6 +46,7 @@
           <li><a href="products.html" class="nav-link">পণ্য সম্ভার</a></li>
           <li><a href="about.html" class="nav-link">আমাদের গল্প</a></li>
           <li><a href="contact.html" class="nav-link">যোগাযোগ</a></li>
+          <li><a href="track.html" class="nav-link">অর্ডার ট্র্যাক</a></li>
         </ul>
       </nav>
 
@@ -99,6 +100,16 @@
 
           <!-- LEFT: FORM -->
           <div class="co-main">
+            <div class="guest-login-note" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:16px 18px;margin-bottom:18px;">
+  <strong style="color:#92400e;font-size:1.02rem;">অর্ডারের আগে লগইন করে নিন</strong>
+  <p style="margin:6px 0 14px;color:#78350f;font-size:0.9rem;line-height:1.65;">
+    লগইন করে অর্ডার করলে আপনার অ্যাকাউন্ট থেকে অর্ডারের অবস্থা (প্রসেসিং, কনফার্ম, শিপিং) আরও ভালোভাবে ট্র্যাক করতে পারবেন। পুরোনো অর্ডারও দেখতে পাবেন, আর পরের বার তথ্য আবার লিখতে হবে না।
+  </p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" class="btn btn-primary" onclick="openAccountModal('login')">লগইন করুন</button>
+    <button type="button" class="btn btn-secondary" onclick="openAccountModal('register')">নতুন অ্যাকাউন্ট খুলুন</button>
+  </div>
+</div>
 
             <!-- 1. Customer info -->
             <div class="co-card">

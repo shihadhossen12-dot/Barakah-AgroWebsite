@@ -570,6 +570,73 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 // --------------------------------------------------------------------------
 // ORDERS SUBMISSION (SUPPORTS AUTHENTICATED OR GUEST CHECKOUT)
 // --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// ORDER TRACKING (লগইন ছাড়া: অর্ডার আইডি + মোবাইল নম্বর)
+// --------------------------------------------------------------------------
+const trackHits = new Map();
+
+function normPhone(p) {
+  const bn = '০১২৩৪৫৬৭৮৯';
+  const digits = String(p || '')
+    .replace(/[০-৯]/g, (c) => String(bn.indexOf(c)))
+    .replace(/\D/g, '');
+  return digits.slice(-10);
+}
+
+app.get('/api/orders/track', async (req, res) => {
+  // এক আইপি থেকে মিনিটে ১৫ বারের বেশি চেষ্টা করলে আটকে দেবে
+  const ip = String(req.headers['x-forwarded-for'] || req.ip || 'x').split(',')[0].trim();
+  const now = Date.now();
+  const hits = (trackHits.get(ip) || []).filter((t) => now - t < 60000);
+  if (hits.length >= 15) {
+    return res.status(429).json({ error: 'অনেকবার চেষ্টা করা হয়েছে। এক মিনিট পরে আবার চেষ্টা করুন।' });
+  }
+  hits.push(now);
+  trackHits.set(ip, hits);
+
+  const id = String(req.query.id || '').trim().toUpperCase();
+  const phone = normPhone(req.query.phone);
+  if (!id || phone.length < 10) {
+    return res.status(400).json({ error: 'অনুগ্রহ করে অর্ডার আইডি ও মোবাইল নম্বর দিন।' });
+  }
+
+  try {
+    const orders = await getOrders();
+    const o = orders.find(
+      (x) => String(x.id).toUpperCase() === id && normPhone(x.customer && x.customer.phone) === phone
+    );
+    if (!o) {
+      return res.status(404).json({ error: 'এই তথ্য দিয়ে কোনো অর্ডার পাওয়া যায়নি। আইডি ও নম্বর আবার দেখুন।' });
+    }
+
+    res.json({
+      order: {
+        id: o.id,
+        status: o.status,
+        createdAt: o.createdAt,
+        updatedAt: o.updatedAt,
+        customerName: o.customer && o.customer.name,
+        district: o.customer && o.customer.district,
+        paymentMethod: String(o.paymentMethod || 'Cash on Delivery').split(' | ')[0],
+        items: (o.items || []).map((i) => ({
+          name: i.name,
+          packageLabel: i.packageLabel,
+          quantity: Number(i.quantity) || 1,
+          price: Number(i.price) || 0
+        })),
+        subtotal: Number(o.subtotal) || 0,
+        discount: Number(o.discount) || 0,
+        deliveryFee: Number(o.deliveryFee) || 0,
+        total: Number(o.total) || 0
+      }
+    });
+  } catch (error) {
+    console.error('Track order error:', error);
+    res.status(500).json({ error: 'অর্ডারের তথ্য লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।' });
+  }
+});
+
 app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   const body = req.body || {};
   const { customer, items, deliveryLocation, deliveryFee, subtotal, discount, total, paymentMethod, note } = body;

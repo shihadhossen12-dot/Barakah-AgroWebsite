@@ -1712,7 +1712,7 @@ async function handleCheckoutSubmit(e) {
     }
     if (!response.ok) throw new Error(data.error || "Order save failed");
 
-    showOrderSuccessModal(data.order.id, name, phone, address);
+    showOrderSuccessModal(data.order.id, name, phone, address, data.order.paymentMethod);
     sessionStorage.removeItem("barakah_checkout");
     clearCart();
     updateCartCount();
@@ -1788,7 +1788,12 @@ ${itemsText}------------------------------
   showToast("হোয়াটসঅ্যাপে আপনার অর্ডারের তথ্য পাঠানো হয়েছে!");
 }
 
-function showOrderSuccessModal(orderId, name, phone, address) {
+function showOrderSuccessModal(orderId, name, phone, address, paymentMethod) {
+  const pm = String(paymentMethod || "Cash on Delivery");
+  const pmParts = pm.split(" | ");
+  const paymentText = pm.startsWith("Cash")
+    ? "ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা পরিশোধ করুন)"
+    : pmParts[0] + " (TrxID: " + (pmParts[2] || "").replace("TrxID: ", "") + ") — পেমেন্ট যাচাই করে আমরা অর্ডার কনফার্ম করব";
   let modal = document.getElementById("orderSuccessModal");
   if (!modal) {
     modal = document.createElement("div");
@@ -1809,12 +1814,13 @@ function showOrderSuccessModal(orderId, name, phone, address) {
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; text-align: left; font-size: 0.88rem; color: #334155; margin-bottom: 24px;">
         <p><strong>মোবাইল:</strong> ${phone}</p>
         <p><strong>ঠিকানা:</strong> ${address}</p>
-        <p><strong>পেমেন্ট:</strong> ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা পরিশোধ করুন)</p>
+                <p><strong>পেমেন্ট:</strong> ${paymentText}</p>
       </div>
       <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 24px;">
         আমাদের প্রতিনিধি খুব শীঘ্রই কল করে আপনার অর্ডারটি কনফার্ম করবেন এবং দ্রুত ডেলিভারি সম্পন্ন করবেন।
       </p>
             ${getLoggedInCustomer() ? '<a href="account.html" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">আমার অর্ডার দেখুন</a>' : ""}
+                  <a href="track.html?id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}" class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">অর্ডার ট্র্যাক করুন</a>
       <a href="index.html" class="btn btn-primary" style="width: 100%;">
         হোমে ফিরে যান
       </a>
@@ -2390,6 +2396,9 @@ document.addEventListener("DOMContentLoaded", prefillCheckoutFromAccount);
 
 function updateCustomerAccountUI() {
   const user = getLoggedInCustomer();
+    document.querySelectorAll(".guest-login-note").forEach(el => {
+    el.style.display = user ? "none" : "";
+  });
   document.querySelectorAll(".account-btn-label").forEach(el => {
     el.textContent = user ? (user.name.split(" ")[0] || "অ্যাকাউন্ট") : "লগইন";
   });
@@ -2452,9 +2461,9 @@ function openAccountModal(initialTab = "login") {
     });
   }
 
-  const user = getLoggedInCustomer();
+    const user = getLoggedInCustomer();
   const cart = getCart();
-
+  
   modal.innerHTML = `
     <div class="account-modal-box">
       <div class="account-modal-header">
@@ -2573,6 +2582,7 @@ async function handleCustomerAuthSubmit(e, mode) {
     updateCustomerAccountUI();
     showToast(`স্বাগতম, ${data.user.name}!`);
     closeAccountModal();
+        if (location.pathname.endsWith("checkout.html")) location.reload();
   } catch (error) {
     showToast(error.message || "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।");
     if (submitBtn) submitBtn.disabled = false;
