@@ -3297,7 +3297,7 @@ function initProductDetailsPage() {
   // Render Sub-components
   renderDetailedReviewsList(reviews);
   renderReviewPhotosCarousel(reviews, product);
-
+  loadProductReviews(product);
   // Attach Touch Swipe for Main Gallery Image
   setupMainGalleryTouchSwipe();
 }
@@ -3314,14 +3314,9 @@ function getDetailedProductReviews(product) {
     console.error("Error reading saved reviews", e);
   }
 
-  // Pre-seed matching reviews from CUSTOMER_REVIEWS
-  const matchingDefaults = CUSTOMER_REVIEWS.filter(
-    (r) => r.product.includes(product.banglaCategory) || r.product.includes(product.name) || r.product.includes(product.banglaName)
-  );
-
-  const defaultsToUse = matchingDefaults.length > 0 ? matchingDefaults : CUSTOMER_REVIEWS.slice(0, 3);
-  return list.concat(defaultsToUse);
-}
+    // শুধু গ্রাহকের নিজের দেওয়া রিভিউ দেখানো হবে (ডিফল্ট রিভিউ বন্ধ)
+  return list;
+  }
 
 // Render Review Photos Carousel
 function renderReviewPhotosCarousel(reviews, product) {
@@ -3342,16 +3337,7 @@ function renderReviewPhotosCarousel(reviews, product) {
     }
   });
 
-  // Also include product authentic photos as delivered goods
-  if (product.images && product.images.length > 1) {
-    product.images.forEach((img, i) => {
-      photos.push({
-        url: img,
-        caption: `ভেরিফাইড ডেলিভারি ফটো (${i + 1})`,
-        product: product.banglaName
-      });
-    });
-  }
+  
 
   if (photos.length === 0) {
   track.innerHTML = `
@@ -3710,3 +3696,258 @@ window.setReviewRating = setReviewRating;
 window.handleReviewPhotoSelect = handleReviewPhotoSelect;
 window.handleProductReviewSubmit = handleProductReviewSubmit;
 
+/* ==========================================================================
+   সার্ভার-ভিত্তিক রিভিউ সিস্টেম (এই ব্লকটি ফাইলের একদম শেষে থাকবে)
+   শেষে window.… লাইনগুলো ওপরের পুরোনো ফাংশনের জায়গায় এগুলো বসিয়ে দেয়।
+   ========================================================================== */
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatReviewDate(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return "সম্প্রতি";
+  return d.toLocaleDateString("bn-BD", { year: "numeric", month: "long", day: "numeric" });
+}
+
+// পুরোনো ডিফল্ট রিভিউ আর দেখানো হবে না
+function noDefaultReviews(product) {
+  return [];
+}
+
+async function loadProductReviews(product) {
+  const list = document.getElementById("customerReviewsList");
+  if (list) list.innerHTML = `<div style="text-align:center; padding:24px; color:#64748b;">রিভিউ লোড হচ্ছে...</div>`;
+  let reviews = [];
+  try {
+    const res = await fetch("/api/reviews/" + encodeURIComponent(product.id));
+    if (res.ok) reviews = (await res.json()).reviews || [];
+  } catch (err) {
+    console.error("Error loading reviews", err);
+  }
+  detailsState.reviews = reviews;
+
+  const linkEl = document.querySelector(".rating-reviews-link");
+  if (linkEl) linkEl.textContent = "(" + reviews.length + " customer reviews)";
+  const headEl = document.querySelector("#customerReviewsSection .details-card-title span");
+  if (headEl) headEl.textContent = "সম্মানিত গ্রাহকদের রিভিউ (" + reviews.length + ")";
+
+  renderServerReviewsList(reviews);
+  renderServerReviewPhotos(reviews, product);
+}
+
+function renderServerReviewPhotos(reviews, product) {
+  const track = document.getElementById("reviewPhotosCarouselTrack");
+  if (!track) return;
+
+  const photos = [];
+  reviews.forEach((r) => {
+    if (r.image) photos.push({ url: r.image, caption: `${r.name} - ${r.location || ""}` });
+  });
+
+  if (photos.length === 0) {
+    track.innerHTML = `
+      <p style="text-align:center; padding:20px; color:#64748b;">
+        এখনো কোনো রিভিউ ছবি আপলোড করা হয়নি।
+      </p>
+    `;
+    return;
+  }
+
+  track.innerHTML = photos.map((p) => `
+    <div class="review-photo-card" data-src="${escapeHtml(p.url)}" data-caption="${escapeHtml(p.caption)}" onclick="openImageLightbox(this.dataset.src, this.dataset.caption)" title="বড় করে দেখতে ক্লিক করুন">
+      <div class="review-photo-thumb-wrap">
+        <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.caption)}" class="review-photo-img" loading="lazy">
+        <span class="review-photo-zoom-icon">🔍</span>
+      </div>
+      <div class="review-photo-meta">
+        <span class="review-photo-caption">${escapeHtml(p.caption)}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderServerReviewsList(reviews) {
+  const container = document.getElementById("customerReviewsList");
+  if (!container) return;
+
+  if (reviews.length === 0) {
+    container.innerHTML = `<div style="text-align: center; padding: 24px; color: #64748b;">এখনও কোনো রিভিউ দেওয়া হয়নি। প্রথম রিভিউটি আপনি দিন!</div>`;
+    return;
+  }
+
+  container.innerHTML = reviews.map((r) => `
+    <div class="details-review-card">
+      <div class="details-review-header">
+        <div class="review-author-wrap">
+          <div class="review-avatar-circle">
+            ${escapeHtml(String(r.name || "?").charAt(0))}
+          </div>
+          <div>
+            <h4 class="review-author-name">${escapeHtml(r.name)}</h4>
+            <span class="review-author-loc">${escapeHtml(r.location || "সম্মানিত ক্রেতা")}</span>
+          </div>
+        </div>
+        <div class="review-meta-right">
+          ${r.verified ? `<span class="verified-customer-pill">✓ ভেরিফাইড ক্রয়</span>` : ""}
+          <span class="review-date-text">${escapeHtml(formatReviewDate(r.createdAt))}</span>
+        </div>
+      </div>
+
+      <div class="review-stars-row">
+        ${Array.from({ length: 5 }, (_, i) => i < (r.rating || 5) ? "★" : "☆").join("")}
+      </div>
+
+      <p class="review-comment-body">“${escapeHtml(r.text)}”</p>
+
+      ${r.image ? `
+        <div class="review-card-photo-box" data-src="${escapeHtml(r.image)}" data-caption="${escapeHtml(r.name)}-এর রিভিউ ছবি" onclick="openImageLightbox(this.dataset.src, this.dataset.caption)">
+          <img src="${escapeHtml(r.image)}" alt="Customer review photo" class="review-card-thumb">
+          <span class="review-photo-click-tip">ছবি বড় করে দেখুন</span>
+        </div>
+      ` : ""}
+    </div>
+  `).join("");
+}
+
+// ছবি ছোট (সর্বোচ্চ ৯০০px, JPEG) করে নেওয়া হয়, যাতে সার্ভারে দ্রুত সেভ হয়
+function handleServerReviewPhotoSelect(event) {
+  const file = event.target.files[0];
+  const nameEl = document.getElementById("reviewPhotoName");
+  const previewWrap = document.getElementById("reviewPhotoPreviewWrap");
+  const previewImg = document.getElementById("reviewPhotoPreviewImg");
+
+  if (!file) {
+    if (nameEl) nameEl.textContent = "কোনো ছবি নির্বাচিত নেই";
+    if (previewWrap) previewWrap.style.display = "none";
+    detailsState.uploadedPhotoBase64 = null;
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    showToast("দয়া করে শুধু ছবির ফাইল দিন");
+    event.target.value = "";
+    return;
+  }
+
+  if (nameEl) nameEl.textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = new Image();
+    img.onload = function () {
+      const max = 900;
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      let quality = 0.8;
+      let dataUrl = canvas.toDataURL("image/jpeg", quality);
+      while (dataUrl.length > 450000 && quality > 0.4) {
+        quality -= 0.1;
+        dataUrl = canvas.toDataURL("image/jpeg", quality);
+      }
+      if (dataUrl.length > 450000) {
+        showToast("ছবিটি অনেক বড়, অন্য একটি ছোট ছবি দিন");
+        detailsState.uploadedPhotoBase64 = null;
+        return;
+      }
+      detailsState.uploadedPhotoBase64 = dataUrl;
+      if (previewImg) previewImg.src = dataUrl;
+      if (previewWrap) previewWrap.style.display = "block";
+    };
+    img.onerror = function () {
+      showToast("ছবিটি পড়া যায়নি, অন্য ছবি দিন");
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handleServerReviewSubmit(e) {
+  e.preventDefault();
+  const product = detailsState.product;
+  if (!product) return;
+
+  const user = getLoggedInCustomer();
+  if (!user) {
+    showToast("রিভিউ দিতে আগে লগইন করুন");
+    if (typeof openAccountModal === "function") openAccountModal("login");
+    return;
+  }
+
+  const name = document.getElementById("reviewAuthorName")?.value.trim();
+  const location = document.getElementById("reviewAuthorLocation")?.value.trim();
+  const comment = document.getElementById("reviewCommentText")?.value.trim();
+
+  if (!name || !comment) {
+    showToast("দয়া করে নাম ও রিভিউ লিখুন");
+    return;
+  }
+
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + user.token },
+      body: JSON.stringify({
+        productId: product.id,
+        name: name,
+        location: location,
+        rating: detailsState.selectedRating || 5,
+        text: comment,
+        image: detailsState.uploadedPhotoBase64 || null
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (res.status === 401) {
+      localStorage.removeItem("barakah_customer");
+      showToast("সেশন শেষ হয়ে গেছে, আবার লগইন করুন");
+      if (typeof openAccountModal === "function") openAccountModal("login");
+      return;
+    }
+    if (!res.ok) {
+      showToast(data.error || "রিভিউ জমা দেওয়া যায়নি");
+      return;
+    }
+
+    await loadProductReviews(product);
+
+    const form = document.getElementById("productReviewForm");
+    if (form) form.reset();
+    const previewWrap = document.getElementById("reviewPhotoPreviewWrap");
+    if (previewWrap) previewWrap.style.display = "none";
+    const nameEl = document.getElementById("reviewPhotoName");
+    if (nameEl) nameEl.textContent = "কোনো ছবি নির্বাচিত নেই";
+    detailsState.uploadedPhotoBase64 = null;
+    setReviewRating(5);
+
+    showToast("ধন্যবাদ! আপনার মূল্যবান রিভিউ সফলভাবে যুক্ত হয়েছে।");
+  } catch (err) {
+    console.error("Error saving review", err);
+    showToast("নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন");
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+// পুরোনো ফাংশনের জায়গায় নতুনগুলো বসানো
+window.getDetailedProductReviews = noDefaultReviews;
+window.renderReviewPhotosCarousel = renderServerReviewPhotos;
+window.renderDetailedReviewsList = renderServerReviewsList;
+window.handleReviewPhotoSelect = handleServerReviewPhotoSelect;
+window.handleProductReviewSubmit = handleServerReviewSubmit;

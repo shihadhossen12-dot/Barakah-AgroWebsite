@@ -27,6 +27,7 @@ import {
   markChatReadByAdmin,
   getChatThreads
 } from './db.js';
+import { registerReviewRoutes } from './reviews.js';
 
 dotenv.config();
 
@@ -564,6 +565,8 @@ app.post('/api/telegram/webhook', async (req, res) => {
     console.error('Telegram webhook error:', error);
   }
 });
+
+registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersByUserId });
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

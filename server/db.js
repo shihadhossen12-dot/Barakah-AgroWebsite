@@ -662,3 +662,9 @@ export async function getChatThreads() {
     };
   }).sort((a, b) => new Date(b.lastAt) - new Date(a.lastAt));
 }
+
+
+// reviews.js এই ফাংশন দিয়ে একই ডাটাবেস কানেকশন ব্যবহার করে
+export function getDbHandle() {
+  return { pool: pool && !useMock ? pool : null };
+}
