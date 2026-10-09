@@ -22,8 +22,12 @@ async function ensureTable(pool) {
           text TEXT NOT NULL,
           image TEXT,
           verified BOOLEAN NOT NULL DEFAULT FALSE,
-          created_at TIMESTAMPTZ NOT NULL
+          created_at TIMESTAMPTZ NOT NULL,
+          admin_reply TEXT,
+          admin_reply_at TIMESTAMPTZ
         );
+        ALTER TABLE reviews ADD COLUMN IF NOT EXISTS admin_reply TEXT;
+        ALTER TABLE reviews ADD COLUMN IF NOT EXISTS admin_reply_at TIMESTAMPTZ;
         CREATE UNIQUE INDEX IF NOT EXISTS reviews_product_user_idx ON reviews (product_id, user_id);
         CREATE INDEX IF NOT EXISTS reviews_product_idx ON reviews (product_id, created_at DESC);
       `)
@@ -36,10 +40,11 @@ async function ensureTable(pool) {
 }
 
 const COLS = `id, product_id AS "productId", user_id AS "userId", name, location, rating, text,
-  (image IS NOT NULL AND image <> '') AS "hasImage", verified, created_at AS "createdAt"`;
+  (image IS NOT NULL AND image <> '') AS "hasImage", verified, created_at AS "createdAt",
+  admin_reply AS "adminReply", admin_reply_at AS "adminReplyAt"`;
 
 function stripImage({ image, ...rest }) {
-  return { ...rest, hasImage: !!image };
+  return { ...rest, hasImage: !!image, adminReply: rest.adminReply || null, adminReplyAt: rest.adminReplyAt || null };
 }
 
 // দ্রষ্টব্য: রিভিউয়ের ডাটাবেস ত্রুটি হলে শুধু রিভিউ ফিচার এরর দেবে,
@@ -110,6 +115,24 @@ async function deleteReview(id) {
   return true;
 }
 
+async function saveAdminReply(id, reply) {
+  const { pool } = getDbHandle();
+  const repliedAt = reply ? new Date().toISOString() : null;
+  if (pool) {
+    await ensureTable(pool);
+    const result = await pool.query(
+      `UPDATE reviews SET admin_reply = $2, admin_reply_at = $3 WHERE id = $1`,
+      [String(id), reply || null, repliedAt]
+    );
+    return result.rowCount ? { adminReply: reply || null, adminReplyAt: repliedAt } : null;
+  }
+  const review = inMemoryReviews.find((r) => r.id === String(id));
+  if (!review) return null;
+  review.adminReply = reply || null;
+  review.adminReplyAt = repliedAt;
+  return { adminReply: review.adminReply, adminReplyAt: repliedAt };
+}
+
 // ---- সীমা: এক ক্রেতা ঘণ্টায় সর্বোচ্চ ১০টি রিভিউ ----
 const reviewRate = new Map();
 function reviewRateOk(key) {
@@ -136,7 +159,9 @@ function publicReview(r) {
     text: r.text,
     image: r.hasImage ? `/api/review-image/${encodeURIComponent(r.id)}` : null,
     verified: !!r.verified,
-    createdAt: r.createdAt
+    createdAt: r.createdAt,
+    adminReply: r.adminReply || null,
+    adminReplyAt: r.adminReplyAt || null
   };
 }
 
@@ -241,6 +266,19 @@ export function registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersBy
     } catch (error) {
       console.error('Delete review error:', error);
       res.status(500).json({ error: 'Failed to delete review.' });
+    }
+  });
+
+  app.patch('/api/admin/reviews/:id/reply', adminAuth, async (req, res) => {
+    const reply = String(req.body?.reply ?? '').trim();
+    if (reply.length > 1000) return res.status(400).json({ error: 'Reply must be 1000 characters or fewer.' });
+    try {
+      const saved = await saveAdminReply(req.params.id, reply);
+      if (!saved) return res.status(404).json({ error: 'Review not found' });
+      res.json(saved);
+    } catch (error) {
+      console.error('Save review reply error:', error);
+      res.status(500).json({ error: 'Failed to save reply.' });
     }
   });
 }

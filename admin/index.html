@@ -1,127 +1,1001 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Barakah Agro — Admin Dashboard</title>
-<style>
-:root{--green:#176b3a;--green2:#23844b;--bg:#f5f7f6;--card:#fff;--text:#17211b;--muted:#6b776f;--line:#e6ebe7;--shadow:0 8px 30px rgba(20,45,30,.07)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI","Noto Sans Bengali",Arial,sans-serif}button,input,select{font:inherit}
-.login-page{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#edf7f0,#f8faf9)}
-.login{width:min(430px,100%);background:#fff;padding:38px;border-radius:24px;box-shadow:var(--shadow)}.brand{display:flex;gap:12px;align-items:center;margin-bottom:28px}.brand-icon{width:48px;height:48px;border-radius:14px;background:#e7f5eb;display:grid;place-items:center;font-size:25px}.brand h1{margin:0;font-size:22px}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
-label{display:block;font-size:13px;font-weight:700;margin:14px 0 7px}.login input,.search{width:100%;border:1px solid #d9e1dc;border-radius:11px;padding:12px 13px;outline:none;background:#fff}.login input:focus,.search:focus{border-color:var(--green);box-shadow:0 0 0 3px #176b3a14}
-.btn{border:0;border-radius:10px;padding:11px 15px;background:var(--green);color:#fff;cursor:pointer;font-weight:700}.btn:hover{background:#12582f}.btn.secondary{background:#fff;color:var(--green);border:1px solid #bdd1c3}.btn.dark{background:#374151}.error{color:#b42318;font-size:13px;min-height:20px;margin-top:8px}
-.app{display:flex;min-height:100vh}.sidebar{width:240px;background:#103f26;color:#fff;padding:24px 16px;position:fixed;inset:0 auto 0 0}.side-brand{padding:8px 10px 28px;font-size:20px;font-weight:800}.side-brand small{display:block;color:#a9c6b2;font-size:11px;font-weight:500;margin-top:4px}.nav-title{font-size:10px;color:#8fb09a;text-transform:uppercase;letter-spacing:1px;padding:10px}.nav-item{padding:11px 12px;border-radius:9px;color:#dbece0;margin:3px 0;font-size:14px}.nav-item.active{background:#1b6339;color:#fff;font-weight:700}
-.main{margin-left:240px;width:calc(100% - 240px);padding:30px;max-width:1500px}.header{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:24px}.header h1{margin:0;font-size:27px}.header p{margin:5px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.stat-label{color:var(--muted);font-size:12px}.stat-value{font-size:27px;font-weight:800;margin-top:7px}.stat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--green)}
-.panel{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.toolbar{padding:16px;display:flex;gap:10px;border-bottom:1px solid var(--line);align-items:center}.search{max-width:500px}.count{margin-left:auto;color:var(--muted);font-size:13px}
-.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:1050px}.table th,.table td{text-align:left;padding:15px;border-bottom:1px solid var(--line);vertical-align:middle}.table th{font-size:11px;color:#68746d;text-transform:uppercase;letter-spacing:.5px;background:#fbfcfb}.table tr:hover td{background:#fcfefd}.order-id{font-weight:800;color:var(--green)}.customer-name{font-weight:750}.muted{color:var(--muted);font-size:12px;margin-top:3px}.total{font-weight:800}.status{border:1px solid #d7e0da;border-radius:9px;padding:8px 9px;background:#fff;text-transform:capitalize;cursor:pointer}.view{border:1px solid #c9d8cd;background:#fff;color:var(--green);border-radius:9px;padding:8px 10px;font-weight:700;cursor:pointer}.empty{padding:55px;text-align:center;color:var(--muted)}
-.overlay{position:fixed;inset:0;background:rgba(12,25,17,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 25px 70px #0003}.modal-head{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px;align-items:center}.modal-head h2{margin:0;font-size:20px}.close{border:0;background:#f0f3f1;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px}.modal-body{padding:24px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.info{border:1px solid var(--line);border-radius:13px;padding:15px}.info h3{font-size:12px;text-transform:uppercase;color:var(--muted);margin:0 0 10px}.info p{margin:5px 0;line-height:1.5}.items-list{margin-top:16px;border:1px solid var(--line);border-radius:13px;overflow:hidden}.item{display:flex;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.item:last-child{border:0}.summary{margin-top:14px;margin-left:auto;width:min(330px,100%)}.sum{display:flex;justify-content:space-between;padding:6px 0;color:#5d6962}.sum.final{border-top:1px solid var(--line);margin-top:5px;padding-top:12px;color:var(--text);font-size:18px;font-weight:800}.note{background:#fff8e6;border:1px solid #f2dfae;border-radius:10px;padding:11px;margin-top:14px;font-size:13px}
-@media(max-width:1050px){.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:760px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%;padding:18px}.stats{grid-template-columns:repeat(2,1fr)}.header{align-items:flex-start;flex-direction:column}.grid2{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}.count{margin-left:0}}
-.badge{background:#dc2626;color:#fff;border-radius:99px;font-size:11px;padding:2px 7px;margin-left:6px;font-weight:700}
-.chatmodal{width:min(900px,100%)}.chatbox{display:grid;grid-template-columns:260px 1fr;height:70vh}.chatlist{border-right:1px solid var(--line);overflow:auto}.chatitem{padding:13px 15px;border-bottom:1px solid var(--line);cursor:pointer}.chatitem:hover,.chatitem.active{background:#f0f7f2}
-.chatmain{display:flex;flex-direction:column;min-width:0}.chathead{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700}.chatmsgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:#f7faf8}
-.bubble{max-width:75%;padding:9px 12px;border-radius:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.bubble small{display:block;font-size:10px;opacity:.6;margin-top:4px}.bubble.me{align-self:flex-end;background:var(--green);color:#fff}.bubble.them{align-self:flex-start;background:#fff;border:1px solid var(--line)}
-.chatsend{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}.chatsend input{flex:1;border:1px solid #d9e1dc;border-radius:11px;padding:12px;outline:none}
-@media(max-width:760px){.chatbox{grid-template-columns:1fr;grid-template-rows:150px 1fr;height:80vh}.chatlist{border-right:0;border-bottom:1px solid var(--line)}}</style></head>
-<body><div id="app"></div><div id="overlay" class="overlay" onclick="if(event.target===this)closeModal()"></div>
-<script>
-const app=document.getElementById('app');let token=localStorage.getItem('barakah_admin_token');window.orders=[];
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-const money=n=>'৳'+Number(n||0).toLocaleString('en-BD');
-function payInfo(o){const p=String(o.paymentMethod||'Cash on Delivery');if(p.startsWith('Cash'))return{cod:true,method:'Cash on Delivery',sender:'',trx:''};const a=p.split(' | ');return{cod:false,method:a[0],sender:(a[1]||'').replace('Sender: ',''),trx:(a[2]||'').replace('TrxID: ','')}}
-function payCell(o){const p=payInfo(o);if(p.cod)return '<span style="background:#fef3c7;color:#92400e;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:700">💵 COD</span><div class="muted">ডেলিভারিতে টাকা নেবেন</div>';return '<span style="background:#dcfce7;color:#166534;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:700">'+esc(p.method)+'</span><div class="muted">TrxID: <b style="color:#17211b;user-select:all">'+esc(p.trx)+'</b></div><div class="muted">প্রেরক: '+esc(p.sender)+'</div>'}
-function payBox(o){const p=payInfo(o);return '<div class="info" style="margin-bottom:14px"><h3>Payment</h3>'+(p.cod?'<p><b>💵 Cash on Delivery</b></p><p class="muted">ডেলিভারির সময় সংগ্রহ করুন: '+money(o.total)+'</p>':'<p><b>'+esc(p.method)+'</b></p><p>প্রেরকের নম্বর: <b>'+esc(p.sender)+'</b></p><p>Transaction ID: <b style="user-select:all">'+esc(p.trx)+'</b></p><p class="muted">'+esc(p.method)+' অ্যাপ/SMS-এ এই TrxID দিয়ে '+money(o.total)+' এসেছে কি না মিলিয়ে দেখুন।</p>')+'</div>'}
-function login(){app.innerHTML=`<div class="login-page"><div class="login"><div class="brand"><div class="brand-icon">🌿</div><div><h1>Barakah Agro</h1><p>Secure Admin Panel</p></div></div><div id="err" class="error"></div><label>Username</label><input id="u" value="admin" autocomplete="username"><label>Password</label><input id="p" type="password" placeholder="Admin password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:10px" onclick="doLogin()">Sign in to dashboard</button></div></div>`}
-async function doLogin(){const err=document.getElementById('err');err.textContent='';try{const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})});const d=await r.json();if(!r.ok){err.textContent=d.error||'Login failed';return}localStorage.setItem('barakah_admin_token',d.token);token=d.token;dashboard()}catch(e){err.textContent='Server-এর সাথে যোগাযোগ করা যাচ্ছে না।'}}
-async function api(url,opt={}){opt.headers={...(opt.headers||{}),Authorization:'Bearer '+token,'Content-Type':'application/json'};const r=await fetch(url,opt);if(r.status===401){localStorage.removeItem('barakah_admin_token');token=null;login();throw new Error('Unauthorized')}const d=await r.json();if(!r.ok)throw new Error(d.error||'Request failed');return d}
-async function dashboard(){app.innerHTML=`<div class="app"><aside class="sidebar"><div class="side-brand">🌿 Barakah Agro<small>Store Administration</small></div><div class="nav-title">Management</div><div class="nav-item active">📦 Orders</div><div class="nav-item">🛍️ Products <span style="opacity:.5">Soon</span></div><div class="nav-item">⚙️ Settings <span style="opacity:.5">Soon</span></div></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;try{const d=await api('/api/admin/orders');window.orders=d.orders||[];renderOrders(window.orders)}catch(e){document.getElementById('orders').innerHTML='<div class="empty">Orders load করা যায়নি।</div>'}}
-function renderOrders(list){const c={pending:0,processing:0,confirmed:0,shipped:0,delivered:0,cancelled:0};list.forEach(o=>c[o.status]=(c[o.status]||0)+1);document.getElementById('stats').innerHTML=`<div class="stat"><div class="stat-label">Total Orders</div><div class="stat-value">${window.orders.length}</div></div><div class="stat"><div class="stat-label"><span class="stat-dot"></span>Pending</div><div class="stat-value">${c.pending}</div></div><div class="stat"><div class="stat-label">Processing</div><div class="stat-value">${c.processing}</div></div><div class="stat"><div class="stat-label">Shipped</div><div class="stat-value">${c.shipped}</div></div><div class="stat"><div class="stat-label">Delivered</div><div class="stat-value">${c.delivered}</div></div>`;document.getElementById('count').textContent=`${list.length} order${list.length===1?'':'s'}`;if(!list.length){document.getElementById('orders').innerHTML='<div class="empty">এখনো কোনো order নেই।</div>';return}document.getElementById('orders').innerHTML=`<table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr></thead><tbody>${list.map(o=>`<tr><td><div class="order-id">${esc(o.id)}</div><div class="muted">${new Date(o.createdAt).toLocaleString('en-BD')}</div></td><td><div class="customer-name">${esc(o.customer?.name)}</div><div class="muted">${esc(o.customer?.phone)}</div><div class="muted">${esc(o.customer?.district||'')}</div></td><td><div>${(o.items||[]).length} product${(o.items||[]).length===1?'':'s'}</div><div class="muted">${esc((o.items||[]).slice(0,2).map(i=>i.name).join(', '))}${o.items?.length>2?'…':''}</div></td><td><div class="total">${money(o.total)}</div><div class="muted">Delivery ${money(o.deliveryFee)}</div></td><td>${payCell(o)}</td><td><select class="status" onchange="changeStatus('${esc(o.id)}',this.value)">${['pending','processing','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="view" onclick="viewOrder('${esc(o.id)}')">View details</button> <button class="view" style="color:#dc2626" onclick="deleteOrder('${esc(o.id)}')">Delete</button></td></tr>`).join('')}</tbody></table>`}
-function viewOrder(id){const o=window.orders.find(x=>x.id===id);if(!o)return;document.getElementById('overlay').innerHTML=`<div class="modal"><div class="modal-head"><div><h2>Order ${esc(o.id)}</h2><div class="muted">${new Date(o.createdAt).toLocaleString('en-BD')}</div></div><button class="close" onclick="closeModal()">×</button></div><div class="modal-body"><div class="grid2"><div class="info"><h3>Customer</h3><p><b>${esc(o.customer?.name)}</b></p><p>📞 ${esc(o.customer?.phone)}</p><p>📍 ${esc(o.customer?.district||'')}${o.customer?.upazila?', '+esc(o.customer.upazila):''}</p><p>${esc(o.customer?.address)}</p></div><div class="info"><h3>Order status</h3><select class="status" style="width:100%" onchange="changeStatusFromModal('${esc(o.id)}',this.value)">${['pending','processing','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select>${o.note?`<div class="note">📝 ${esc(o.note)}</div>`:''}</div></div>${payBox(o)}<div class="items-list">${(o.items||[]).map(i=>`<div class="item"><div><b>${esc(i.name)}</b><div class="muted">${esc(i.packageLabel||'')} × ${i.quantity}</div></div><b>${money(i.price*i.quantity)}</b></div>`).join('')}</div><div class="summary"><div class="sum"><span>Subtotal</span><span>${money(o.subtotal)}</span></div><div class="sum"><span>Discount</span><span>- ${money(o.discount)}</span></div><div class="sum"><span>Delivery</span><span>${money(o.deliveryFee)}</span></div><div class="sum final"><span>Total</span><span>${money(o.total)}</span></div></div></div></div>`;document.getElementById('overlay').style.display='flex'}
-function closeModal(){document.getElementById('overlay').style.display='none'}
-async function deleteOrder(id){if(!confirm('এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফেরত আনা যাবে না।'))return;try{await api('/api/admin/orders/'+encodeURIComponent(id),{method:'DELETE'});window.orders=window.orders.filter(x=>x.id!==id);closeModal();renderOrders(window.orders)}catch(e){alert(e.message)}}
-async function changeStatus(id,status){try{await api('/api/admin/orders/'+encodeURIComponent(id)+'/status',{method:'PATCH',body:JSON.stringify({status})});const o=window.orders.find(x=>x.id===id);if(o)o.status=status;renderOrders(window.orders)}catch(e){alert(e.message);dashboard()}}
-async function changeStatusFromModal(id,status){await changeStatus(id,status);const o=window.orders.find(x=>x.id===id);if(o){closeModal();viewOrder(id)}}
-function filterRows(){const q=(document.getElementById('search').value||'').toLowerCase();renderOrders(window.orders.filter(o=>[o.id,o.customer?.name,o.customer?.phone,o.customer?.district,o.customer?.address,o.paymentMethod].join(' ').toLowerCase().includes(q)))}
-async function openReviews(){const ov=document.getElementById('overlay');ov.style.display='flex';ov.innerHTML='<div class="modal"><div class="modal-head"><div><h2>⭐ Customer Reviews</h2><div class="muted">খারাপ বা স্প্যাম রিভিউ এখান থেকে মুছে ফেলতে পারবেন।</div></div><button class="close" onclick="closeModal()">×</button></div><div class="modal-body" id="reviewsBody"><div class="empty">Loading...</div></div></div>';try{const d=await api('/api/admin/reviews');window.reviewsList=d.reviews||[];renderReviewsAdmin()}catch(e){document.getElementById('reviewsBody').innerHTML='<div class="empty">Reviews load করা যায়নি।</div>'}}
-function renderReviewsAdmin(){const b=document.getElementById('reviewsBody');if(!b)return;const l=window.reviewsList||[];if(!l.length){b.innerHTML='<div class="empty">এখনো কোনো রিভিউ নেই।</div>';return}b.innerHTML=l.map(r=>`<div class="info" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><b>${esc(r.name)}</b> <span class="muted">(${esc(r.location)})</span> ${r.verified?'<span style="color:#166534;font-size:12px;font-weight:700">✓ Verified buyer</span>':''}<div class="muted">Product ID: ${esc(r.productId)} • ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)} • ${new Date(r.createdAt).toLocaleString('en-BD')}</div></div><button class="view" style="color:#dc2626" onclick="removeReview('${esc(r.id)}')">Delete</button></div><p style="margin:10px 0 0;white-space:pre-wrap;word-break:break-word">${esc(r.text)}</p>${r.image?'<a href="'+esc(r.image)+'" target="_blank"><img src="'+esc(r.image)+'" style="max-height:90px;border-radius:8px;margin-top:8px;border:1px solid var(--line)"></a>':''}</div>`).join('')}
-async function removeReview(id){if(!confirm('এই রিভিউটি স্থায়ীভাবে মুছে ফেলবেন?'))return;try{await api('/api/admin/reviews/'+encodeURIComponent(id),{method:'DELETE'});window.reviewsList=window.reviewsList.filter(x=>x.id!==id);renderReviewsAdmin()}catch(e){alert(e.message)}}
-async function logout(){try{await api('/api/admin/logout',{method:'POST'})}catch{}localStorage.removeItem('barakah_admin_token');token=null;login()}
-// ===== CHAT =====
-let chatUser=null,chatLast=0,chatTimer=null,chatThreads=[];
-const chatTime=t=>new Date(t).toLocaleString('en-BD',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'});
-async function refreshChatBadge(){
-  if(!token||!document.getElementById('chatBadge'))return;
-  try{
-    const d=await api('/api/admin/chat');chatThreads=d.threads||[];
-    const n=chatThreads.reduce((a,t)=>a+(t.unread||0),0);
-    const b=document.getElementById('chatBadge');
-    if(b){b.textContent=n||'';b.style.display=n?'inline-block':'none'}
-    document.title=(n?'('+n+') ':'')+'Barakah Agro — Admin Dashboard';
-    renderChatList();
-  }catch(e){}
-}
-function openChat(){
-  chatUser=null;
-  document.getElementById('overlay').innerHTML=`<div class="modal chatmodal"><div class="modal-head"><h2>💬 Customer Chat</h2><button class="close" onclick="closeChat()">×</button></div><div class="chatbox"><div id="chatList" class="chatlist"></div><div class="chatmain"><div id="chatHead" class="chathead">বাম পাশ থেকে একজন কাস্টমার বাছুন</div><div id="chatMsgs" class="chatmsgs"></div><div class="chatsend"><input id="chatInput" placeholder="উত্তর লিখুন..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">Send</button></div></div></div></div>`;
-  document.getElementById('overlay').style.display='flex';
-  renderChatList();refreshChatBadge();
-  clearInterval(chatTimer);chatTimer=setInterval(pollOpenChat,5000);
-}
-function closeChat(){clearInterval(chatTimer);chatUser=null;closeModal()}
-function renderChatList(){
-  const el=document.getElementById('chatList');if(!el)return;
-  if(!chatThreads.length){el.innerHTML='<div class="empty" style="padding:24px">এখনো কোনো মেসেজ নেই।</div>';return}
-  el.innerHTML=chatThreads.map(t=>`<div class="chatitem ${t.userId===chatUser?'active':''}" onclick="selectChat('${esc(t.userId)}')"><div><b>${esc(t.name||'Customer')}</b>${t.unread?`<span class="badge">${t.unread}</span>`:''}</div><div class="muted">${esc(t.phone||'')}</div><div class="muted">${esc(((t.lastSender==='admin'?'আপনি: ':'')+(t.lastText||'')).slice(0,40))}</div></div>`).join('');
-}
-async function selectChat(uid){
-  chatUser=uid;chatLast=0;
-  const t=chatThreads.find(x=>x.userId===uid);
-  document.getElementById('chatHead').textContent=t?t.name+' · '+t.phone:'';
-  document.getElementById('chatMsgs').innerHTML='';
-  renderChatList();
-  await loadChatMsgs();refreshChatBadge();
-}
-async function loadChatMsgs(){
-  const uid=chatUser;if(!uid)return;
-  const d=await api('/api/admin/chat/'+encodeURIComponent(uid)+'?after='+chatLast);
-  const box=document.getElementById('chatMsgs');
-  if(!box||uid!==chatUser)return;
-  let added=false;
-  (d.messages||[]).forEach(m=>{
-    if(m.id<=chatLast)return;
-    chatLast=m.id;added=true;
-    box.insertAdjacentHTML('beforeend',`<div class="bubble ${m.sender==='admin'?'me':'them'}">${esc(m.text)}<small>${chatTime(m.createdAt)}</small></div>`);
-  });
-  if(added)box.scrollTop=box.scrollHeight;
-}
-async function sendChat(){
-  const inp=document.getElementById('chatInput');
-  const text=inp.value.trim();if(!text||!chatUser)return;
-  inp.value='';
-  try{
-    await api('/api/admin/chat/'+encodeURIComponent(chatUser),{method:'POST',body:JSON.stringify({text})});
-    await loadChatMsgs();refreshChatBadge();
-  }catch(e){alert(e.message);inp.value=text}
-}
-async function pollOpenChat(){
-  if(!document.getElementById('chatList')){clearInterval(chatTimer);return}
-  try{await refreshChatBadge();await loadChatMsgs()}catch(e){}
-}
-setTimeout(refreshChatBadge,1500);
-setInterval(refreshChatBadge,10000);
-if(token)dashboard();else login();
-async function resetCustomerPassword(){
-  const phone = prompt('গ্রাহকের মোবাইল নম্বর (01XXXXXXXXX):'); if(!phone) return;
-  const newPassword = prompt('নতুন অস্থায়ী পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর):'); if(!newPassword) return;
-  try{
-    await api('/api/admin/reset-customer-password',{method:'POST',body:JSON.stringify({phone,newPassword})});
-    alert('✅ পাসওয়ার্ড রিসেট হয়েছে। গ্রাহককে নতুন পাসওয়ার্ডটি জানিয়ে দিন।');
-  }catch(e){ alert(e.message); }
-}
-setInterval(function(){
-  const a=document.querySelector('.actions');
-  if(a&&!document.getElementById('pwResetBtn')){
-    const b=document.createElement('button');
-    b.id='pwResetBtn';b.className='btn secondary';b.textContent='🔑 Password Reset';
-    b.onclick=resetCustomerPassword;a.prepend(b);
-  }
-},1000);
-</script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Barakah Agro — Admin Dashboard</title>
+    <style>
+      :root {
+        --green: #176b3a;
+        --green2: #23844b;
+        --bg: #f5f7f6;
+        --card: #fff;
+        --text: #17211b;
+        --muted: #6b776f;
+        --line: #e6ebe7;
+        --shadow: 0 8px 30px rgba(20, 45, 30, 0.07);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          "Noto Sans Bengali",
+          Arial,
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      .login-page {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: linear-gradient(135deg, #edf7f0, #f8faf9);
+      }
+      .login {
+        width: min(430px, 100%);
+        background: #fff;
+        padding: 38px;
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+      }
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+      .brand-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #e7f5eb;
+        display: grid;
+        place-items: center;
+        font-size: 25px;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+      .brand p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 14px 0 7px;
+      }
+      .login input,
+      .search {
+        width: 100%;
+        border: 1px solid #d9e1dc;
+        border-radius: 11px;
+        padding: 12px 13px;
+        outline: none;
+        background: #fff;
+      }
+      .login input:focus,
+      .search:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px #176b3a14;
+      }
+      .btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 15px;
+        background: var(--green);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .btn:hover {
+        background: #12582f;
+      }
+      .btn.secondary {
+        background: #fff;
+        color: var(--green);
+        border: 1px solid #bdd1c3;
+      }
+      .btn.dark {
+        background: #374151;
+      }
+      .error {
+        color: #b42318;
+        font-size: 13px;
+        min-height: 20px;
+        margin-top: 8px;
+      }
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 240px;
+        background: #103f26;
+        color: #fff;
+        padding: 24px 16px;
+        position: fixed;
+        inset: 0 auto 0 0;
+      }
+      .side-brand {
+        padding: 8px 10px 28px;
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .side-brand small {
+        display: block;
+        color: #a9c6b2;
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 4px;
+      }
+      .nav-title {
+        font-size: 10px;
+        color: #8fb09a;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 10px;
+      }
+      .nav-item {
+        padding: 11px 12px;
+        border-radius: 9px;
+        color: #dbece0;
+        margin: 3px 0;
+        font-size: 14px;
+      }
+      .nav-item.active {
+        background: #1b6339;
+        color: #fff;
+        font-weight: 700;
+      }
+      .main {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+        padding: 30px;
+        max-width: 1500px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 27px;
+      }
+      .header p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .stat-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .stat-value {
+        font-size: 27px;
+        font-weight: 800;
+        margin-top: 7px;
+      }
+      .stat-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+        background: var(--green);
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .toolbar {
+        padding: 16px;
+        display: flex;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+      }
+      .search {
+        max-width: 500px;
+      }
+      .count {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .table-wrap {
+        overflow: auto;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1050px;
+      }
+      .table th,
+      .table td {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      .table th {
+        font-size: 11px;
+        color: #68746d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #fbfcfb;
+      }
+      .table tr:hover td {
+        background: #fcfefd;
+      }
+      .order-id {
+        font-weight: 800;
+        color: var(--green);
+      }
+      .customer-name {
+        font-weight: 750;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 3px;
+      }
+      .total {
+        font-weight: 800;
+      }
+      .status {
+        border: 1px solid #d7e0da;
+        border-radius: 9px;
+        padding: 8px 9px;
+        background: #fff;
+        text-transform: capitalize;
+        cursor: pointer;
+      }
+      .view {
+        border: 1px solid #c9d8cd;
+        background: #fff;
+        color: var(--green);
+        border-radius: 9px;
+        padding: 8px 10px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .empty {
+        padding: 55px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(12, 25, 17, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 20;
+      }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 90vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 25px 70px #0003;
+      }
+      .modal-head {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        align-items: center;
+      }
+      .modal-head h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close {
+        border: 0;
+        background: #f0f3f1;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .modal-body {
+        padding: 24px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .info {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 15px;
+      }
+      .info h3 {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 10px;
+      }
+      .info p {
+        margin: 5px 0;
+        line-height: 1.5;
+      }
+      .items-list {
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        overflow: hidden;
+      }
+      .item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 15px;
+        border-bottom: 1px solid var(--line);
+      }
+      .item:last-child {
+        border: 0;
+      }
+      .summary {
+        margin-top: 14px;
+        margin-left: auto;
+        width: min(330px, 100%);
+      }
+      .sum {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        color: #5d6962;
+      }
+      .sum.final {
+        border-top: 1px solid var(--line);
+        margin-top: 5px;
+        padding-top: 12px;
+        color: var(--text);
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .note {
+        background: #fff8e6;
+        border: 1px solid #f2dfae;
+        border-radius: 10px;
+        padding: 11px;
+        margin-top: 14px;
+        font-size: 13px;
+      }
+      @media (max-width: 1050px) {
+        .stats {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 760px) {
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+        }
+        .app {
+          display: block;
+        }
+        .main {
+          margin: 0;
+          width: 100%;
+          padding: 18px;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          flex-wrap: wrap;
+        }
+        .count {
+          margin-left: 0;
+        }
+      }
+      .badge {
+        background: #dc2626;
+        color: #fff;
+        border-radius: 99px;
+        font-size: 11px;
+        padding: 2px 7px;
+        margin-left: 6px;
+        font-weight: 700;
+      }
+      .chatmodal {
+        width: min(900px, 100%);
+      }
+      .chatbox {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        height: 70vh;
+      }
+      .chatlist {
+        border-right: 1px solid var(--line);
+        overflow: auto;
+      }
+      .chatitem {
+        padding: 13px 15px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+      }
+      .chatitem:hover,
+      .chatitem.active {
+        background: #f0f7f2;
+      }
+      .chatmain {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .chathead {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        font-weight: 700;
+      }
+      .chatmsgs {
+        flex: 1;
+        overflow: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: #f7faf8;
+      }
+      .bubble {
+        max-width: 75%;
+        padding: 9px 12px;
+        border-radius: 14px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .bubble small {
+        display: block;
+        font-size: 10px;
+        opacity: 0.6;
+        margin-top: 4px;
+      }
+      .bubble.me {
+        align-self: flex-end;
+        background: var(--green);
+        color: #fff;
+      }
+      .bubble.them {
+        align-self: flex-start;
+        background: #fff;
+        border: 1px solid var(--line);
+      }
+      .chatsend {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .chatsend input {
+        flex: 1;
+        border: 1px solid #d9e1dc;
+        border-radius: 11px;
+        padding: 12px;
+        outline: none;
+      }
+      @media (max-width: 760px) {
+        .chatbox {
+          grid-template-columns: 1fr;
+          grid-template-rows: 150px 1fr;
+          height: 80vh;
+        }
+        .chatlist {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div
+      id="overlay"
+      class="overlay"
+      onclick="if (event.target === this) closeModal();"
+    ></div>
+    <script>
+      const app = document.getElementById("app");
+      let token = localStorage.getItem("barakah_admin_token");
+      window.orders = [];
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[c],
+        );
+      const money = (n) => "৳" + Number(n || 0).toLocaleString("en-BD");
+      function payInfo(o) {
+        const p = String(o.paymentMethod || "Cash on Delivery");
+        if (p.startsWith("Cash"))
+          return { cod: true, method: "Cash on Delivery", sender: "", trx: "" };
+        const a = p.split(" | ");
+        return {
+          cod: false,
+          method: a[0],
+          sender: (a[1] || "").replace("Sender: ", ""),
+          trx: (a[2] || "").replace("TrxID: ", ""),
+        };
+      }
+      function payCell(o) {
+        const p = payInfo(o);
+        if (p.cod)
+          return '<span style="background:#fef3c7;color:#92400e;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:700">💵 COD</span><div class="muted">ডেলিভারিতে টাকা নেবেন</div>';
+        return (
+          '<span style="background:#dcfce7;color:#166534;padding:4px 9px;border-radius:99px;font-size:12px;font-weight:700">' +
+          esc(p.method) +
+          '</span><div class="muted">TrxID: <b style="color:#17211b;user-select:all">' +
+          esc(p.trx) +
+          '</b></div><div class="muted">প্রেরক: ' +
+          esc(p.sender) +
+          "</div>"
+        );
+      }
+      function payBox(o) {
+        const p = payInfo(o);
+        return (
+          '<div class="info" style="margin-bottom:14px"><h3>Payment</h3>' +
+          (p.cod
+            ? '<p><b>💵 Cash on Delivery</b></p><p class="muted">ডেলিভারির সময় সংগ্রহ করুন: ' +
+              money(o.total) +
+              "</p>"
+            : "<p><b>" +
+              esc(p.method) +
+              "</b></p><p>প্রেরকের নম্বর: <b>" +
+              esc(p.sender) +
+              '</b></p><p>Transaction ID: <b style="user-select:all">' +
+              esc(p.trx) +
+              '</b></p><p class="muted">' +
+              esc(p.method) +
+              " অ্যাপ/SMS-এ এই TrxID দিয়ে " +
+              money(o.total) +
+              " এসেছে কি না মিলিয়ে দেখুন।</p>") +
+          "</div>"
+        );
+      }
+      function login() {
+        app.innerHTML = `<div class="login-page"><div class="login"><div class="brand"><div class="brand-icon">🌿</div><div><h1>Barakah Agro</h1><p>Secure Admin Panel</p></div></div><div id="err" class="error"></div><label>Username</label><input id="u" value="admin" autocomplete="username"><label>Password</label><input id="p" type="password" placeholder="Admin password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:10px" onclick="doLogin()">Sign in to dashboard</button></div></div>`;
+      }
+      async function doLogin() {
+        const err = document.getElementById("err");
+        err.textContent = "";
+        try {
+          const r = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: document.getElementById("u").value,
+              password: document.getElementById("p").value,
+            }),
+          });
+          const d = await r.json();
+          if (!r.ok) {
+            err.textContent = d.error || "Login failed";
+            return;
+          }
+          localStorage.setItem("barakah_admin_token", d.token);
+          token = d.token;
+          dashboard();
+        } catch (e) {
+          err.textContent = "Server-এর সাথে যোগাযোগ করা যাচ্ছে না।";
+        }
+      }
+      async function api(url, opt = {}) {
+        opt.headers = {
+          ...(opt.headers || {}),
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        };
+        const r = await fetch(url, opt);
+        if (r.status === 401) {
+          localStorage.removeItem("barakah_admin_token");
+          token = null;
+          login();
+          throw new Error("Unauthorized");
+        }
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "Request failed");
+        return d;
+      }
+      async function dashboard() {
+        app.innerHTML = `<div class="app"><aside class="sidebar"><div class="side-brand">🌿 Barakah Agro<small>Store Administration</small></div><div class="nav-title">Management</div><div class="nav-item active">📦 Orders</div><div class="nav-item">🛍️ Products <span style="opacity:.5">Soon</span></div><div class="nav-item">⚙️ Settings <span style="opacity:.5">Soon</span></div></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;
+        try {
+          const d = await api("/api/admin/orders");
+          window.orders = d.orders || [];
+          renderOrders(window.orders);
+        } catch (e) {
+          document.getElementById("orders").innerHTML =
+            '<div class="empty">Orders load করা যায়নি।</div>';
+        }
+      }
+      function renderOrders(list) {
+        const c = {
+          pending: 0,
+          processing: 0,
+          confirmed: 0,
+          shipped: 0,
+          delivered: 0,
+          cancelled: 0,
+        };
+        list.forEach((o) => (c[o.status] = (c[o.status] || 0) + 1));
+        document.getElementById("stats").innerHTML =
+          `<div class="stat"><div class="stat-label">Total Orders</div><div class="stat-value">${window.orders.length}</div></div><div class="stat"><div class="stat-label"><span class="stat-dot"></span>Pending</div><div class="stat-value">${c.pending}</div></div><div class="stat"><div class="stat-label">Processing</div><div class="stat-value">${c.processing}</div></div><div class="stat"><div class="stat-label">Shipped</div><div class="stat-value">${c.shipped}</div></div><div class="stat"><div class="stat-label">Delivered</div><div class="stat-value">${c.delivered}</div></div>`;
+        document.getElementById("count").textContent =
+          `${list.length} order${list.length === 1 ? "" : "s"}`;
+        if (!list.length) {
+          document.getElementById("orders").innerHTML =
+            '<div class="empty">এখনো কোনো order নেই।</div>';
+          return;
+        }
+        document.getElementById("orders").innerHTML =
+          `<table class="table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr></thead><tbody>${list
+            .map(
+              (o) =>
+                `<tr><td><div class="order-id">${esc(o.id)}</div><div class="muted">${new Date(o.createdAt).toLocaleString("en-BD")}</div></td><td><div class="customer-name">${esc(o.customer?.name)}</div><div class="muted">${esc(o.customer?.phone)}</div><div class="muted">${esc(o.customer?.district || "")}</div></td><td><div>${(o.items || []).length} product${(o.items || []).length === 1 ? "" : "s"}</div><div class="muted">${esc(
+                  (o.items || [])
+                    .slice(0, 2)
+                    .map((i) => i.name)
+                    .join(", "),
+                )}${o.items?.length > 2 ? "…" : ""}</div></td><td><div class="total">${money(o.total)}</div><div class="muted">Delivery ${money(o.deliveryFee)}</div></td><td>${payCell(o)}</td><td><select class="status" onchange="changeStatus('${esc(o.id)}',this.value)">${["pending", "processing", "confirmed", "shipped", "delivered", "cancelled"].map((s) => `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`).join("")}</select></td><td><button class="view" onclick="viewOrder('${esc(o.id)}')">View details</button> <button class="view" style="color:#dc2626" onclick="deleteOrder('${esc(o.id)}')">Delete</button></td></tr>`,
+            )
+            .join("")}</tbody></table>`;
+      }
+      function viewOrder(id) {
+        const o = window.orders.find((x) => x.id === id);
+        if (!o) return;
+        document.getElementById("overlay").innerHTML =
+          `<div class="modal"><div class="modal-head"><div><h2>Order ${esc(o.id)}</h2><div class="muted">${new Date(o.createdAt).toLocaleString("en-BD")}</div></div><button class="close" onclick="closeModal()">×</button></div><div class="modal-body"><div class="grid2"><div class="info"><h3>Customer</h3><p><b>${esc(o.customer?.name)}</b></p><p>📞 ${esc(o.customer?.phone)}</p><p>📍 ${esc(o.customer?.district || "")}${o.customer?.upazila ? ", " + esc(o.customer.upazila) : ""}</p><p>${esc(o.customer?.address)}</p></div><div class="info"><h3>Order status</h3><select class="status" style="width:100%" onchange="changeStatusFromModal('${esc(o.id)}',this.value)">${["pending", "processing", "confirmed", "shipped", "delivered", "cancelled"].map((s) => `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`).join("")}</select>${o.note ? `<div class="note">📝 ${esc(o.note)}</div>` : ""}</div></div>${payBox(o)}<div class="items-list">${(o.items || []).map((i) => `<div class="item"><div><b>${esc(i.name)}</b><div class="muted">${esc(i.packageLabel || "")} × ${i.quantity}</div></div><b>${money(i.price * i.quantity)}</b></div>`).join("")}</div><div class="summary"><div class="sum"><span>Subtotal</span><span>${money(o.subtotal)}</span></div><div class="sum"><span>Discount</span><span>- ${money(o.discount)}</span></div><div class="sum"><span>Delivery</span><span>${money(o.deliveryFee)}</span></div><div class="sum final"><span>Total</span><span>${money(o.total)}</span></div></div></div></div>`;
+        document.getElementById("overlay").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("overlay").style.display = "none";
+      }
+      async function deleteOrder(id) {
+        if (
+          !confirm(
+            "এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফেরত আনা যাবে না।",
+          )
+        )
+          return;
+        try {
+          await api("/api/admin/orders/" + encodeURIComponent(id), {
+            method: "DELETE",
+          });
+          window.orders = window.orders.filter((x) => x.id !== id);
+          closeModal();
+          renderOrders(window.orders);
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function changeStatus(id, status) {
+        try {
+          await api("/api/admin/orders/" + encodeURIComponent(id) + "/status", {
+            method: "PATCH",
+            body: JSON.stringify({ status }),
+          });
+          const o = window.orders.find((x) => x.id === id);
+          if (o) o.status = status;
+          renderOrders(window.orders);
+        } catch (e) {
+          alert(e.message);
+          dashboard();
+        }
+      }
+      async function changeStatusFromModal(id, status) {
+        await changeStatus(id, status);
+        const o = window.orders.find((x) => x.id === id);
+        if (o) {
+          closeModal();
+          viewOrder(id);
+        }
+      }
+      function filterRows() {
+        const q = (document.getElementById("search").value || "").toLowerCase();
+        renderOrders(
+          window.orders.filter((o) =>
+            [
+              o.id,
+              o.customer?.name,
+              o.customer?.phone,
+              o.customer?.district,
+              o.customer?.address,
+              o.paymentMethod,
+            ]
+              .join(" ")
+              .toLowerCase()
+              .includes(q),
+          ),
+        );
+      }
+      async function openReviews() {
+        const ov = document.getElementById("overlay");
+        ov.style.display = "flex";
+        ov.innerHTML =
+          '<div class="modal"><div class="modal-head"><div><h2>⭐ Customer Reviews</h2><div class="muted">খারাপ বা স্প্যাম রিভিউ এখান থেকে মুছে ফেলতে পারবেন।</div></div><button class="close" onclick="closeModal()">×</button></div><div class="modal-body" id="reviewsBody"><div class="empty">Loading...</div></div></div>';
+        try {
+          const d = await api("/api/admin/reviews");
+          window.reviewsList = d.reviews || [];
+          renderReviewsAdmin();
+        } catch (e) {
+          document.getElementById("reviewsBody").innerHTML =
+            '<div class="empty">Reviews load করা যায়নি।</div>';
+        }
+      }
+      function renderReviewsAdmin() {
+        const b = document.getElementById("reviewsBody");
+        if (!b) return;
+        const l = window.reviewsList || [];
+        if (!l.length) {
+          b.innerHTML = '<div class="empty">এখনো কোনো রিভিউ নেই।</div>';
+          return;
+        }
+        b.innerHTML = l
+          .map(
+            (r) =>
+              `<div class="info" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><b>${esc(r.name)}</b> <span class="muted">(${esc(r.location)})</span> ${r.verified ? '<span style="color:#166534;font-size:12px;font-weight:700">✓ Verified buyer</span>' : ""}<div class="muted">Product ID: ${esc(r.productId)} • ${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)} • ${new Date(r.createdAt).toLocaleString("en-BD")}</div></div><button class="view" style="color:#dc2626" onclick="removeReview('${esc(r.id)}')">Delete</button></div><p style="margin:10px 0 0;white-space:pre-wrap;word-break:break-word">${esc(r.text)}</p>${r.image ? '<a href="' + esc(r.image) + '" target="_blank"><img src="' + esc(r.image) + '" style="max-height:90px;border-radius:8px;margin-top:8px;border:1px solid var(--line)"></a>' : ""}</div>`,
+          )
+          .join("");
+      }
+      async function removeReview(id) {
+        if (!confirm("এই রিভিউটি স্থায়ীভাবে মুছে ফেলবেন?")) return;
+        try {
+          await api("/api/admin/reviews/" + encodeURIComponent(id), {
+            method: "DELETE",
+          });
+          window.reviewsList = window.reviewsList.filter((x) => x.id !== id);
+          renderReviewsAdmin();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function logout() {
+        try {
+          await api("/api/admin/logout", { method: "POST" });
+        } catch {}
+        localStorage.removeItem("barakah_admin_token");
+        token = null;
+        login();
+      }
+      // ===== CHAT =====
+      let chatUser = null,
+        chatLast = 0,
+        chatTimer = null,
+        chatThreads = [];
+      const chatTime = (t) =>
+        new Date(t).toLocaleString("en-BD", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "numeric",
+          month: "short",
+        });
+      async function refreshChatBadge() {
+        if (!token || !document.getElementById("chatBadge")) return;
+        try {
+          const d = await api("/api/admin/chat");
+          chatThreads = d.threads || [];
+          const n = chatThreads.reduce((a, t) => a + (t.unread || 0), 0);
+          const b = document.getElementById("chatBadge");
+          if (b) {
+            b.textContent = n || "";
+            b.style.display = n ? "inline-block" : "none";
+          }
+          document.title =
+            (n ? "(" + n + ") " : "") + "Barakah Agro — Admin Dashboard";
+          renderChatList();
+        } catch (e) {}
+      }
+      function openChat() {
+        chatUser = null;
+        document.getElementById("overlay").innerHTML =
+          `<div class="modal chatmodal"><div class="modal-head"><h2>💬 Customer Chat</h2><button class="close" onclick="closeChat()">×</button></div><div class="chatbox"><div id="chatList" class="chatlist"></div><div class="chatmain"><div id="chatHead" class="chathead">বাম পাশ থেকে একজন কাস্টমার বাছুন</div><div id="chatMsgs" class="chatmsgs"></div><div class="chatsend"><input id="chatInput" placeholder="উত্তর লিখুন..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">Send</button></div></div></div></div>`;
+        document.getElementById("overlay").style.display = "flex";
+        renderChatList();
+        refreshChatBadge();
+        clearInterval(chatTimer);
+        chatTimer = setInterval(pollOpenChat, 5000);
+      }
+      function closeChat() {
+        clearInterval(chatTimer);
+        chatUser = null;
+        closeModal();
+      }
+      function renderChatList() {
+        const el = document.getElementById("chatList");
+        if (!el) return;
+        if (!chatThreads.length) {
+          el.innerHTML =
+            '<div class="empty" style="padding:24px">এখনো কোনো মেসেজ নেই।</div>';
+          return;
+        }
+        el.innerHTML = chatThreads
+          .map(
+            (t) =>
+              `<div class="chatitem ${t.userId === chatUser ? "active" : ""}" onclick="selectChat('${esc(t.userId)}')"><div><b>${esc(t.name || "Customer")}</b>${t.unread ? `<span class="badge">${t.unread}</span>` : ""}</div><div class="muted">${esc(t.phone || "")}</div><div class="muted">${esc(((t.lastSender === "admin" ? "আপনি: " : "") + (t.lastText || "")).slice(0, 40))}</div></div>`,
+          )
+          .join("");
+      }
+      async function selectChat(uid) {
+        chatUser = uid;
+        chatLast = 0;
+        const t = chatThreads.find((x) => x.userId === uid);
+        document.getElementById("chatHead").textContent = t
+          ? t.name + " · " + t.phone
+          : "";
+        document.getElementById("chatMsgs").innerHTML = "";
+        renderChatList();
+        await loadChatMsgs();
+        refreshChatBadge();
+      }
+      async function loadChatMsgs() {
+        const uid = chatUser;
+        if (!uid) return;
+        const d = await api(
+          "/api/admin/chat/" + encodeURIComponent(uid) + "?after=" + chatLast,
+        );
+        const box = document.getElementById("chatMsgs");
+        if (!box || uid !== chatUser) return;
+        let added = false;
+        (d.messages || []).forEach((m) => {
+          if (m.id <= chatLast) return;
+          chatLast = m.id;
+          added = true;
+          box.insertAdjacentHTML(
+            "beforeend",
+            `<div class="bubble ${m.sender === "admin" ? "me" : "them"}">${esc(m.text)}<small>${chatTime(m.createdAt)}</small></div>`,
+          );
+        });
+        if (added) box.scrollTop = box.scrollHeight;
+      }
+      async function sendChat() {
+        const inp = document.getElementById("chatInput");
+        const text = inp.value.trim();
+        if (!text || !chatUser) return;
+        inp.value = "";
+        try {
+          await api("/api/admin/chat/" + encodeURIComponent(chatUser), {
+            method: "POST",
+            body: JSON.stringify({ text }),
+          });
+          await loadChatMsgs();
+          refreshChatBadge();
+        } catch (e) {
+          alert(e.message);
+          inp.value = text;
+        }
+      }
+      async function pollOpenChat() {
+        if (!document.getElementById("chatList")) {
+          clearInterval(chatTimer);
+          return;
+        }
+        try {
+          await refreshChatBadge();
+          await loadChatMsgs();
+        } catch (e) {}
+      }
+      setTimeout(refreshChatBadge, 1500);
+      setInterval(refreshChatBadge, 10000);
+      if (token) dashboard();
+      else login();
+      async function resetCustomerPassword() {
+        const phone = prompt("গ্রাহকের মোবাইল নম্বর (01XXXXXXXXX):");
+        if (!phone) return;
+        const newPassword = prompt(
+          "নতুন অস্থায়ী পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর):",
+        );
+        if (!newPassword) return;
+        try {
+          await api("/api/admin/reset-customer-password", {
+            method: "POST",
+            body: JSON.stringify({ phone, newPassword }),
+          });
+          alert(
+            "✅ পাসওয়ার্ড রিসেট হয়েছে। গ্রাহককে নতুন পাসওয়ার্ডটি জানিয়ে দিন।",
+          );
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      setInterval(function () {
+        const a = document.querySelector(".actions");
+        if (a && !document.getElementById("pwResetBtn")) {
+          const b = document.createElement("button");
+          b.id = "pwResetBtn";
+          b.className = "btn secondary";
+          b.textContent = "🔑 Password Reset";
+          b.onclick = resetCustomerPassword;
+          a.prepend(b);
+        }
+      }, 1000);
+    </script>
+    <script>
+      async function saveReviewReply(id){
+        const input=document.getElementById('review-reply-'+id);
+        try{
+          const d=await api('/api/admin/reviews/'+encodeURIComponent(id)+'/reply',{method:'PATCH',body:JSON.stringify({reply:input.value})});
+          const r=window.reviewsList.find(x=>x.id===id);
+          if(r){r.adminReply=d.adminReply;r.adminReplyAt=d.adminReplyAt}
+          renderReviewsAdmin();
+        }catch(e){alert(e.message)}
+      }
+      const renderReviewsAdminBase=renderReviewsAdmin;
+      renderReviewsAdmin=function(){
+        renderReviewsAdminBase();
+        const body=document.getElementById('reviewsBody');
+        if(!body)return;
+        (window.reviewsList||[]).forEach(r=>{
+          const cards=body.querySelectorAll('.info');
+          const card=[...cards].find(x=>x.textContent.includes(r.text));
+          if(!card)return;
+          const area=document.createElement('div');
+          area.style.marginTop='12px';
+          area.innerHTML='<label>Reply as Barakah Agro</label><textarea id="review-reply-'+esc(r.id)+'" maxlength="1000" rows="3" style="width:100%;padding:10px">'+esc(r.adminReply||'')+'</textarea><button class="btn" style="margin-top:8px" onclick="saveReviewReply(\''+esc(r.id)+'\')">'+(r.adminReply?'Update reply':'Post reply')+'</button>';
+          card.appendChild(area);
+        });
+      };
+    </script>
+  </body>
+</html>

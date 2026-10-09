@@ -3806,6 +3806,8 @@ function renderServerReviewsList(reviews) {
 
       <p class="review-comment-body">“${escapeHtml(r.text)}”</p>
 
+      ${r.adminReply ? `<div class="admin-review-reply" style="margin:12px 0 0;padding:12px 14px;border-left:3px solid #23844b;background:#f0f8f2;border-radius:8px"><strong style="color:#176b3a">Barakah Agro Reply</strong><p style="margin:5px 0 0;white-space:pre-wrap">${escapeHtml(r.adminReply)}</p></div>` : ""}
+
       ${r.image ? `
         <div class="review-card-photo-box" data-src="${escapeHtml(r.image)}" data-caption="${escapeHtml(r.name)}-এর রিভিউ ছবি" onclick="openImageLightbox(this.dataset.src, this.dataset.caption)">
           <img src="${escapeHtml(r.image)}" alt="Customer review photo" class="review-card-thumb">
