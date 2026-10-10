@@ -2206,54 +2206,16 @@ function renderCustomerReviewsCarousel() {
   const track = document.getElementById("customerReviewsCarousel");
   if (!track) return;
 
-  track.innerHTML = CUSTOMER_REVIEWS.map(r => `
-    <div class="review-card-modern">
-      <div>
-        <div class="review-card-header">
-          <img src="${r.image}" alt="${r.name}" class="review-card-avatar" onerror="this.src='images/logo.png'">
-          <div class="review-card-user">
-            <h4>${r.name}</h4>
-            <p>${r.location}</p>
-          </div>
-        </div>
-        <div class="review-stars-wrap">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <p class="review-card-text">“${r.text}”</p>
-      </div>
-      <div class="review-card-footer">
-        <span class="verified-customer-tag">✓ ভেরিফাইড ক্রেতা</span>
-        <span>${r.product}</span>
-      </div>
+  const reviewMarkup = (isClone = false) => CUSTOMER_REVIEWS.map(r => `
+    <div class="review-photo-card" title="ছবিটি বড় করে দেখতে ক্লিক করুন" role="button" tabindex="${isClone ? "-1" : "0"}" onclick="openImageLightbox(this.querySelector('img').src, this.querySelector('img').alt)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageLightbox(this.querySelector('img').src,this.querySelector('img').alt)}">
+      <img src="${r.image}" alt="${r.name}" class="review-photo-image" onerror="this.src='images/logo.png'">
     </div>
   `).join("");
 
-  // Smooth continuous auto-scroll for reviews
-  let isInteracting = false;
-  let autoScrollTimer = null;
-
-  function stepReviewScroll() {
-    if (!isInteracting && track.scrollWidth > track.clientWidth) {
-      if (track.scrollLeft >= track.scrollWidth - track.clientWidth - 2) {
-        track.scrollLeft = 0;
-      } else {
-        track.scrollLeft += 1;
-      }
-    }
-  }
-
- // autoScrollTimer = setInterval(stepReviewScroll, 40);
-
-  track.addEventListener("mouseenter", () => { isInteracting = true; });
-  track.addEventListener("mouseleave", () => { isInteracting = false; });
-  track.addEventListener("touchstart", () => { isInteracting = true; }, { passive: true });
-  track.addEventListener("touchend", () => {
-    setTimeout(() => { isInteracting = false; }, 2000);
-  });
+  track.innerHTML = `
+    <div class="review-marquee-group">${reviewMarkup()}</div>
+    <div class="review-marquee-group" aria-hidden="true">${reviewMarkup(true)}</div>
+  `;
 }
 
 // ==========================================================================
@@ -3309,7 +3271,7 @@ function getDetailedProductReviews(product) {
     const saved = localStorage.getItem(`barakah_reviews_${product.id}`);
     if (saved) {
       list = JSON.parse(saved);
-    }
+    } 
   } catch (e) {
     console.error("Error reading saved reviews", e);
   }

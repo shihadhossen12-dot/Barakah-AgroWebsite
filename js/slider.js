@@ -23,8 +23,7 @@
     { id: 'meatCarousel',           dir: PRODUCT_DIR,  speed: PRODUCT_SPEED },
     { id: 'leavesCarousel',         dir: PRODUCT_DIR,  speed: PRODUCT_SPEED },
     { id: 'superfoodsCarousel',     dir: PRODUCT_DIR,  speed: PRODUCT_SPEED },
-    { id: 'fruitsCarousel',         dir: PRODUCT_DIR,  speed: PRODUCT_SPEED },
-    { id: 'customerReviewsCarousel', dir: REVIEW_DIR,  speed: REVIEW_SPEED }
+    { id: 'fruitsCarousel',         dir: PRODUCT_DIR,  speed: PRODUCT_SPEED }
   ];
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
