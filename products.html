@@ -44,14 +44,82 @@
       <nav>
         <ul class="nav-links" id="navLinks">
           <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="products.html" class="nav-link active">Products</a></li>
+          <li class="nav-item-has-dropdown">
+            <div class="mobile-cat-header-row" id="mobileProductsToggle">
+              <a href="products.html" class="nav-link nav-link-product-text active">
+                <span class="nav-link-with-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                  <span>Products</span>
+                </span>
+                <span class="mobile-cat-count-pill">৮টি ক্যাটাগরি</span>
+              </a>
+              <button type="button" class="mobile-cat-chevron-btn" id="mobileCatChevronBtn" aria-label="ক্যাটাগরি সমূহ দেখুন" aria-expanded="false">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+            <div class="mobile-cat-dropdown-panel" id="mobileCatDropdownPanel">
+              <div class="mobile-cat-panel-inner">
+                <a href="products.html" class="mobile-cat-all-btn">
+                  <div class="mobile-cat-all-left">
+                    <div class="mobile-cat-mini-icon all-theme">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </div>
+                    <span class="mobile-cat-all-text">সকল পণ্য দেখুন (All Products)</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+                <div class="mobile-cat-items-list">
+                  <a href="products.html?category=mustard-oil" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon oil-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">কাঠের ঘানির সরিষার তেল</span><span class="mobile-cat-card-sub">Mustard Oil</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=milk" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon milk-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8v4H8z"/><path d="M6 6h12v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">দেশি গরুর খাঁটি দুধ</span><span class="mobile-cat-card-sub">Pure Cow Milk</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=meat" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon meat-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">দেশি মুরগি ও হাঁসের মাংস</span><span class="mobile-cat-card-sub">Organic Duck & Chicken</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=leaves" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon leaves-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">শুকনো পাট ও সাজনা পাতা</span><span class="mobile-cat-card-sub">Dried Leaves & Herbs</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=superfoods" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon dates-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">আজওয়া খেজুর ও সুপারফুড</span><span class="mobile-cat-card-sub">Ajwa Dates & Superfoods</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=fruits" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon fruits-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">নিজস্ব বাগানের তাজা ফল</span><span class="mobile-cat-card-sub">Fresh Garden Fruits</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=honey" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon honey-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">সুন্দরবনের খাঁটি মধু</span><span class="mobile-cat-card-sub">Pure Honey</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <a href="products.html?category=spices" class="mobile-cat-card">
+                    <div class="mobile-cat-card-icon spices-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/></svg></div>
+                    <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">খাঁটি গুঁড়া ও গোটা মসলা</span><span class="mobile-cat-card-sub">Organic Spices</span></div>
+                    <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
           <li><a href="about.html" class="nav-link">About Us</a></li>
           <li><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
-                <button class="account-btn" onclick="openAccountModal('login')" title="Login or Register">
+        <button class="account-btn" onclick="openAccountModal('login')" title="Login or Register">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span class="account-btn-label"></span>
         </button>
@@ -76,6 +144,135 @@
       </div>
     </div>
   </header>
+
+  <!-- ========================================================================
+       DESKTOP PRODUCT CATEGORY BAR (PROFESSIONAL E-COMMERCE SUB-HEADER)
+       Visible on Desktop (> 991px), Strictly Hidden on Mobile (Single Bar only)
+       ======================================================================== -->
+  <div class="desktop-category-bar">
+    <div class="container desktop-cat-container">
+      
+      <!-- All Categories Mega Dropdown -->
+      <div class="desktop-cat-all-wrap">
+        <button class="desktop-cat-all-btn" id="desktopCatDropdownBtn" aria-expanded="false" aria-haspopup="true">
+          <svg class="cat-grid-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+          <span class="desktop-cat-all-title">সব ক্যাটাগরি</span>
+          <svg class="cat-chevron-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <div class="desktop-cat-dropdown-menu" id="desktopCatDropdownMenu">
+          <div class="desktop-cat-dropdown-header">
+            <span class="desktop-cat-dropdown-label">পণ্য বিভাগসমূহ</span>
+            <span class="desktop-cat-dropdown-badge">৮টি ক্যাটাগরি</span>
+          </div>
+          <div class="desktop-cat-dropdown-grid">
+            <a href="products.html?category=mustard-oil" class="desktop-cat-drop-item" data-cat="mustard-oil">
+              <span class="drop-icon-box oil-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">কাঠের ঘানির সরিষার তেল</span><span class="drop-sub">কোল্ড প্রেসড শতভাগ খাঁটি তেল</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=milk" class="desktop-cat-drop-item" data-cat="milk">
+              <span class="drop-icon-box milk-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8v4H8z"/><path d="M6 6h12v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">দেশি গরুর খাঁটি দুধ</span><span class="drop-sub">প্রাকৃতিক চারণভূমির তরল দুধ</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=meat" class="desktop-cat-drop-item" data-cat="meat">
+              <span class="drop-icon-box meat-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">দেশি মুরগি ও হাঁসের মাংস</span><span class="drop-sub">অর্গানিক তাজা মাংস</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=leaves" class="desktop-cat-drop-item" data-cat="leaves">
+              <span class="drop-icon-box leaves-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">শুকনো পাট ও সাজনা পাতা</span><span class="drop-sub">ভেষজ গুণসম্পন্ন পুষ্টিকর পাতা</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=superfoods" class="desktop-cat-drop-item" data-cat="superfoods">
+              <span class="drop-icon-box dates-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">আজওয়া খেজুর ও সুপারফুড</span><span class="drop-sub">মদিনা শরিফের প্রিমিয়াম আজওয়া</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=fruits" class="desktop-cat-drop-item" data-cat="fruits">
+              <span class="drop-icon-box fruits-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">নিজস্ব বাগানের তাজা ফল</span><span class="drop-sub">ফরমালিনমুক্ত মৌসুমী তাজা ফল</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=honey" class="desktop-cat-drop-item" data-cat="honey">
+              <span class="drop-icon-box honey-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">সুন্দরবনের খাঁটি মধু</span><span class="drop-sub">শতভাগ প্রাকৃতিক ফুলের চাকের মধু</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="products.html?category=spices" class="desktop-cat-drop-item" data-cat="spices">
+              <span class="drop-icon-box spices-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/></svg></span>
+              <div class="drop-text-box"><span class="drop-name">খাঁটি গুঁড়া ও গোটা মসলা</span><span class="drop-sub">ঘরোয়া ভাঙা খাঁটি মসলা সম্ভার</span></div>
+              <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+          </div>
+          <div class="desktop-cat-dropdown-footer">
+            <a href="products.html" class="desktop-cat-all-link">
+              <span>সকল পণ্য একসঙ্গে দেখুন</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Category Links Strip -->
+      <nav class="desktop-cat-nav-links" aria-label="দ্রুত ক্যাটাগরি">
+        <a href="products.html?category=mustard-oil" class="desktop-cat-link" data-cat="mustard-oil">
+          <span class="cat-link-icon oil-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+          <span>সরিষার তেল</span>
+        </a>
+        <a href="products.html?category=milk" class="desktop-cat-link" data-cat="milk">
+          <span class="cat-link-icon milk-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 2h8v4H8z"/><path d="M6 6h12v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/></svg></span>
+          <span>দেশি গরুর দুধ</span>
+        </a>
+        <a href="products.html?category=meat" class="desktop-cat-link" data-cat="meat">
+          <span class="cat-link-icon meat-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <span>মুরগি ও হাঁস</span>
+        </a>
+        <a href="products.html?category=leaves" class="desktop-cat-link" data-cat="leaves">
+          <span class="cat-link-icon leaves-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></span>
+          <span>শুকনো পাতা</span>
+        </a>
+        <a href="products.html?category=superfoods" class="desktop-cat-link" data-cat="superfoods">
+          <span class="cat-link-icon dates-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+          <span>আজওয়া খেজুর</span>
+        </a>
+        <a href="products.html?category=fruits" class="desktop-cat-link" data-cat="fruits">
+          <span class="cat-link-icon fruits-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></span>
+          <span>তাজা ফল</span>
+        </a>
+        <a href="products.html?category=honey" class="desktop-cat-link" data-cat="honey">
+          <span class="cat-link-icon honey-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z"/></svg></span>
+          <span>খাঁটি মধু</span>
+        </a>
+        <a href="products.html?category=spices" class="desktop-cat-link" data-cat="spices">
+          <span class="cat-link-icon spices-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/></svg></span>
+          <span>মসলা</span>
+        </a>
+        <a href="products.html" class="desktop-cat-link" data-cat="all">
+          <span class="cat-link-icon all-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+          <span>সকল পণ্য</span>
+        </a>
+      </nav>
+
+      <!-- Right Promotional Pill -->
+      <div class="desktop-cat-promo">
+        <a href="products.html" class="desktop-promo-badge" title="বিশেষ সুবিধা">
+          <span class="promo-dot"></span>
+          <span class="promo-text">🚚 ২,০০০৳ অর্ডারে ফ্রি ডেলিভারি</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
 
   <!-- PAGE HERO -->
   <div class="page-hero">
