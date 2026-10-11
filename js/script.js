@@ -1312,7 +1312,7 @@ function adjustModalQty(delta) {
 function addModalItemToCart() {
   const modalGrid = document.querySelector(".modal-grid");
   if (!modalGrid) return;
-  const productId = parseInt(modalGrid.getAttribute("data-modal-product-id"));
+  const productId = modalGrid.getAttribute("data-modal-product-id");
   const packageId = modalGrid.getAttribute("data-selected-pkg");
   const qtyInput = document.getElementById("modalQtyInput");
   const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
@@ -1324,7 +1324,7 @@ function addModalItemToCart() {
 function buyModalItemNow() {
   const modalGrid = document.querySelector(".modal-grid");
   if (!modalGrid) return;
-  const productId = parseInt(modalGrid.getAttribute("data-modal-product-id"));
+  const productId = modalGrid.getAttribute("data-modal-product-id");
   const packageId = modalGrid.getAttribute("data-selected-pkg");
   const qtyInput = document.getElementById("modalQtyInput");
   const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
@@ -3231,10 +3231,10 @@ function initProductDetailsPage() {
   if (!container) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-  const paramId = parseInt(urlParams.get("id"), 10);
+  const paramId = urlParams.get("id");
 
   // Find product or fallback to first product
-  let product = BARAKAH_PRODUCTS.find((p) => p.id === paramId);
+  let product = BARAKAH_PRODUCTS.find((p) => String(p.id) === String(paramId));
   if (!product) {
     product = BARAKAH_PRODUCTS[0];
   }

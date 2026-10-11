@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import { readFile } from 'fs/promises';
+import vm from 'vm';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -45,6 +47,28 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const adminSessions = new Set();
 const allowedStatuses = ['pending', 'processing', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+
+let sourceProductsPromise;
+async function getSourceProducts() {
+  if (!sourceProductsPromise) sourceProductsPromise = readFile(path.join(root, 'js', 'script.js'), 'utf8').then(source => {
+    const match = source.match(/const BARAKAH_PRODUCTS\s*=\s*(\[[\s\S]*?\n\]);\s*window\.BARAKAH_PRODUCTS/);
+    if (!match) return [];
+    try { return vm.runInNewContext(`(${match[1]})`, Object.create(null), { timeout: 1000 }); }
+    catch (error) { console.error('Could not read product catalog for social previews:', error); return []; }
+  });
+  return sourceProductsPromise;
+}
+
+function escapeMeta(value) {
+  return String(value || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+function setMeta(html, _selector, tag) {
+  const identity = tag.match(/^<meta\s+(name|property)="([^"]+)"/i);
+  if (!identity) return html;
+  const expression = new RegExp(`<meta\\s+${identity[1]}=["']${identity[2]}["']\\s+content=["'][^"']*["']\\s*\\/?\\s*>`, 'i');
+  return expression.test(html) ? html.replace(expression, tag) : html.replace('</head>', `  ${tag}\n</head>`);
+}
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -776,6 +800,47 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   } catch (error) {
     console.error('Create order error:', error);
     res.status(500).json({ error: 'Failed to create order.' });
+  }
+});
+app.get('/product-details.html', async (req, res, next) => {
+  const id = String(req.query.id || '');
+  if (!id) return next();
+  try {
+    const [sourceProducts, managed, page] = await Promise.all([
+      getSourceProducts(), getManagedProducts(), readFile(path.join(root, 'product-details.html'), 'utf8')
+    ]);
+    const removed = new Set((managed.deletedIds || []).map(String));
+    const products = sourceProducts.filter(p => !removed.has(String(p.id)));
+    for (const product of managed.products || []) {
+      const index = products.findIndex(p => String(p.id) === String(product.id));
+      if (index >= 0) products[index] = product; else products.push(product);
+    }
+    const product = products.find(p => String(p.id) === id);
+    if (!product) return res.type('html').send(page);
+
+    const forwardedProto = (req.get('x-forwarded-proto') || req.protocol).split(',')[0].trim();
+    const origin = (process.env.APP_URL || `${forwardedProto}://${req.get('host')}`).replace(/\/$/, '');
+    const title = `${product.banglaName || product.name} | Barakah Agro`;
+    const description = String(product.shortDescription || product.description || product.name).slice(0, 300);
+    const rawImage = product.image || product.images?.[0] || 'images/logo.png';
+    const image = /^https?:\/\//i.test(rawImage) ? rawImage : new URL('/' + String(rawImage).replace(/^\/+/, ''), origin).href;
+    const pageUrl = `${origin}/product-details.html?id=${encodeURIComponent(id)}`;
+    let html = page.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeMeta(title)}</title>`);
+    html = setMeta(html, 'name', `<meta name="description" content="${escapeMeta(description)}">`);
+    html = setMeta(html, 'property', `<meta property="og:title" content="${escapeMeta(title)}">`);
+    html = setMeta(html, 'property', `<meta property="og:description" content="${escapeMeta(description)}">`);
+    html = setMeta(html, 'property', `<meta property="og:image" content="${escapeMeta(image)}">`);
+    html = setMeta(html, 'property', `<meta property="og:url" content="${escapeMeta(pageUrl)}">`);
+    html = setMeta(html, 'property', '<meta property="og:type" content="product">');
+    html = setMeta(html, 'property', '<meta property="og:site_name" content="Barakah Agro">');
+    html = setMeta(html, 'name', '<meta name="twitter:card" content="summary_large_image">');
+    html = setMeta(html, 'name', `<meta name="twitter:title" content="${escapeMeta(title)}">`);
+    html = setMeta(html, 'name', `<meta name="twitter:description" content="${escapeMeta(description)}">`);
+    html = setMeta(html, 'name', `<meta name="twitter:image" content="${escapeMeta(image)}">`);
+    res.type('html').send(html);
+  } catch (error) {
+    console.error('Product social metadata error:', error);
+    next(error);
   }
 });
 app.use(express.static(root, { index: 'index.html' }));
