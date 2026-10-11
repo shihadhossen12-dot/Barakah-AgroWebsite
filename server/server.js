@@ -752,11 +752,13 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
 
   const normalizedCouponCode = String(couponCode || '').trim().toUpperCase();
   const couponRules = {
-    TURAB: { type: 'percent', value: 5, minSpend: 0 }
+    TURAB: { type: 'percent', value: 5, minSpend: 0 },
+    ASHATURAB: { type: 'percent', value: 20, minSpend: 0 },
+    'AMADER-BARAKAH': { type: 'percent', value: 50, minSpend: 0 }
   };
   const privateCouponCode = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
   const privateCouponPercent = Number(process.env.PRIVATE_COUPON_PERCENT);
-  if (privateCouponCode && Number.isFinite(privateCouponPercent) && privateCouponPercent > 0 && privateCouponPercent < 100) {
+  if (privateCouponCode && Number.isFinite(privateCouponPercent) && privateCouponPercent > 0 && privateCouponPercent < 100 && !Object.hasOwn(couponRules, privateCouponCode)) {
     couponRules[privateCouponCode] = { type: 'percent', value: privateCouponPercent, minSpend: 0 };
   }
   const coupon = couponRules[normalizedCouponCode];

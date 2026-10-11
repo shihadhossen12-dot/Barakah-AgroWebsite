@@ -621,7 +621,9 @@ const SHIPPING_CONFIG = {
 
 // Available coupons
 const COUPONS = {
-  TURAB: { type: "percent", value: 5, minSpend: 0, label: "৫% ছাড়" }
+  TURAB: { type: "percent", value: 5, minSpend: 0, label: "৫% ছাড়" },
+  ASHATURAB: { type: "percent", value: 20, minSpend: 0, label: "২০% ছাড়" },
+  "AMADER-BARAKAH": { type: "percent", value: 50, minSpend: 0, label: "৫০% ছাড়" }
 };
 
 const FREE_DELIVERY_OFFER_KEY = "barakah_free_delivery_offer_deadline";
