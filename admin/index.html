@@ -157,6 +157,10 @@
         color: #dbece0;
         margin: 3px 0;
         font-size: 14px;
+        border: 0;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
       }
       .nav-item.active {
         background: #1b6339;
@@ -415,10 +419,21 @@
       }
       @media (max-width: 760px) {
         .sidebar {
-          position: static;
+          position: sticky;
+          top: 0;
           width: 100%;
           height: auto;
+          z-index: 10;
+          padding: 10px 12px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          overflow-x: auto;
+          white-space: nowrap;
         }
+        .side-brand { padding: 4px 8px; font-size: 15px; }
+        .side-brand small, .nav-title { display: none; }
+        .nav-item { flex: 0 0 auto; margin: 0; padding: 9px 11px; }
         .app {
           display: block;
         }
@@ -443,7 +458,18 @@
         .count {
           margin-left: 0;
         }
+        .actions { width: 100%; flex-wrap: wrap; }
+        .actions .btn { flex: 1 1 auto; }
+        .table { min-width: 820px; }
+        .overlay { padding: 8px; }
+        .modal { max-height: 94vh; border-radius: 14px; }
+        .modal-body, .modal-head { padding: 16px; }
+        .product-form { grid-template-columns: 1fr !important; }
+        .chatbox { grid-template-rows: 120px 1fr !important; height: 82vh !important; }
       }
+      .product-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding:16px; }
+      .product-form input { min-width:0; width:100%; border:1px solid #d9e1dc; border-radius:10px; padding:11px 12px; }
+      .product-form .wide { grid-column:1/-1; }
       .badge {
         background: #dc2626;
         color: #fff;
@@ -660,7 +686,7 @@
         return d;
       }
       async function dashboard() {
-        app.innerHTML = `<div class="app"><aside class="sidebar"><div class="side-brand">🌿 Barakah Agro<small>Store Administration</small></div><div class="nav-title">Management</div><div class="nav-item active">📦 Orders</div><div class="nav-item">🛍️ Products <span style="opacity:.5">Soon</span></div><div class="nav-item">⚙️ Settings <span style="opacity:.5">Soon</span></div></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;
+        app.innerHTML = `<div class="app"><aside class="sidebar"><div class="side-brand">🌿 Barakah Agro<small>Store Administration</small></div><div class="nav-title">Management</div><button class="nav-item active" onclick="dashboard()">📦 Orders</button><button class="nav-item" onclick="showProducts()">🛍️ Products</button></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="enableNotifications()">🔔 Enable alerts</button><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openContactMessages()">✉️ Messages <span id="contactBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;
         try {
           const d = await api("/api/admin/orders");
           window.orders = d.orders || [];
@@ -669,6 +695,23 @@
           document.getElementById("orders").innerHTML =
             '<div class="empty">Orders load করা যায়নি।</div>';
         }
+      }
+      let adminProducts = [];
+      async function showProducts() {
+        app.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        app.querySelectorAll('.nav-item')[1]?.classList.add('active');
+        app.querySelector('.main').innerHTML = `<div class="header"><div><h1>Products</h1><p>Add products to the store or remove products from the catalog.</p></div><div class="actions"><button class="btn secondary" onclick="dashboard()">← Orders</button><button class="btn dark" onclick="logout()">Logout</button></div></div><section class="panel"><form class="product-form" id="productForm" onsubmit="addProduct(event)"><input name="name" required minlength="2" placeholder="Product name (English)"/><input name="banglaName" placeholder="Product name (Bangla, optional)"/><input name="price" type="number" min="0" required placeholder="Price (৳)"/><input name="oldPrice" type="number" min="0" placeholder="Old price (optional)"/><input name="category" placeholder="Category (e.g. honey)"/><input name="stock" type="number" min="0" placeholder="Stock"/><input name="image" class="wide" placeholder="Image path or URL (optional)"/><input name="description" class="wide" placeholder="Short description (optional)"/><button class="btn wide" type="submit">＋ Add product</button></form></section><section class="panel" style="margin-top:16px"><div class="toolbar"><b>Store catalog</b><span class="count" id="productCount"></span></div><div class="table-wrap" id="productRows"><div class="empty">Loading products…</div></div></section>`;
+        try { const d = await api('/api/products'); adminProducts = d.products || []; const deleted = new Set(d.deletedIds || []); const builtIns = (window.BARAKAH_PRODUCTS || []).filter(p => !deleted.has(String(p.id))); const all = [...builtIns, ...adminProducts.filter(p => !builtIns.some(x => String(x.id) === String(p.id)))]; document.getElementById('productCount').textContent = `${all.length} products`; document.getElementById('productRows').innerHTML = all.length ? `<table class="table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th></th></tr></thead><tbody>${all.map(p => `<tr><td><b>${esc(p.banglaName || p.name)}</b><div class="muted">${esc(p.name)}</div></td><td>${esc(p.categoryName || p.category || '')}</td><td>${money(p.price)}</td><td>${Number(p.stock || 0)}</td><td><button class="view" style="color:#dc2626" onclick="deleteProduct('${esc(p.id)}','${esc(p.name || p.banglaName)}')">Delete</button></td></tr>`).join('')}</tbody></table>` : '<div class="empty">No products in the catalog.</div>'; }
+        catch(e) { document.getElementById('productRows').innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+      }
+      async function addProduct(event) { event.preventDefault(); const form = event.currentTarget; const body = Object.fromEntries(new FormData(form)); try { await api('/api/admin/products',{method:'POST',body:JSON.stringify(body)}); form.reset(); await showProducts(); } catch(e) { alert(e.message); } }
+      async function deleteProduct(id,name) { if (!confirm(`“${name}” পণ্যটি ক্যাটালগ থেকে মুছবেন?`)) return; try { await api('/api/admin/products/'+encodeURIComponent(id),{method:'DELETE'}); await showProducts(); } catch(e) { alert(e.message); } }
+      async function enableNotifications() { if (!('Notification' in window)) return alert('এই browser notification সমর্থন করে না।'); const p = await Notification.requestPermission(); alert(p === 'granted' ? 'নতুন মেসেজের browser notification চালু হয়েছে।' : 'Browser settings থেকে notification অনুমতি দিন।'); }
+      async function openContactMessages() {
+        const ov = document.getElementById('overlay'); ov.style.display = 'flex';
+        ov.innerHTML = '<div class="modal"><div class="modal-head"><div><h2>Customer messages</h2><div class="muted">Contact page submissions</div></div><button class="close" onclick="closeModal()">×</button></div><div class="modal-body" id="contactMessageList"><div class="empty">Loading…</div></div></div>';
+        try { const d = await api('/api/admin/contact-messages?read=1'); const el = document.getElementById('contactMessageList'); if (!el) return; el.innerHTML = d.messages.length ? d.messages.map(m => `<article class="info" style="margin-bottom:12px"><b>${esc(m.name)}</b><div class="muted">${esc(m.phone)} · ${new Date(m.createdAt).toLocaleString()}</div>${m.subject ? `<p><b>${esc(m.subject)}</b></p>` : ''}<p style="white-space:pre-wrap">${esc(m.message)}</p></article>`).join('') : '<div class="empty">No messages yet.</div>'; refreshChatBadge(); }
+        catch(e) { document.getElementById('contactMessageList').innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
       }
       function renderOrders(list) {
         const c = {
@@ -832,11 +875,18 @@
           month: "short",
         });
       async function refreshChatBadge() {
-        if (!token || !document.getElementById("chatBadge")) return;
+        if (!token) return;
         try {
           const d = await api("/api/admin/chat");
           chatThreads = d.threads || [];
           const n = chatThreads.reduce((a, t) => a + (t.unread || 0), 0);
+          const contacts = await api('/api/admin/contact-messages');
+          const contactN = contacts.unread || 0;
+          const previous = Number(sessionStorage.getItem('barakahUnreadMessages') || 0);
+          const total = n + contactN;
+          if (total > previous && 'Notification' in window && Notification.permission === 'granted' && document.hidden) { const newest = chatThreads.find(t => t.unread); new Notification('Barakah Agro: নতুন customer message', { body: contactN ? `${contactN}টি নতুন contact message এসেছে` : `${newest?.name || 'Customer'}: ${newest?.lastText || 'নতুন মেসেজ এসেছে'}`, tag: 'barakah-customer-message' }); }
+          sessionStorage.setItem('barakahUnreadMessages', String(total));
+          const cb = document.getElementById('contactBadge'); if (cb) { cb.textContent = contactN || ''; cb.style.display = contactN ? 'inline-block' : 'none'; }
           const b = document.getElementById("chatBadge");
           if (b) {
             b.textContent = n || "";

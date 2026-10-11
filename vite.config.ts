@@ -12,7 +12,12 @@ import {
   createUser,
   findUserByPhone,
   findUserByEmail,
-  findUserById
+  findUserById,
+  getManagedProducts,
+  saveManagedProduct,
+  removeManagedProduct,
+  addContactMessage,
+  getContactMessages
 } from './server/db.js';
 
 function apiPlugin(): Plugin {
@@ -205,6 +210,49 @@ function apiPlugin(): Plugin {
         // --------------------------------------------------------------------
         // ADMIN ENDPOINTS
         // --------------------------------------------------------------------
+        if (url === '/api/contact-messages' && req.method === 'POST') {
+          const b = await readBody();
+          const name = String(b.name || '').trim().slice(0, 120);
+          const phone = String(b.phone || '').trim().slice(0, 40);
+          const subject = String(b.subject || '').trim().slice(0, 160);
+          const message = String(b.message || '').trim().slice(0, 3000);
+          if (name.length < 2 || phone.length < 6 || message.length < 2) return json(400, { error: 'নাম, ফোন ও বার্তা ঠিকভাবে পূরণ করুন।' });
+          try { const saved = await addContactMessage({ name, phone, subject, message }); return json(201, { ok: true, id: saved.id }); }
+          catch { return json(500, { error: 'বার্তা পাঠানো যায়নি। আবার চেষ্টা করুন।' }); }
+        }
+        if (url.startsWith('/api/admin/contact-messages') && req.method === 'GET') {
+          const auth = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+          if (!auth || !adminSessions.has(auth)) return json(401, { error: 'Unauthorized' });
+          try { return json(200, await getContactMessages(url.includes('read=1'))); }
+          catch { return json(500, { error: 'বার্তা লোড করা যায়নি।' }); }
+        }
+        if (url === '/api/products' && req.method === 'GET') {
+          try { return json(200, await getManagedProducts()); }
+          catch { return json(500, { error: 'Failed to load products.' }); }
+        }
+        if (url === '/api/admin/products' && req.method === 'POST') {
+          const auth = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+          if (!auth || !adminSessions.has(auth)) return json(401, { error: 'Unauthorized' });
+          const b = await readBody();
+          const name = String(b.name || '').trim();
+          const price = Number(b.price);
+          if (name.length < 2 || !Number.isFinite(price) || price < 0) return json(400, { error: 'নাম ও সঠিক দাম দিন।' });
+          const id = 'admin-' + crypto.randomBytes(6).toString('hex');
+          const category = String(b.category || 'other').trim().slice(0, 60);
+          const image = String(b.image || 'images/products/default.png').trim();
+          const oldPrice = Number(b.oldPrice) || 0;
+          const stock = Math.max(0, Number(b.stock) || 0);
+          const product = { id, name, banglaName: String(b.banglaName || name).trim(), category, categoryName: category, sku: String(b.sku || id).trim(), price, oldPrice, stock, image, images: [image], shortDescription: String(b.description || '').trim(), description: String(b.description || '').trim(), rating: 0, reviewCount: 0, packages: [{ id: id + '-default', label: '১ পিস', price, oldPrice, stock }] };
+          try { await saveManagedProduct(product); return json(201, { product }); }
+          catch { return json(500, { error: 'পণ্য যোগ করা যায়নি।' }); }
+        }
+        const managedProductMatch = url.match(/^\/api\/admin\/products\/([^/?]+)$/);
+        if (managedProductMatch && req.method === 'DELETE') {
+          const auth = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+          if (!auth || !adminSessions.has(auth)) return json(401, { error: 'Unauthorized' });
+          try { await removeManagedProduct(decodeURIComponent(managedProductMatch[1])); return json(200, { ok: true }); }
+          catch { return json(500, { error: 'পণ্য মুছতে সমস্যা হয়েছে।' }); }
+        }
         if (url === '/api/admin/login' && req.method === 'POST') {
           const body = await readBody();
           const { username, password } = body;

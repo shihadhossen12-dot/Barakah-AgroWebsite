@@ -447,11 +447,29 @@
   <script src="js/script.js"></script>
     <script src="js/chat.js"></script>
   <script>
-    function handleContactFormSubmit(e) {
+    async function handleContactFormSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById("contactName").value;
-      showToast(`ধন্যবাদ ${name}! আপনার বার্তাটি সফলভাবে গ্রহণ করা হয়েছে।`);
-      e.target.reset();
+      const form = e.currentTarget;
+      const button = form.querySelector('button[type="submit"]');
+      const name = document.getElementById("contactName").value.trim();
+      button.disabled = true;
+      try {
+        const response = await fetch('/api/contact-messages', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            phone: document.getElementById("contactPhone").value.trim(),
+            subject: document.getElementById("contactSubject").value.trim(),
+            message: document.getElementById("contactMessage").value.trim()
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'বার্তা পাঠানো যায়নি।');
+        showToast(`ধন্যবাদ ${name}! আপনার বার্তাটি সফলভাবে গ্রহণ করা হয়েছে।`);
+        form.reset();
+      } catch (error) {
+        showToast(error.message || 'বার্তা পাঠানো যায়নি। আবার চেষ্টা করুন।');
+      } finally { button.disabled = false; }
     }
   </script>
 </body>

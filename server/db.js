@@ -8,6 +8,8 @@ let pool = null;
 let useMock = false;
 const inMemoryOrders = [];
 const inMemoryUsers = [];
+const inMemoryCatalog = { products: [], deletedIds: [] };
+const inMemoryContactMessages = [];
 
 if (process.env.DATABASE_URL) {
   try {
@@ -71,6 +73,22 @@ export async function initDb() {
           read_by_admin BOOLEAN NOT NULL DEFAULT FALSE
         );
 
+        CREATE TABLE IF NOT EXISTS managed_products (
+          id TEXT PRIMARY KEY,
+          product JSONB NOT NULL,
+          deleted BOOLEAN NOT NULL DEFAULT FALSE,
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        CREATE TABLE IF NOT EXISTS contact_messages (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          phone TEXT NOT NULL,
+          subject TEXT,
+          message TEXT NOT NULL,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          read_by_admin BOOLEAN NOT NULL DEFAULT FALSE
+        );
+
         CREATE TABLE IF NOT EXISTS customer_sessions (
           token_hash TEXT PRIMARY KEY,
           user_id TEXT NOT NULL,
@@ -96,6 +114,57 @@ export async function initDb() {
     }
   }
   console.log('In-memory store initialized.');
+}
+
+export async function getManagedProducts() {
+  if (pool && !useMock) {
+    try {
+      const result = await pool.query('SELECT id, product, deleted FROM managed_products');
+      return { products: result.rows.filter(r => !r.deleted).map(r => r.product), deletedIds: result.rows.filter(r => r.deleted).map(r => r.id) };
+    } catch (err) { console.warn('Get managed products failed:', err); }
+  }
+  return { products: [...inMemoryCatalog.products], deletedIds: [...inMemoryCatalog.deletedIds] };
+}
+
+export async function saveManagedProduct(product) {
+  const id = String(product.id);
+  if (pool && !useMock) {
+    await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,$2,FALSE,NOW()) ON CONFLICT(id) DO UPDATE SET product=EXCLUDED.product, deleted=FALSE, updated_at=NOW()`, [id, product]);
+  } else {
+    inMemoryCatalog.deletedIds = inMemoryCatalog.deletedIds.filter(x => x !== id);
+    const i = inMemoryCatalog.products.findIndex(p => String(p.id) === id);
+    if (i < 0) inMemoryCatalog.products.push(product); else inMemoryCatalog.products[i] = product;
+  }
+  return product;
+}
+
+export async function removeManagedProduct(id) {
+  const key = String(id);
+  if (pool && !useMock) {
+    const result = await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,'{}'::jsonb,TRUE,NOW()) ON CONFLICT(id) DO UPDATE SET deleted=TRUE, updated_at=NOW()`, [key]);
+  } else {
+    inMemoryCatalog.products = inMemoryCatalog.products.filter(p => String(p.id) !== key);
+    if (!inMemoryCatalog.deletedIds.includes(key)) inMemoryCatalog.deletedIds.push(key);
+  }
+}
+
+export async function addContactMessage(data) {
+  const item = { name: data.name, phone: data.phone, subject: data.subject || '', message: data.message, createdAt: new Date().toISOString(), readByAdmin: false };
+  if (pool && !useMock) {
+    const r = await pool.query('INSERT INTO contact_messages(name,phone,subject,message,created_at) VALUES($1,$2,$3,$4,$5) RETURNING id', [item.name,item.phone,item.subject,item.message,item.createdAt]);
+    return { ...item, id: r.rows[0].id };
+  }
+  item.id = Date.now(); inMemoryContactMessages.unshift(item); return item;
+}
+
+export async function getContactMessages(markRead = false) {
+  if (pool && !useMock) {
+    if (markRead) await pool.query('UPDATE contact_messages SET read_by_admin=TRUE WHERE read_by_admin=FALSE');
+    const r = await pool.query('SELECT id,name,phone,subject,message,created_at AS "createdAt",read_by_admin AS "readByAdmin" FROM contact_messages ORDER BY created_at DESC LIMIT 200');
+    return { messages: r.rows, unread: r.rows.filter(m => !m.readByAdmin).length };
+  }
+  if (markRead) inMemoryContactMessages.forEach(m => m.readByAdmin = true);
+  return { messages: inMemoryContactMessages.slice(0,200), unread: inMemoryContactMessages.filter(m => !m.readByAdmin).length };
 }
 
 // --------------------------------------------------------------------------

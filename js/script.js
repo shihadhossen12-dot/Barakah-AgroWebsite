@@ -592,6 +592,23 @@ const BARAKAH_PRODUCTS = [
 
 
 window.BARAKAH_PRODUCTS = BARAKAH_PRODUCTS;
+// Apply the admin-managed catalog overlay across the storefront.
+fetch('/api/products').then(r => r.ok ? r.json() : null).then(data => {
+  if (!data) return;
+  const deleted = new Set((data.deletedIds || []).map(String));
+  for (let i = BARAKAH_PRODUCTS.length - 1; i >= 0; i--) {
+    if (deleted.has(String(BARAKAH_PRODUCTS[i].id))) BARAKAH_PRODUCTS.splice(i, 1);
+  }
+  (data.products || []).forEach(product => {
+    const i = BARAKAH_PRODUCTS.findIndex(p => String(p.id) === String(product.id));
+    if (i >= 0) BARAKAH_PRODUCTS[i] = product; else BARAKAH_PRODUCTS.push(product);
+  });
+  if (document.readyState !== 'loading') {
+    if (document.getElementById('allProductsGrid')) renderProductsCatalog(new URLSearchParams(location.search).get('category') || 'all');
+    if (document.getElementById('productDetailsContainer')) initProductDetailsPage();
+    if (document.getElementById('bestSellingCarousel')) renderHomeProductCarousels();
+  }
+}).catch(() => {});
 
 // Delivery configuration
 const SHIPPING_CONFIG = {

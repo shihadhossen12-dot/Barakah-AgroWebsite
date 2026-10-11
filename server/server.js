@@ -25,7 +25,12 @@ import {
   addChatMessage,
   getChatMessages,
   markChatReadByAdmin,
-  getChatThreads
+  getChatThreads,
+  getManagedProducts,
+  saveManagedProduct,
+  removeManagedProduct,
+  addContactMessage,
+  getContactMessages
 } from './db.js';
 import { registerReviewRoutes } from './reviews.js';
 
@@ -380,6 +385,46 @@ app.get('/api/admin/orders', adminAuth, async (req, res) => {
     console.error('Get orders error:', error);
     res.status(500).json({ error: 'Failed to load orders.' });
   }
+});
+
+app.get('/api/products', async (_req, res) => {
+  try { res.json(await getManagedProducts()); }
+  catch (error) { console.error('Products load error:', error); res.status(500).json({ error: 'Failed to load products.' }); }
+});
+
+app.post('/api/admin/products', adminAuth, async (req, res) => {
+  const b = req.body || {};
+  const name = String(b.name || '').trim();
+  const price = Number(b.price);
+  if (name.length < 2 || !Number.isFinite(price) || price < 0) return res.status(400).json({ error: 'নাম ও সঠিক দাম দিন।' });
+  const id = 'admin-' + crypto.randomBytes(6).toString('hex');
+  const category = String(b.category || 'other').trim().slice(0, 60);
+  const product = { id, name, banglaName: String(b.banglaName || name).trim(), category, categoryName: category, sku: String(b.sku || id).trim(), price, oldPrice: Number(b.oldPrice) || 0, stock: Math.max(0, Number(b.stock) || 0), image: String(b.image || 'images/products/default.png').trim(), images: [String(b.image || 'images/products/default.png').trim()], shortDescription: String(b.description || '').trim(), description: String(b.description || '').trim(), rating: 0, reviewCount: 0, packages: [{ id: id + '-default', label: '১ পিস', price, oldPrice: Number(b.oldPrice) || 0, stock: Math.max(0, Number(b.stock) || 0) }] };
+  try { await saveManagedProduct(product); res.status(201).json({ product }); }
+  catch (error) { console.error('Product add error:', error); res.status(500).json({ error: 'পণ্য যোগ করা যায়নি।' }); }
+});
+
+app.delete('/api/admin/products/:id', adminAuth, async (req, res) => {
+  try { await removeManagedProduct(req.params.id); res.json({ ok: true }); }
+  catch (error) { console.error('Product delete error:', error); res.status(500).json({ error: 'পণ্য মুছতে সমস্যা হয়েছে।' }); }
+});
+
+app.post('/api/contact-messages', async (req, res) => {
+  const name = String(req.body?.name || '').trim().slice(0, 120);
+  const phone = String(req.body?.phone || '').trim().slice(0, 40);
+  const subject = String(req.body?.subject || '').trim().slice(0, 160);
+  const message = String(req.body?.message || '').trim().slice(0, 3000);
+  if (name.length < 2 || phone.length < 6 || message.length < 2) return res.status(400).json({ error: 'নাম, ফোন ও বার্তা ঠিকভাবে পূরণ করুন।' });
+  try {
+    const saved = await addContactMessage({ name, phone, subject, message });
+    notifyOwner(`📩 নতুন যোগাযোগ বার্তা\n👤 ${name} (${phone})\nবিষয়: ${subject || 'নেই'}\n\n${message}`);
+    res.status(201).json({ ok: true, id: saved.id });
+  } catch (error) { console.error('Contact message save error:', error); res.status(500).json({ error: 'বার্তা পাঠানো যায়নি। আবার চেষ্টা করুন।' }); }
+});
+
+app.get('/api/admin/contact-messages', adminAuth, async (req, res) => {
+  try { res.json(await getContactMessages(req.query.read === '1')); }
+  catch (error) { console.error('Contact messages load error:', error); res.status(500).json({ error: 'বার্তা লোড করা যায়নি।' }); }
 });
 
 app.patch('/api/admin/orders/:id/status', adminAuth, async (req, res) => {
