@@ -335,7 +335,7 @@ function apiPlugin(): Plugin {
           const normalizedCoupon = String(couponCode || '').trim().toUpperCase();
           const privateCode = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
           const privatePercent = Number(process.env.PRIVATE_COUPON_PERCENT);
-          const couponRules: Record<string, number> = { TURAB: 5 };
+          const couponRules: Record<string, number> = { ASHATURAB: 9 };
           if (privateCode && Number.isFinite(privatePercent) && privatePercent > 0 && privatePercent < 100) couponRules[privateCode] = privatePercent;
           if (normalizedCoupon && !Object.prototype.hasOwnProperty.call(couponRules, normalizedCoupon)) return json(400, { error: 'Invalid coupon.' });
           const orderSubtotal = cleanItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
