@@ -210,6 +210,14 @@ function apiPlugin(): Plugin {
         // --------------------------------------------------------------------
         // ADMIN ENDPOINTS
         // --------------------------------------------------------------------
+        if (url === '/api/coupons/validate' && req.method === 'POST') {
+          const body = await readBody();
+          const configured = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
+          const percent = Number(process.env.PRIVATE_COUPON_PERCENT);
+          if (!configured || !Number.isFinite(percent) || percent <= 0 || percent >= 100) return json(503, { error: 'Coupon service is unavailable.' });
+          if (String(body.code || '').trim().toUpperCase() !== configured) return json(400, { error: 'Invalid coupon.' });
+          return json(200, { coupon: { type: 'percent', value: percent, minSpend: 0 } });
+        }
         if (url === '/api/contact-messages' && req.method === 'POST') {
           const b = await readBody();
           const name = String(b.name || '').trim().slice(0, 120);
@@ -304,7 +312,7 @@ function apiPlugin(): Plugin {
         // --------------------------------------------------------------------
         if (url === '/api/orders' && req.method === 'POST') {
           const body = await readBody();
-          const { customer, items, deliveryLocation, deliveryFee, subtotal, discount, total, paymentMethod, note } = body;
+          const { customer, items, deliveryLocation, deliveryFee, couponCode, paymentMethod, note } = body;
           if (!customer?.name || !customer?.phone || !customer?.district || !customer?.address) {
             return json(400, { error: 'Customer information is incomplete.' });
           }
@@ -324,6 +332,16 @@ function apiPlugin(): Plugin {
             image: String(item.image ?? '')
           }));
 
+          const normalizedCoupon = String(couponCode || '').trim().toUpperCase();
+          const privateCode = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
+          const privatePercent = Number(process.env.PRIVATE_COUPON_PERCENT);
+          const couponRules: Record<string, number> = { TURAB: 5 };
+          if (privateCode && Number.isFinite(privatePercent) && privatePercent > 0 && privatePercent < 100) couponRules[privateCode] = privatePercent;
+          if (normalizedCoupon && !Object.prototype.hasOwnProperty.call(couponRules, normalizedCoupon)) return json(400, { error: 'Invalid coupon.' });
+          const orderSubtotal = cleanItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
+          const orderDiscount = normalizedCoupon ? Math.round(orderSubtotal * couponRules[normalizedCoupon] / 100) : 0;
+          const orderDeliveryFee = Math.max(0, Number(deliveryFee) || 0);
+
           const order = {
             id: makeOrderId(),
             userId: customerSession ? customerSession.userId : (body.userId || null),
@@ -340,10 +358,10 @@ function apiPlugin(): Plugin {
             note: String(note || '').trim(),
             deliveryLocation: deliveryLocation === 'outside' ? 'outside' : 'inside',
             items: cleanItems,
-            subtotal: Number(subtotal) || 0,
-            discount: Number(discount) || 0,
-            deliveryFee: Number(deliveryFee) || 0,
-            total: Number(total) || 0
+            subtotal: orderSubtotal,
+            discount: orderDiscount,
+            deliveryFee: orderDeliveryFee,
+            total: Math.max(0, orderSubtotal - orderDiscount + orderDeliveryFee)
           };
 
           try {

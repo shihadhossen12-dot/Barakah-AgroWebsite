@@ -1363,10 +1363,25 @@ document.addEventListener("keydown", function (e) {
 // 6. CART PAGE LOGIC (cart.html)
 // --------------------------------------------------------------------------
 let appliedCouponCode = null;
+let privateCouponRule = null;
+let appliedPrivateCouponCode = null;
 try {
   const savedCouponCode = sessionStorage.getItem("barakah_coupon");
   if (savedCouponCode && COUPONS[savedCouponCode]) appliedCouponCode = savedCouponCode;
+  const savedPrivateRule = sessionStorage.getItem("barakah_private_coupon_rule");
+  if (savedPrivateRule) privateCouponRule = JSON.parse(savedPrivateRule);
+  const privateCode = sessionStorage.getItem("barakah_private_coupon_code");
+  if (privateCode && privateCode === savedCouponCode && privateCouponRule?.type === "percent") {
+    appliedCouponCode = privateCode;
+    appliedPrivateCouponCode = privateCode;
+  }
 } catch (error) {}
+
+function getAppliedCouponRule() {
+  if (!appliedCouponCode) return null;
+  if (COUPONS[appliedCouponCode]) return COUPONS[appliedCouponCode];
+  return appliedCouponCode === appliedPrivateCouponCode ? privateCouponRule : null;
+}
 
 function renderCartPage() {
   const container = document.getElementById("cartItemsContainer");
@@ -1433,8 +1448,9 @@ function calculateAndRenderTotals() {
 
   // Coupon Discount calculation
   let discountAmount = 0;
-  if (appliedCouponCode && COUPONS[appliedCouponCode]) {
-    const c = COUPONS[appliedCouponCode];
+  const activeCoupon = getAppliedCouponRule();
+  if (activeCoupon) {
+    const c = activeCoupon;
     if (subtotal >= c.minSpend) {
       if (c.type === "percent") {
         discountAmount = Math.round((subtotal * c.value) / 100);
@@ -1475,10 +1491,32 @@ function calculateAndRenderTotals() {
     syncPaymentAmount();
 }
 
-function applyCoupon() {
+async function applyCoupon() {
   const input = document.getElementById("couponInput");
   if (!input) return;
   const code = input.value.trim().toUpperCase();
+
+  if (code && !COUPONS[code]) {
+    try {
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code })
+      });
+      const result = await response.json();
+      if (response.ok && result.coupon) {
+        appliedCouponCode = code;
+        appliedPrivateCouponCode = code;
+        privateCouponRule = result.coupon;
+        try {
+          sessionStorage.setItem('barakah_coupon', code);
+          sessionStorage.setItem('barakah_private_coupon_code', code);
+          sessionStorage.setItem('barakah_private_coupon_rule', JSON.stringify(privateCouponRule));
+        } catch (error) {}
+        showToast('কুপনটি সফলভাবে প্রয়োগ হয়েছে!');
+        calculateAndRenderTotals();
+        return;
+      }
+    } catch (error) {}
+  }
 
   if (COUPONS[code]) {
     const coupon = COUPONS[code];
@@ -1491,6 +1529,8 @@ function applyCoupon() {
     }
 
     appliedCouponCode = code;
+    appliedPrivateCouponCode = null;
+    privateCouponRule = null;
     try { sessionStorage.setItem("barakah_coupon", code); } catch (error) {}
     showToast(`কুপন '${code}' সফলভাবে যুক্ত হয়েছে!`);
     calculateAndRenderTotals();
@@ -1742,8 +1782,9 @@ async function handleCheckoutSubmit(e) {
   if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
 
   let discountAmount = 0;
-  if (appliedCouponCode && COUPONS[appliedCouponCode]) {
-    const coupon = COUPONS[appliedCouponCode];
+  const activeCoupon = getAppliedCouponRule();
+  if (activeCoupon) {
+    const coupon = activeCoupon;
     if (subtotal >= coupon.minSpend) {
       discountAmount = coupon.type === "percent"
         ? Math.round((subtotal * coupon.value) / 100)
@@ -1781,7 +1822,11 @@ async function handleCheckoutSubmit(e) {
     showOrderSuccessModal(data.order.id, name, phone, address, data.order.paymentMethod);
     sessionStorage.removeItem("barakah_checkout");
     sessionStorage.removeItem("barakah_coupon");
+    sessionStorage.removeItem("barakah_private_coupon_code");
+    sessionStorage.removeItem("barakah_private_coupon_rule");
     appliedCouponCode = null;
+    appliedPrivateCouponCode = null;
+    privateCouponRule = null;
     clearCart();
     updateCartCount();
   } catch (error) {

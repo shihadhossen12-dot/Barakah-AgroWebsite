@@ -709,6 +709,17 @@ app.get('/api/orders/track', async (req, res) => {
   }
 });
 
+app.post('/api/coupons/validate', (req, res) => {
+  const configuredCode = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
+  const percent = Number(process.env.PRIVATE_COUPON_PERCENT);
+  const enteredCode = String(req.body?.code || '').trim().toUpperCase();
+  if (!configuredCode || !Number.isFinite(percent) || percent <= 0 || percent >= 100) {
+    return res.status(503).json({ error: 'Coupon service is unavailable.' });
+  }
+  if (enteredCode !== configuredCode) return res.status(400).json({ error: 'Invalid coupon.' });
+  res.json({ coupon: { type: 'percent', value: percent, minSpend: 0 } });
+});
+
 app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   const body = req.body || {};
   const { customer, items, deliveryLocation, deliveryFee, couponCode, paymentMethod, note } = body;
@@ -743,8 +754,13 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   const couponRules = {
     TURAB: { type: 'percent', value: 5, minSpend: 0 }
   };
+  const privateCouponCode = String(process.env.PRIVATE_COUPON_CODE || '').trim().toUpperCase();
+  const privateCouponPercent = Number(process.env.PRIVATE_COUPON_PERCENT);
+  if (privateCouponCode && Number.isFinite(privateCouponPercent) && privateCouponPercent > 0 && privateCouponPercent < 100) {
+    couponRules[privateCouponCode] = { type: 'percent', value: privateCouponPercent, minSpend: 0 };
+  }
   const coupon = couponRules[normalizedCouponCode];
-  if (normalizedCouponCode && !coupon) {
+  if (normalizedCouponCode && !Object.hasOwn(couponRules, normalizedCouponCode)) {
     return res.status(400).json({ error: 'কুপন কোডটি সঠিক নয়।' });
   }
 
