@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import crypto from 'crypto';
-import {defineConfig, Plugin} from 'vite';
+import {defineConfig, Plugin, loadEnv} from 'vite';
 import {
   initDb,
   createOrder,
@@ -379,7 +379,9 @@ function apiPlugin(): Plugin {
   };
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  // Expose local .env settings to API middleware as well as Vite itself.
+  Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
   return {
     plugins: [react(), tailwindcss(), apiPlugin()],
     resolve: {
