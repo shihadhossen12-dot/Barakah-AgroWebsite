@@ -604,9 +604,53 @@ const SHIPPING_CONFIG = {
 
 // Available coupons
 const COUPONS = {
-  BARAKAH10: { type: "percent", value: 10, minSpend: 1000, label: "১০% ছাড়" },
-  PURE100: { type: "fixed", value: 100, minSpend: 1500, label: "৳১০০ ছাড়" }
+  TURAB: { type: "percent", value: 5, minSpend: 0, label: "৫% ছাড়" }
 };
+
+const FREE_DELIVERY_OFFER_KEY = "barakah_free_delivery_offer_deadline";
+const FREE_DELIVERY_OFFER_DURATION = 2 * 60 * 60 * 1000;
+let fallbackOfferDeadline = 0;
+
+function getFreeDeliveryOfferDeadline() {
+  try {
+    const savedDeadline = Number(localStorage.getItem(FREE_DELIVERY_OFFER_KEY));
+    if (Number.isFinite(savedDeadline) && savedDeadline > 0) return savedDeadline;
+
+    const deadline = Date.now() + FREE_DELIVERY_OFFER_DURATION;
+    localStorage.setItem(FREE_DELIVERY_OFFER_KEY, String(deadline));
+    return deadline;
+  } catch (error) {
+    if (!fallbackOfferDeadline) fallbackOfferDeadline = Date.now() + FREE_DELIVERY_OFFER_DURATION;
+    return fallbackOfferDeadline;
+  }
+}
+
+function isFreeDeliveryOfferActive() {
+  return Date.now() < getFreeDeliveryOfferDeadline();
+}
+
+function initFreeDeliveryCountdown() {
+  const hoursEl = document.getElementById("offerCountdownHours");
+  const minutesEl = document.getElementById("offerCountdownMinutes");
+  const secondsEl = document.getElementById("offerCountdownSeconds");
+  const statusEl = document.getElementById("offerCountdownStatus");
+  if (!hoursEl || !minutesEl || !secondsEl || !statusEl) return;
+
+  const updateCountdown = () => {
+    const remaining = Math.max(0, getFreeDeliveryOfferDeadline() - Date.now());
+    const totalSeconds = Math.floor(remaining / 1000);
+    hoursEl.textContent = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    minutesEl.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    secondsEl.textContent = String(totalSeconds % 60).padStart(2, "0");
+    statusEl.textContent = remaining > 0 ? "অফারটি ২ ঘণ্টার মধ্যে শেষ হবে" : "এই অফারের সময় শেষ";
+    document.querySelectorAll("[data-free-delivery-copy]").forEach((element) => {
+      if (!isFreeDeliveryOfferActive()) element.textContent = "ফ্রি ডেলিভারি অফারের সময় শেষ";
+    });
+  };
+
+  updateCountdown();
+  window.setInterval(updateCountdown, 1000);
+}
 
 /* ==========================================================================
    CUSTOMER REVIEWS DATABASE (Easily customize or replace photos here)
@@ -1302,6 +1346,10 @@ document.addEventListener("keydown", function (e) {
 // 6. CART PAGE LOGIC (cart.html)
 // --------------------------------------------------------------------------
 let appliedCouponCode = null;
+try {
+  const savedCouponCode = sessionStorage.getItem("barakah_coupon");
+  if (savedCouponCode && COUPONS[savedCouponCode]) appliedCouponCode = savedCouponCode;
+} catch (error) {}
 
 function renderCartPage() {
   const container = document.getElementById("cartItemsContainer");
@@ -1362,7 +1410,7 @@ function calculateAndRenderTotals() {
   }
 
   let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (subtotal >= SHIPPING_CONFIG.freeThreshold) {
+  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) {
     deliveryFee = 0;
   }
 
@@ -1390,7 +1438,7 @@ function calculateAndRenderTotals() {
 
   if (subtotalEl) subtotalEl.textContent = `৳ ${subtotal}`;
   if (deliveryEl) {
-    if (deliveryFee === 0 && subtotal >= SHIPPING_CONFIG.freeThreshold) {
+    if (deliveryFee === 0 && isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) {
       deliveryEl.innerHTML = '<span class="free-delivery-badge">ফ্রি ডেলিভারি!</span>';
     } else {
       deliveryEl.textContent = `৳ ${deliveryFee}`;
@@ -1426,6 +1474,7 @@ function applyCoupon() {
     }
 
     appliedCouponCode = code;
+    try { sessionStorage.setItem("barakah_coupon", code); } catch (error) {}
     showToast(`কুপন '${code}' সফলভাবে যুক্ত হয়েছে!`);
     calculateAndRenderTotals();
   } else {
@@ -1673,7 +1722,7 @@ async function handleCheckoutSubmit(e) {
   document.querySelectorAll('input[name="deliveryLocation"]').forEach(r => { if (r.checked) location = r.value; });
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
+  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
 
   let discountAmount = 0;
   if (appliedCouponCode && COUPONS[appliedCouponCode]) {
@@ -1689,7 +1738,7 @@ async function handleCheckoutSubmit(e) {
   const payload = {
     customer: { name, phone, district, address },
     note, deliveryLocation: location, items: cart,
-    subtotal, discount: discountAmount, deliveryFee, total: grandTotal,
+    subtotal, discount: discountAmount, couponCode: appliedCouponCode || null, deliveryFee, total: grandTotal,
     paymentMethod: paymentInfo.summary
   };
 
@@ -1714,6 +1763,8 @@ async function handleCheckoutSubmit(e) {
 
     showOrderSuccessModal(data.order.id, name, phone, address, data.order.paymentMethod);
     sessionStorage.removeItem("barakah_checkout");
+    sessionStorage.removeItem("barakah_coupon");
+    appliedCouponCode = null;
     clearCart();
     updateCartCount();
   } catch (error) {
@@ -1752,7 +1803,7 @@ function orderViaWhatsApp() {
   }
 
   let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
+  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
 
   const total = subtotal + deliveryFee;
 
@@ -1835,6 +1886,11 @@ function showOrderSuccessModal(orderId, name, phone, address, paymentMethod) {
 // 8. GLOBAL INITIALIZATION (DOM CONTENT LOADED)
 // --------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
+  getFreeDeliveryOfferDeadline();
+  initFreeDeliveryCountdown();
+  const couponInput = document.getElementById("couponInput");
+  if (couponInput && appliedCouponCode) couponInput.value = appliedCouponCode;
+
   // Update cart badge across all pages
   updateCartCount();
 

@@ -19,13 +19,13 @@
 </head>
 <body>
 
-  <!-- ========================================================================
+  <!-- =======================================================================
        TOP ANNOUNCEMENT BAR
        ======================================================================== -->
   <div class="top-bar">
     <div class="container top-bar-inner">
       <div class="top-bar-left">
-        <span>🔥 বিশেষ অফার: ২,০০০ টাকার অর্ডারে সমগ্র বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!</span>
+        <span data-free-delivery-copy>🔥 বিশেষ অফার: ২,০০০ টাকার অর্ডারে সমগ্র বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!</span>
       </div>
       <div class="top-bar-right">
         <a href="tel:01786239185" class="top-bar-link">
@@ -381,7 +381,7 @@
       <div class="desktop-cat-promo">
         <a href="products.html" class="desktop-promo-badge" title="বিশেষ সুবিধা">
           <span class="promo-dot"></span>
-          <span class="promo-text">🚚 ২,০০০৳ অর্ডারে ফ্রি ডেলিভারি</span>
+          <span class="promo-text" data-free-delivery-copy>🚚 ২,০০০৳ অর্ডারে ফ্রি ডেলিভারি</span>
         </a>
       </div>
 
@@ -464,29 +464,6 @@
   </div>
 
   <!-- ========================================================================
-       FEATURED CATEGORIES (SHOP BY CATEGORY)
-       ======================================================================== -->
-  <section class="section" style="padding-bottom: 20px;">
-    <div class="container">
-      <div class="carousel-header">
-        <div class="carousel-title-box">
-          <span class="carousel-badge">ক্যাটাগরি ব্রাউজ করুন</span>
-          <h2 class="carousel-title">পণ্য বিভাগ অনুসারে কেনাকাটা করুন</h2>
-          <p class="carousel-desc">আপনার পরিবারের স্বাস্থ্য ও দৈনন্দিন সুষম আহারের জন্য প্রস্তুত খাঁটি খাদ্য বিভাগসমূহ</p>
-        </div>
-        <div class="carousel-actions">
-          <a href="products.html" class="carousel-view-all">সকল পণ্য →</a>
-        </div>
-      </div>
-
-      <!-- Categories Grid / Mobile Horizontal Carousel -->
-      <div class="categories-grid" id="featuredCategoriesGrid">
-        <!-- Rendered dynamically from FEATURED_CATEGORIES in js/script.js -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================
        BEST SELLING PRODUCTS SECTION (HORIZONTAL CAROUSEL)
        ======================================================================== -->
   <section class="carousel-section">
@@ -494,7 +471,7 @@
       <div class="carousel-header">
         <div class="carousel-title-box">
           <span class="carousel-badge">গ্রাহকদের সবচেয়ে পছন্দের</span>
-          <h2 class="carousel-title">সেরা বিক্রিত পণ্য সম্ভার (Best Selling)</h2>
+          <h2 class="carousel-title"><span style="color: rgb(10, 203, 142); font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"> Barakah Agro</span> থেকে যেকোনো পণ্য কিনুন আপনার পছন্দের</h2>
           <p class="carousel-desc">কাঠের ঘানির খাঁটি সরিষার তেল, দেশি হাঁসের মাংস ও পুষ্টিকর সুপারফুড</p>
         </div>
         <div class="carousel-actions">
@@ -520,9 +497,9 @@
         <div class="promo-grid">
           <div>
             <span class="promo-tag">🔥 বিশেষ সুযোগ</span>
-            <h2 class="promo-title">২,০০০ টাকার অর্ডারে সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!</h2>
+            <h2 class="promo-title" data-free-delivery-copy>২,০০০ টাকার অর্ডারে সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!</h2>
             <p class="promo-subtitle">
-              ঘানির খাঁটি তেল ও স্বাস্থ্যকর পারিবারিক খাদ্য এখন আরও সাশ্রয়ে। কোনো প্রকার প্রিজারভেটিভ ছাড়াই শতভাগ ফ্রেশ পণ্য পৌঁছে দিচ্ছি আপনার ঠিকানায়।
+              পেমেন্টের সময় TURAB কোড ব্যবহার করে অতিরিক্ত ৫% ছাড় নিন। ৳২,০০০ বা তার বেশি অর্ডারে সারা দেশে ফ্রি ডেলিভারি।
             </p>
             <div style="display: flex; gap: 14px; flex-wrap: wrap;">
               <a href="products.html" class="btn btn-accent btn-lg">এখনই অর্ডার করুন</a>
@@ -533,6 +510,20 @@
             </div>
           </div>
           <div class="promo-features">
+            <div class="promo-countdown" role="timer" aria-label="ফ্রি ডেলিভারি অফার শেষ হওয়ার কাউন্টডাউন">
+              <div class="promo-countdown-copy">
+                <span class="promo-countdown-kicker">সীমিত সময়ের অফার</span>
+                <strong>ফ্রি ডেলিভারি শেষ হতে বাকি</strong>
+              </div>
+              <div class="promo-countdown-units" aria-live="off">
+                <div class="promo-countdown-unit"><strong id="offerCountdownHours">02</strong><span>ঘণ্টা</span></div>
+                <span class="promo-countdown-separator">:</span>
+                <div class="promo-countdown-unit"><strong id="offerCountdownMinutes">00</strong><span>মিনিট</span></div>
+                <span class="promo-countdown-separator">:</span>
+                <div class="promo-countdown-unit"><strong id="offerCountdownSeconds">00</strong><span>সেকেন্ড</span></div>
+              </div>
+              <p class="promo-countdown-status" id="offerCountdownStatus">অফারটি ২ ঘণ্টার মধ্যে শেষ হবে</p>
+            </div>
             <div class="promo-feature-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
               <span>১০০% দেশি মাঘী সরিষা থেকে ঘানিভাঙা তেল</span>

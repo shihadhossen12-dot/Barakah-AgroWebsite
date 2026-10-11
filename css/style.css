@@ -3739,6 +3739,74 @@ textarea.form-control {
   padding: 20px;
 }
 
+.promo-countdown {
+  padding: 16px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-md);
+  background: rgba(4, 29, 16, 0.34);
+}
+
+.promo-countdown-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.promo-countdown-kicker {
+  color: #d4f2a5;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.promo-countdown-copy strong {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.promo-countdown-units {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.promo-countdown-unit {
+  display: flex;
+  min-width: 58px;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.promo-countdown-unit strong {
+  color: #ffffff;
+  font-size: 1.7rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.promo-countdown-unit span {
+  margin-top: 5px;
+  color: #dcebdd;
+  font-size: 0.72rem;
+}
+
+.promo-countdown-separator {
+  color: #d4f2a5;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.promo-countdown-status {
+  margin: 10px 0 0;
+  color: #e2f2e6;
+  font-size: 0.78rem;
+}
+
 .promo-feature-item {
   display: flex;
   align-items: center;

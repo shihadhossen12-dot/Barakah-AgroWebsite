@@ -642,7 +642,7 @@ app.get('/api/orders/track', async (req, res) => {
 
 app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   const body = req.body || {};
-  const { customer, items, deliveryLocation, deliveryFee, subtotal, discount, total, paymentMethod, note } = body;
+  const { customer, items, deliveryLocation, deliveryFee, couponCode, paymentMethod, note } = body;
   if (!customer?.name || !customer?.phone || !customer?.district || !customer?.address) {
     return res.status(400).json({ error: 'Customer information is incomplete.' });
   }
@@ -670,6 +670,25 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
     image: String(item.image ?? '')
   }));
 
+  const normalizedCouponCode = String(couponCode || '').trim().toUpperCase();
+  const couponRules = {
+    TURAB: { type: 'percent', value: 5, minSpend: 0 }
+  };
+  const coupon = couponRules[normalizedCouponCode];
+  if (normalizedCouponCode && !coupon) {
+    return res.status(400).json({ error: 'কুপন কোডটি সঠিক নয়।' });
+  }
+
+  const orderSubtotal = cleanItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  if (coupon && orderSubtotal < coupon.minSpend) {
+    return res.status(400).json({ error: `এই কুপন ব্যবহারের জন্য সর্বনিম্ন ৳ ${coupon.minSpend} টাকার অর্ডার করতে হবে।` });
+  }
+  const orderDiscount = coupon
+    ? (coupon.type === 'percent' ? Math.round(orderSubtotal * coupon.value / 100) : coupon.value)
+    : 0;
+  const orderDeliveryFee = Math.max(0, Number(deliveryFee) || 0);
+  const orderTotal = Math.max(0, orderSubtotal - orderDiscount + orderDeliveryFee);
+
   const order = {
     id: makeOrderId(),
     userId: req.customer ? req.customer.userId : null,
@@ -686,10 +705,10 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
     note: String(note || '').trim(),
     deliveryLocation: deliveryLocation === 'outside' ? 'outside' : 'inside',
     items: cleanItems,
-    subtotal: Number(subtotal) || 0,
-    discount: Number(discount) || 0,
-    deliveryFee: Number(deliveryFee) || 0,
-    total: Number(total) || 0
+    subtotal: orderSubtotal,
+    discount: orderDiscount,
+    deliveryFee: orderDeliveryFee,
+    total: orderTotal
   };
 
   try {
