@@ -1,66 +1,42 @@
-# Barakah Agro — VS Code → GitHub → Live Website
+# Barakah Agro — Hostinger Deployment
 
-This project is prepared so you can keep editing the existing HTML/CSS/JS in VS Code and automatically deploy changes after pushing to GitHub through a connected Render web service.
+The site uses a Node.js/Express backend and Hostinger MySQL for customer accounts, orders, carts, reviews, managed products, chat, and contact messages.
 
-## 1. Local development
+## 1. Create the Hostinger database
+
+In hPanel, create a MySQL database and user, grant that user access to the database, and note the exact hostname, database name, username, and password. Do not share or commit these credentials.
+
+## 2. Check the hosting plan
+
+Use the Node.js application feature available in your hPanel. If your plan does not show a Node.js app option, this project needs a Hostinger VPS or a hosting plan that supports Node.js; static PHP hosting alone cannot run the Express API.
+
+## 3. Deploy the application
+
+Upload or connect the repository so the project root contains `package.json`, `server/`, and the HTML files. Configure the Node.js app to use the project's supported Node.js version (20 or newer) and start command `npm start`.
+
+Add these environment variables in the Node.js app settings. Use the values shown by hPanel for the MySQL connection:
+
+- `DB_HOST`
+- `DB_PORT` (usually `3306`)
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD` (use a strong, unique secret)
+- `NODE_ENV` = `production`
+- `APP_URL` (your live HTTPS domain)
+
+The application creates the required MySQL tables at startup. If the database connection or table setup fails, the Node.js app should fail to start rather than accept orders into temporary memory.
+
+## 4. Verify after deployment
+
+Open the site and `/api/health`, then test customer registration/login, a checkout order, admin order status updates, reviews, and contact messages. Confirm the rows appear in Hostinger phpMyAdmin. Take a database backup before importing any existing production data.
+
+## Local development
 
 ```bash
 npm install
 npm start
 ```
 
-Open:
-- Shop: http://localhost:3000
-- Admin: http://localhost:3000/admin
-
-Create `.env` locally from `.env.example` and set your own `ADMIN_PASSWORD`.
-
-## 2. Put the project on GitHub
-
-Create a new GitHub repository and upload/push this project folder. Do NOT upload `.env`, `node_modules`, or real credentials. They are excluded by `.gitignore`.
-
-Typical commands:
-
-```bash
-git init
-git add .
-git commit -m "Initial Barakah Agro website"
-git branch -M main
-git remote add origin YOUR_GITHUB_REPOSITORY_URL
-git push -u origin main
-```
-
-## 3. Deploy on Render
-
-Create a Render Web Service from the GitHub repository. The included `render.yaml` contains the build/start/health-check settings.
-
-Set these environment variables in Render:
-
-- `ADMIN_USERNAME` = `admin` (or your chosen username)
-- `ADMIN_PASSWORD` = your strong admin password
-- `APP_URL` = your Render service URL
-- `PORT` is provided by Render automatically; the app also defaults to 3000 locally.
-
-Keep `ADMIN_PASSWORD` as a secret in Render. Never commit it to GitHub.
-
-## 4. Automatic updates
-
-With the Render service connected to your GitHub repository and automatic deploys enabled:
-
-1. Edit HTML/CSS/JS in VS Code.
-2. Save your changes.
-3. Commit and push to GitHub:
-
-```bash
-git add .
-git commit -m "Update website"
-git push
-```
-
-4. Render detects the new commit and deploys it automatically.
-
-The live website then uses the new code.
-
-## Important: order data in production
-
-The current project stores orders in `server/data/orders.json`, which is fine for local development. Before relying on this for a real production store, move order storage to a managed database (such as PostgreSQL) or configure persistent storage on your hosting provider. Otherwise a redeploy/restart on some hosts may not preserve local files.
+Create `.env` from `.env.example` for local use. Never upload `.env`, database credentials, or real admin secrets to GitHub.

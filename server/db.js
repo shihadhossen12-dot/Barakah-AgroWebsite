@@ -1,116 +1,171 @@
 import 'dotenv/config';
-import pg from 'pg';
+import mysql from 'mysql2/promise';
 import crypto from 'crypto';
-
-const { Pool } = pg;
 
 let pool = null;
 let useMock = false;
+const databaseConfig = {
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
+};
+const hasDatabaseConfig = Boolean(
+  databaseConfig.host || databaseConfig.user || databaseConfig.password || databaseConfig.database
+);
+const hasCompleteDatabaseConfig = Boolean(
+  databaseConfig.host && databaseConfig.user && databaseConfig.password && databaseConfig.database
+);
 const inMemoryOrders = [];
 const inMemoryUsers = [];
 const inMemoryCatalog = { products: [], deletedIds: [] };
 const inMemoryContactMessages = [];
 
-if (process.env.DATABASE_URL) {
+if (hasCompleteDatabaseConfig) {
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false }
+    const mysqlPool = mysql.createPool({
+      ...databaseConfig,
+      waitForConnections: true,
+      connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 5),
+      charset: 'utf8mb4',
+      timezone: 'Z',
+      flags: ['+FOUND_ROWS']
     });
+    pool = {
+      async query(statement, params = []) {
+        const sql = statement
+          .replace(/\$\d+/g, '?')
+          .replace(/\s+AS\s+"([^"]+)"/g, ' AS `$1`');
+        const values = params.map((value) => {
+          if (typeof value === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(value)) {
+            return new Date(value);
+          }
+          if (value && typeof value === 'object' && !Buffer.isBuffer(value) && !(value instanceof Date)) {
+            return JSON.stringify(value);
+          }
+          return value;
+        });
+        const [result] = await mysqlPool.query(sql, values);
+        return Array.isArray(result)
+          ? { rows: result, rowCount: result.length }
+          : { rows: [], rowCount: result.affectedRows || 0, insertId: result.insertId };
+      }
+    };
   } catch (err) {
-    console.warn('[AI Studio] PostgreSQL pool init failed, fallback to in-memory store:', err);
-    useMock = true;
+    console.warn('MySQL pool initialization failed:', err);
+    throw err;
   }
 } else {
-  console.warn('[AI Studio] DATABASE_URL is not configured. Using in-memory store.');
+  console.warn('MySQL is not configured. Using in-memory store for local development.');
   useMock = true;
 }
 
-export async function initDb() {
+function handleDatabaseError(err) {
+  if (hasCompleteDatabaseConfig) throw err;
+  useMock = true;
+}
+
+export async function initDb({ required = false } = {}) {
+  if (hasDatabaseConfig && !hasCompleteDatabaseConfig) {
+    throw new Error('MySQL configuration is incomplete. Set DB_HOST, DB_USER, DB_PASSWORD and DB_NAME.');
+  }
+  if (required && !hasCompleteDatabaseConfig) {
+    const detail = process.env.DATABASE_URL
+      ? 'DATABASE_URL is PostgreSQL; configure Hostinger MySQL DB_* variables.'
+      : 'Production requires Hostinger MySQL settings: DB_HOST, DB_USER, DB_PASSWORD and DB_NAME.';
+    throw new Error(detail);
+  }
   if (pool && !useMock) {
     try {
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS users (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          phone TEXT NOT NULL UNIQUE,
-          email TEXT,
-          password_hash TEXT NOT NULL,
-          salt TEXT NOT NULL,
-          created_at TIMESTAMPTZ NOT NULL,
-          updated_at TIMESTAMPTZ NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS orders (
-          id TEXT PRIMARY KEY,
-          user_id TEXT,
-          created_at TIMESTAMPTZ NOT NULL,
-          updated_at TIMESTAMPTZ NOT NULL,
-          status TEXT NOT NULL,
+      const statements = [
+        `CREATE TABLE IF NOT EXISTS users (
+          id VARCHAR(100) PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          phone VARCHAR(32) NOT NULL UNIQUE,
+          email VARCHAR(255),
+          password_hash VARCHAR(255) NOT NULL,
+          salt VARCHAR(255) NOT NULL,
+          district VARCHAR(255),
+          address TEXT,
+          created_at DATETIME(3) NOT NULL,
+          updated_at DATETIME(3) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS orders (
+          id VARCHAR(100) PRIMARY KEY,
+          user_id VARCHAR(100),
+          created_at DATETIME(3) NOT NULL,
+          updated_at DATETIME(3) NOT NULL,
+          status VARCHAR(40) NOT NULL,
           payment_method TEXT,
-          customer JSONB NOT NULL,
+          customer JSON NOT NULL,
           note TEXT,
-          delivery_location TEXT,
-          items JSONB NOT NULL,
-          subtotal NUMERIC NOT NULL DEFAULT 0,
-          discount NUMERIC NOT NULL DEFAULT 0,
-          delivery_fee NUMERIC NOT NULL DEFAULT 0,
-          total NUMERIC NOT NULL DEFAULT 0
-        );
-
-          CREATE TABLE IF NOT EXISTS carts (
-          user_id TEXT PRIMARY KEY,
-          items JSONB NOT NULL DEFAULT '[]'::jsonb,
-          updated_at TIMESTAMPTZ NOT NULL
-        );
-
-          CREATE TABLE IF NOT EXISTS chat_messages (
-          id SERIAL PRIMARY KEY,
-          user_id TEXT NOT NULL,
-          sender TEXT NOT NULL,
+          delivery_location VARCHAR(40),
+          items JSON NOT NULL,
+          subtotal DECIMAL(12,2) NOT NULL DEFAULT 0,
+          discount DECIMAL(12,2) NOT NULL DEFAULT 0,
+          delivery_fee DECIMAL(12,2) NOT NULL DEFAULT 0,
+          total DECIMAL(12,2) NOT NULL DEFAULT 0,
+          INDEX orders_user_created_idx (user_id, created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS carts (
+          user_id VARCHAR(100) PRIMARY KEY,
+          items JSON NOT NULL,
+          updated_at DATETIME(3) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS chat_messages (
+          id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          sender VARCHAR(20) NOT NULL,
           text TEXT NOT NULL,
-          created_at TIMESTAMPTZ NOT NULL,
-          read_by_admin BOOLEAN NOT NULL DEFAULT FALSE
-        );
-
-        CREATE TABLE IF NOT EXISTS managed_products (
-          id TEXT PRIMARY KEY,
-          product JSONB NOT NULL,
+          created_at DATETIME(3) NOT NULL,
+          read_by_admin BOOLEAN NOT NULL DEFAULT FALSE,
+          INDEX chat_user_id_idx (user_id, id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS managed_products (
+          id VARCHAR(100) PRIMARY KEY,
+          product JSON NOT NULL,
           deleted BOOLEAN NOT NULL DEFAULT FALSE,
-          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
-        CREATE TABLE IF NOT EXISTS contact_messages (
-          id SERIAL PRIMARY KEY,
-          name TEXT NOT NULL,
-          phone TEXT NOT NULL,
-          subject TEXT,
+          updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS contact_messages (
+          id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          phone VARCHAR(32) NOT NULL,
+          subject VARCHAR(255),
           message TEXT NOT NULL,
-          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
           read_by_admin BOOLEAN NOT NULL DEFAULT FALSE
-        );
-
-        CREATE TABLE IF NOT EXISTS customer_sessions (
-          token_hash TEXT PRIMARY KEY,
-          user_id TEXT NOT NULL,
-          expires_at TIMESTAMPTZ NOT NULL
-        );
-
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS district TEXT;
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT;
-
-        -- Add user_id column if table was previously created without it
-        DO $$
-        BEGIN
-          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='orders' AND column_name='user_id') THEN
-            ALTER TABLE orders ADD COLUMN user_id TEXT;
-          END IF;
-        END $$;
-      `);
-      console.log('PostgreSQL database connected (users & orders tables initialized).');
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS customer_sessions (
+          token_hash VARCHAR(128) PRIMARY KEY,
+          user_id VARCHAR(100) NOT NULL,
+          expires_at DATETIME(3) NOT NULL,
+          INDEX sessions_expiry_idx (expires_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        `CREATE TABLE IF NOT EXISTS reviews (
+          id VARCHAR(100) PRIMARY KEY,
+          product_id VARCHAR(20) NOT NULL,
+          user_id VARCHAR(100) NOT NULL,
+          name VARCHAR(60) NOT NULL,
+          location VARCHAR(80),
+          rating TINYINT NOT NULL,
+          text TEXT NOT NULL,
+          image MEDIUMTEXT,
+          verified BOOLEAN NOT NULL DEFAULT FALSE,
+          created_at DATETIME(3) NOT NULL,
+          admin_reply TEXT,
+          admin_reply_at DATETIME(3),
+          UNIQUE KEY reviews_product_user_idx (product_id, user_id),
+          KEY reviews_product_idx (product_id, created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
+      ];
+      for (const statement of statements) await pool.query(statement);
+      console.log('MySQL database connected (application tables initialized).');
       return;
     } catch (err) {
-      console.warn('PostgreSQL table init failed, switching to in-memory store:', err);
-      useMock = true;
+      console.error('MySQL table initialization failed:', err);
+      throw err;
     }
   }
   console.log('In-memory store initialized.');
@@ -121,7 +176,10 @@ export async function getManagedProducts() {
     try {
       const result = await pool.query('SELECT id, product, deleted FROM managed_products');
       return { products: result.rows.filter(r => !r.deleted).map(r => r.product), deletedIds: result.rows.filter(r => r.deleted).map(r => r.id) };
-    } catch (err) { console.warn('Get managed products failed:', err); }
+    } catch (err) {
+      console.warn('MySQL getManagedProducts failed:', err);
+      handleDatabaseError(err);
+    }
   }
   return { products: [...inMemoryCatalog.products], deletedIds: [...inMemoryCatalog.deletedIds] };
 }
@@ -129,7 +187,7 @@ export async function getManagedProducts() {
 export async function saveManagedProduct(product) {
   const id = String(product.id);
   if (pool && !useMock) {
-    await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,$2,FALSE,NOW()) ON CONFLICT(id) DO UPDATE SET product=EXCLUDED.product, deleted=FALSE, updated_at=NOW()`, [id, product]);
+    await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,$2,FALSE,NOW()) ON DUPLICATE KEY UPDATE product=VALUES(product), deleted=FALSE, updated_at=NOW()`, [id, product]);
   } else {
     inMemoryCatalog.deletedIds = inMemoryCatalog.deletedIds.filter(x => x !== id);
     const i = inMemoryCatalog.products.findIndex(p => String(p.id) === id);
@@ -141,7 +199,7 @@ export async function saveManagedProduct(product) {
 export async function removeManagedProduct(id) {
   const key = String(id);
   if (pool && !useMock) {
-    const result = await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,'{}'::jsonb,TRUE,NOW()) ON CONFLICT(id) DO UPDATE SET deleted=TRUE, updated_at=NOW()`, [key]);
+    await pool.query(`INSERT INTO managed_products(id, product, deleted, updated_at) VALUES($1,'{}',TRUE,NOW()) ON DUPLICATE KEY UPDATE deleted=TRUE, updated_at=NOW()`, [key]);
   } else {
     inMemoryCatalog.products = inMemoryCatalog.products.filter(p => String(p.id) !== key);
     if (!inMemoryCatalog.deletedIds.includes(key)) inMemoryCatalog.deletedIds.push(key);
@@ -149,10 +207,10 @@ export async function removeManagedProduct(id) {
 }
 
 export async function addContactMessage(data) {
-  const item = { name: data.name, phone: data.phone, subject: data.subject || '', message: data.message, createdAt: new Date().toISOString(), readByAdmin: false };
+  const item = { id: 0, name: data.name, phone: data.phone, subject: data.subject || '', message: data.message, createdAt: new Date().toISOString(), readByAdmin: false };
   if (pool && !useMock) {
-    const r = await pool.query('INSERT INTO contact_messages(name,phone,subject,message,created_at) VALUES($1,$2,$3,$4,$5) RETURNING id', [item.name,item.phone,item.subject,item.message,item.createdAt]);
-    return { ...item, id: r.rows[0].id };
+    const result = await pool.query('INSERT INTO contact_messages(name,phone,subject,message,created_at) VALUES($1,$2,$3,$4,$5)', [item.name,item.phone,item.subject,item.message,item.createdAt]);
+    return { ...item, id: result.insertId };
   }
   item.id = Date.now(); inMemoryContactMessages.unshift(item); return item;
 }
@@ -202,8 +260,8 @@ export async function createUser(userData) {
       );
       return user;
     } catch (err) {
-      console.warn('PostgreSQL createUser failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL createUser failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -221,8 +279,8 @@ export async function findUserByPhone(phone) {
       );
       return res.rows[0] || null;
     } catch (err) {
-      console.warn('PostgreSQL findUserByPhone failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL findUserByPhone failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -240,8 +298,8 @@ export async function findUserByEmail(email) {
       );
       return res.rows[0] || null;
     } catch (err) {
-      console.warn('PostgreSQL findUserByEmail failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL findUserByEmail failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -258,8 +316,8 @@ export async function findUserById(id) {
       );
       return res.rows[0] || null;
     } catch (err) {
-      console.warn('PostgreSQL findUserById failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL findUserById failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -322,8 +380,8 @@ export async function createOrder(order) {
       );
       return order;
     } catch (err) {
-      console.warn('PostgreSQL createOrder failed, falling back to in-memory store:', err);
-      useMock = true;
+      console.warn('MySQL createOrder failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -355,8 +413,8 @@ export async function getOrders() {
       `);
       return result.rows;
     } catch (err) {
-      console.warn('PostgreSQL getOrders failed, falling back to in-memory store:', err);
-      useMock = true;
+      console.warn('MySQL getOrders failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -392,8 +450,8 @@ export async function getOrdersByUserId(userId) {
       );
       return result.rows;
     } catch (err) {
-      console.warn('PostgreSQL getOrdersByUserId failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getOrdersByUserId failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -404,13 +462,12 @@ export async function updateOrderStatus(id, status) {
   if (pool && !useMock) {
     try {
       const result = await pool.query(
-        `
-        UPDATE orders
-        SET
-          status = $1,
-          updated_at = $2
-        WHERE id = $3
-        RETURNING
+        `UPDATE orders SET status = $1, updated_at = $2 WHERE id = $3`,
+        [status, new Date().toISOString(), id]
+      );
+      if (!result.rowCount) return null;
+      const updated = await pool.query(
+        `SELECT
           id,
           created_at AS "createdAt",
           updated_at AS "updatedAt",
@@ -424,13 +481,13 @@ export async function updateOrderStatus(id, status) {
           discount,
           delivery_fee AS "deliveryFee",
           total
-        `,
-        [status, new Date().toISOString(), id]
+        FROM orders WHERE id = $1`,
+        [id]
       );
-      return result.rows[0] || null;
+      return updated.rows[0] || null;
     } catch (err) {
-      console.warn('PostgreSQL updateOrderStatus failed, falling back to in-memory store:', err);
-      useMock = true;
+      console.warn('MySQL updateOrderStatus failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -446,11 +503,11 @@ export async function updateOrderStatus(id, status) {
 export async function deleteOrder(id) {
   if (pool && !useMock) {
     try {
-      const result = await pool.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+      const result = await pool.query('DELETE FROM orders WHERE id = $1', [id]);
       return result.rowCount > 0;
     } catch (err) {
-      console.warn('PostgreSQL deleteOrder failed:', err);
-      return false;
+      console.warn('MySQL deleteOrder failed:', err);
+      handleDatabaseError(err);
     }
   }
 
@@ -478,8 +535,8 @@ export async function getCartByUserId(userId) {
       const res = await pool.query('SELECT items FROM carts WHERE user_id = $1', [userId]);
       return res.rows[0]?.items || [];
     } catch (err) {
-      console.warn('PostgreSQL getCartByUserId failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getCartByUserId failed:', err);
+      handleDatabaseError(err);
     }
   }
   return inMemoryCarts.get(userId) || [];
@@ -494,15 +551,14 @@ export async function saveCartForUser(userId, items) {
         `
         INSERT INTO carts (user_id, items, updated_at)
         VALUES ($1, $2, $3)
-        ON CONFLICT (user_id)
-        DO UPDATE SET items = EXCLUDED.items, updated_at = EXCLUDED.updated_at
+        ON DUPLICATE KEY UPDATE items = VALUES(items), updated_at = VALUES(updated_at)
         `,
         [userId, JSON.stringify(cleanItems), new Date().toISOString()]
       );
       return cleanItems;
     } catch (err) {
-      console.warn('PostgreSQL saveCartForUser failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL saveCartForUser failed:', err);
+      handleDatabaseError(err);
     }
   }
   inMemoryCarts.set(userId, cleanItems);
@@ -521,8 +577,8 @@ export async function createSession(token, userId, days = 30) {
       );
       return;
     } catch (err) {
-      console.warn('PostgreSQL createSession failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL createSession failed:', err);
+      handleDatabaseError(err);
     }
   }
   inMemorySessions.set(key, { userId, expiresAt });
@@ -539,8 +595,8 @@ export async function getSessionUserId(token) {
       );
       return res.rows[0]?.user_id || null;
     } catch (err) {
-      console.warn('PostgreSQL getSessionUserId failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getSessionUserId failed:', err);
+      handleDatabaseError(err);
     }
   }
   const s = inMemorySessions.get(key);
@@ -556,8 +612,8 @@ export async function deleteSession(token) {
       await pool.query('DELETE FROM customer_sessions WHERE token_hash = $1', [key]);
       return;
     } catch (err) {
-      console.warn('PostgreSQL deleteSession failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL deleteSession failed:', err);
+      handleDatabaseError(err);
     }
   }
   inMemorySessions.delete(key);
@@ -576,8 +632,8 @@ export async function getUserProfile(id) {
       );
       return res.rows[0] || null;
     } catch (err) {
-      console.warn('PostgreSQL getUserProfile failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getUserProfile failed:', err);
+      handleDatabaseError(err);
     }
   }
   const u = inMemoryUsers.find(user => user.id === id);
@@ -604,8 +660,8 @@ export async function updateUserProfile(id, data) {
       );
       return getUserProfile(id);
     } catch (err) {
-      console.warn('PostgreSQL updateUserProfile failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL updateUserProfile failed:', err);
+      handleDatabaseError(err);
     }
   }
   const u = inMemoryUsers.find(user => user.id === id);
@@ -624,8 +680,8 @@ export async function updateUserPassword(id, passwordHash, salt) {
       );
       return true;
     } catch (err) {
-      console.warn('PostgreSQL updateUserPassword failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL updateUserPassword failed:', err);
+      handleDatabaseError(err);
     }
   }
   const u = inMemoryUsers.find(user => user.id === id);
@@ -647,14 +703,13 @@ export async function addChatMessage(userId, sender, text) {
     try {
       const res = await pool.query(
         `INSERT INTO chat_messages (user_id, sender, text, created_at, read_by_admin)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING id, user_id AS "userId", sender, text, created_at AS "createdAt"`,
+         VALUES ($1, $2, $3, $4, $5)`,
         [userId, sender, text, createdAt, sender === 'admin']
       );
-      return res.rows[0];
+      return { id: res.insertId, userId, sender, text, createdAt };
     } catch (err) {
-      console.warn('PostgreSQL addChatMessage failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL addChatMessage failed:', err);
+      handleDatabaseError(err);
     }
   }
   const msg = { id: ++inMemoryChatSeq, userId, sender, text, createdAt, readByAdmin: sender === 'admin' };
@@ -673,8 +728,8 @@ export async function getChatMessages(userId, afterId = 0) {
       );
       return res.rows;
     } catch (err) {
-      console.warn('PostgreSQL getChatMessages failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getChatMessages failed:', err);
+      handleDatabaseError(err);
     }
   }
   return inMemoryChat
@@ -691,8 +746,8 @@ export async function markChatReadByAdmin(userId) {
       );
       return;
     } catch (err) {
-      console.warn('PostgreSQL markChatReadByAdmin failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL markChatReadByAdmin failed:', err);
+      handleDatabaseError(err);
     }
   }
   inMemoryChat.forEach(m => { if (m.userId === userId && m.sender === 'customer') m.readByAdmin = true; });
@@ -705,18 +760,17 @@ export async function getChatThreads() {
         SELECT u.id AS "userId", u.name, u.phone,
                m.text AS "lastText", m.sender AS "lastSender", m.created_at AS "lastAt",
                (SELECT COUNT(*) FROM chat_messages c
-                 WHERE c.user_id = u.id AND c.sender = 'customer' AND c.read_by_admin = FALSE)::int AS unread
+                 WHERE c.user_id = u.id AND c.sender = 'customer' AND c.read_by_admin = FALSE) AS unread
         FROM users u
-        JOIN LATERAL (
-          SELECT text, sender, created_at FROM chat_messages
-          WHERE user_id = u.id ORDER BY id DESC LIMIT 1
-        ) m ON TRUE
+        JOIN chat_messages m ON m.id = (
+          SELECT MAX(latest.id) FROM chat_messages latest WHERE latest.user_id = u.id
+        )
         ORDER BY m.created_at DESC
       `);
       return res.rows;
     } catch (err) {
-      console.warn('PostgreSQL getChatThreads failed, fallback to in-memory:', err);
-      useMock = true;
+      console.warn('MySQL getChatThreads failed:', err);
+      handleDatabaseError(err);
     }
   }
   const ids = [...new Set(inMemoryChat.map(m => m.userId))];

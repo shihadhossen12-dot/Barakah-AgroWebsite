@@ -26,9 +26,6 @@ function apiPlugin(): Plugin {
   const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'barakah123';
 
-  // Initialize DB asynchronously
-  initDb().catch(console.error);
-
   function makeOrderId() {
     return `BA-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
   }
@@ -44,6 +41,7 @@ function apiPlugin(): Plugin {
   return {
     name: 'api-server-middleware',
     configureServer(server) {
+      initDb().catch(console.error);
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || '';
         if (!url.startsWith('/api')) {

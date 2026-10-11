@@ -13,23 +13,21 @@ async function ensureTable(pool) {
     tableReady = pool
       .query(`
         CREATE TABLE IF NOT EXISTS reviews (
-          id TEXT PRIMARY KEY,
-          product_id TEXT NOT NULL,
-          user_id TEXT NOT NULL,
-          name TEXT NOT NULL,
-          location TEXT,
-          rating INTEGER NOT NULL,
+          id VARCHAR(100) PRIMARY KEY,
+          product_id VARCHAR(20) NOT NULL,
+          user_id VARCHAR(100) NOT NULL,
+          name VARCHAR(60) NOT NULL,
+          location VARCHAR(80),
+          rating TINYINT NOT NULL,
           text TEXT NOT NULL,
-          image TEXT,
+          image MEDIUMTEXT,
           verified BOOLEAN NOT NULL DEFAULT FALSE,
-          created_at TIMESTAMPTZ NOT NULL,
+          created_at DATETIME(3) NOT NULL,
           admin_reply TEXT,
-          admin_reply_at TIMESTAMPTZ
-        );
-        ALTER TABLE reviews ADD COLUMN IF NOT EXISTS admin_reply TEXT;
-        ALTER TABLE reviews ADD COLUMN IF NOT EXISTS admin_reply_at TIMESTAMPTZ;
-        CREATE UNIQUE INDEX IF NOT EXISTS reviews_product_user_idx ON reviews (product_id, user_id);
-        CREATE INDEX IF NOT EXISTS reviews_product_idx ON reviews (product_id, created_at DESC);
+          admin_reply_at DATETIME(3),
+          UNIQUE KEY reviews_product_user_idx (product_id, user_id),
+          KEY reviews_product_idx (product_id, created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `)
       .catch((err) => {
         tableReady = null;
@@ -121,8 +119,8 @@ async function saveAdminReply(id, reply) {
   if (pool) {
     await ensureTable(pool);
     const result = await pool.query(
-      `UPDATE reviews SET admin_reply = $2, admin_reply_at = $3 WHERE id = $1`,
-      [String(id), reply || null, repliedAt]
+        `UPDATE reviews SET admin_reply = $1, admin_reply_at = $2 WHERE id = $3`,
+      [reply || null, repliedAt, String(id)]
     );
     return result.rowCount ? { adminReply: reply || null, adminReplyAt: repliedAt } : null;
   }
@@ -239,7 +237,7 @@ export function registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersBy
       });
       res.status(201).json({ review: publicReview({ ...review, hasImage: !!review.image }) });
     } catch (error) {
-      if (error && error.code === '23505') {
+      if (error && (error.code === '23505' || error.code === 'ER_DUP_ENTRY')) {
         return res.status(409).json({ error: 'আপনি এই পণ্যের রিভিউ আগেই দিয়েছেন।' });
       }
       console.error('Create review error:', error);
