@@ -873,6 +873,7 @@ function addToCart(productId, packageId, quantity = 1) {
   }
 
   saveCart(cart);
+    if (typeof fbTrackAddToCart === "function") fbTrackAddToCart(product, pkg, quantity);
   showToast(`${product.banglaName} কার্টে যোগ হয়েছে!`);
 }
 
@@ -1821,6 +1822,7 @@ async function handleCheckoutSubmit(e) {
     }
     if (!response.ok) throw new Error(data.error || "Order save failed");
 
+        if (typeof fbTrackPurchase === "function") fbTrackPurchase(cart, grandTotal, data.order.id);
     showOrderSuccessModal(data.order.id, name, phone, address, data.order.paymentMethod);
     sessionStorage.removeItem("barakah_checkout");
     sessionStorage.removeItem("barakah_coupon");
