@@ -84,9 +84,9 @@ const BARAKAH_PRODUCTS = [
       "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ ও শুকানো, যা পরিবেশের প্রতি যত্নশীল।"
     ],
     packages: [
-      { id: "pp-250", label: "250 gm packet", price: 300},
-      { id: "pp-500", label: "500 gm packet", price: 580},
-      { id: "pp-1k", label: "1 kg packet", price: 1020}
+      { id: "pp-250", label: "250 gm  1 packet (size :10/14)", price: 200},
+      { id: "pp-500", label: "500 gm  1 packet (size :12/16)", price: 380},
+      { id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 650}
     ]
   },
   {
