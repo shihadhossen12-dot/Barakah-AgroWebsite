@@ -5,7 +5,7 @@
 
 (function () {
   // ▼▼▼ শুধু এই লাইনে Owner-এর দেওয়া Pixel ID বসান (উদাহরণ: "123456789012345") ▼▼▼
-  var PIXEL_ID = "1426295359479154";
+  var PIXEL_ID = "1662114665467591";  
   // ▲▲▲ -------------------------------------------------------------------- ▲▲▲
 
   var CURRENCY = "BDT";
@@ -27,8 +27,40 @@
     fbq('track', 'PageView');
   }
 
+  // ---- Data Layer (Google Tag Manager-এর জন্য) ----
+  window.dataLayer = window.dataLayer || [];
+  var GA4_EVENTS = {
+    ViewContent: "view_item",
+    AddToCart: "add_to_cart",
+    InitiateCheckout: "begin_checkout",
+    Purchase: "purchase"
+  };
+
+  function pushDataLayer(eventName, params, eventId) {
+    try {
+      var gaName = GA4_EVENTS[eventName];
+      if (!gaName) return;
+      var rows = params.contents || (params.content_ids || []).map(function (id) {
+        return { id: id, quantity: 1 };
+      });
+      var ecommerce = {
+        currency: params.currency,
+        value: params.value,
+        items: rows.map(function (c) {
+          return { item_id: String(c.id), quantity: Number(c.quantity) || 1 };
+        })
+      };
+      if (eventName === "Purchase" && eventId) ecommerce.transaction_id = String(eventId);
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({ event: gaName, ecommerce: ecommerce });
+    } catch (e) {
+      console.warn("DataLayer error:", e);
+    }
+  }
+
   // ---- ছোট helper: Pixel না থাকলেও যেন সাইট না ভাঙে ----
   function safeTrack(eventName, params, eventId) {
+    pushDataLayer(eventName, params || {}, eventId);
     try {
       if (!enabled || typeof window.fbq !== "function") return;
       if (eventId) {
