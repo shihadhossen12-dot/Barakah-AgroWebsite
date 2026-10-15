@@ -742,6 +742,11 @@ const CUSTOMER_REVIEWS = [
     text: "চট্টগ্রামেও এত দ্রুত ও নিরাপদে ডেলিভারি পাব ভাবিনি। দুধের মান ১০০% খাঁটি, কোনো ভেজাল নেই। এমন বিশ্বস্ত এগ্রো প্রতিষ্ঠানের প্রসার হওয়া দরকার।",
     image: "images/reviews/customermahbubur.jpeg",
     verified: true
+  },
+  {
+    id: 7,
+    name: "Iftar Rahman",
+    image: "images/reviews/customerifter.jpeg"
   }
 ];
 
