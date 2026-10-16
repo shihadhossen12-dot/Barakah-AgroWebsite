@@ -631,15 +631,18 @@ const FREE_DELIVERY_OFFER_DURATION = 2 * 60 * 60 * 1000;
 let fallbackOfferDeadline = 0;
 
 function getFreeDeliveryOfferDeadline() {
+  const now = Date.now();
   try {
     const savedDeadline = Number(localStorage.getItem(FREE_DELIVERY_OFFER_KEY));
-    if (Number.isFinite(savedDeadline) && savedDeadline > 0) return savedDeadline;
+    if (Number.isFinite(savedDeadline) && savedDeadline > now) return savedDeadline;
 
-    const deadline = Date.now() + FREE_DELIVERY_OFFER_DURATION;
+    const deadline = now + FREE_DELIVERY_OFFER_DURATION;
     localStorage.setItem(FREE_DELIVERY_OFFER_KEY, String(deadline));
     return deadline;
   } catch (error) {
-    if (!fallbackOfferDeadline) fallbackOfferDeadline = Date.now() + FREE_DELIVERY_OFFER_DURATION;
+    if (!fallbackOfferDeadline || fallbackOfferDeadline <= now) {
+      fallbackOfferDeadline = now + FREE_DELIVERY_OFFER_DURATION;
+    }
     return fallbackOfferDeadline;
   }
 }
