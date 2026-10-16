@@ -73,6 +73,55 @@ function apiPlugin(): Plugin {
           return json(200, { ok: true });
         }
 
+        if (url.startsWith('/api/orders/track') && req.method === 'GET') {
+          const requestUrl = new URL(url, 'http://localhost');
+          const id = String(requestUrl.searchParams.get('id') || '').trim().toUpperCase();
+          const normalizePhone = (value: unknown) => String(value || '')
+            .replace(/[০-৯]/g, digit => String('০১২৩৪৫৬৭৮৯'.indexOf(digit)))
+            .replace(/\D/g, '')
+            .slice(-10);
+          const phone = normalizePhone(requestUrl.searchParams.get('phone'));
+
+          if (!id || phone.length < 10) {
+            return json(400, { error: 'অনুগ্রহ করে অর্ডার আইডি ও মোবাইল নম্বর দিন।' });
+          }
+
+          try {
+            const orders = await getOrders();
+            const order = orders.find((item: any) =>
+              String(item.id).toUpperCase() === id && normalizePhone(item.customer?.phone) === phone
+            );
+            if (!order) {
+              return json(404, { error: 'এই তথ্য দিয়ে কোনো অর্ডার পাওয়া যায়নি। আইডি ও নম্বর আবার দেখুন।' });
+            }
+
+            return json(200, {
+              order: {
+                id: order.id,
+                status: order.status,
+                createdAt: order.createdAt,
+                updatedAt: order.updatedAt,
+                customerName: order.customer?.name,
+                district: order.customer?.district,
+                paymentMethod: String(order.paymentMethod || 'Cash on Delivery').split(' | ')[0],
+                items: (order.items || []).map((item: any) => ({
+                  name: item.name,
+                  packageLabel: item.packageLabel,
+                  quantity: Number(item.quantity) || 1,
+                  price: Number(item.price) || 0
+                })),
+                subtotal: Number(order.subtotal) || 0,
+                discount: Number(order.discount) || 0,
+                deliveryFee: Number(order.deliveryFee) || 0,
+                total: Number(order.total) || 0
+              }
+            });
+          } catch (error) {
+            console.error('Track order error:', error);
+            return json(500, { error: 'অর্ডারের তথ্য লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।' });
+          }
+        }
+
         // --------------------------------------------------------------------
         // CUSTOMER AUTHENTICATION ENDPOINTS
         // --------------------------------------------------------------------
@@ -388,6 +437,16 @@ export default defineConfig(({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
   return {
     plugins: [react(), tailwindcss(), apiPlugin()],
+    build: {
+      rollupOptions: {
+        input: {
+          index: path.resolve(__dirname, 'index.html'),
+          track: path.resolve(__dirname, 'track.html'),
+          termsPolicy: path.resolve(__dirname, 'terms-and-policy.html'),
+          refundPolicy: path.resolve(__dirname, 'refund-policy.html')
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

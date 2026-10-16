@@ -1968,6 +1968,31 @@ document.addEventListener("DOMContentLoaded", function () {
   // Mobile Hamburger Toggle
   const hamburgerBtn = document.getElementById("hamburgerBtn");
   const navLinks = document.getElementById("navLinks");
+  const quickLinksBtn = document.getElementById("headerQuickLinksBtn");
+  const quickLinksMenu = document.getElementById("headerQuickLinksMenu");
+
+  if (quickLinksBtn && quickLinksMenu) {
+    quickLinksBtn.addEventListener("click", function (event) {
+      event.stopPropagation();
+      const isOpen = quickLinksMenu.classList.toggle("open");
+      quickLinksBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!quickLinksMenu.contains(event.target) && !quickLinksBtn.contains(event.target)) {
+        quickLinksMenu.classList.remove("open");
+        quickLinksBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        quickLinksMenu.classList.remove("open");
+        quickLinksBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   if (hamburgerBtn && navLinks) {
     hamburgerBtn.addEventListener("click", function (e) {
       e.stopPropagation();
