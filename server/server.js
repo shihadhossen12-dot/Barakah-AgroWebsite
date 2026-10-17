@@ -865,7 +865,7 @@ app.use(express.static(root, { index: 'index.html' }));
 app.get('/admin', (req, res) => res.sendFile(path.join(root, 'admin', 'index.html')));
 async function startServer() {
   try {
-    await initDb({ required: true });
+    await initDb({ required: process.env.NODE_ENV === 'production' });
 
     app.listen(PORT, () => {
       console.log(`Barakah Agro running at http://localhost:${PORT}`);

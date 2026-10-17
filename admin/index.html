@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+     <link rel="icon" type="image/png" href="../images/logo.png">
     <title>Barakah Agro — Admin Dashboard</title>
     <style>
       :root {
@@ -13,7 +14,7 @@
         --green2: #23844b;
         --bg: #f5f7f6;
         --card: #fff;
-        --text: #17211b;
+        --text: #032c15;
         --muted: #6b776f;
         --line: #e6ebe7;
         --shadow: 0 8px 30px rgba(20, 45, 30, 0.07);
@@ -44,14 +45,15 @@
         display: grid;
         place-items: center;
         padding: 24px;
-        background: linear-gradient(135deg, #edf7f0, #f8faf9);
+        background: linear-gradient(175deg, #1de6be, #046840, #064e19);
       }
       .login {
         width: min(430px, 100%);
-        background: #fff;
+        background: #043945;
         padding: 38px;
         border-radius: 24px;
         box-shadow: var(--shadow);
+        color: white;
       }
       .brand {
         display: flex;
@@ -60,13 +62,14 @@
         margin-bottom: 28px;
       }
       .brand-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
-        background: #e7f5eb;
-        display: grid;
-        place-items: center;
-        font-size: 25px;
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        border-radius: 50%;
+        border: 3px solid #e7f5eb;
+        background: #fff;
+        object-fit: cover;
+        box-shadow: 0 6px 14px rgba(23, 107, 58, 0.2);
       }
       .brand h1 {
         margin: 0;
@@ -136,9 +139,32 @@
         inset: 0 auto 0 0;
       }
       .side-brand {
-        padding: 8px 10px 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 10px 28px;
         font-size: 20px;
         font-weight: 800;
+        text-align: center;
+      }
+      .side-brand-logo {
+        width: 112px;
+        height: 112px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid rgba(226, 255, 234, 0.94);
+        background: #fff;
+        box-shadow: 0 10px 0 rgba(4, 27, 15, 0.24), 0 16px 28px rgba(0, 0, 0, 0.3), 0 0 24px rgba(148, 226, 166, 0.22);
+        transition: transform 220ms ease, box-shadow 220ms ease;
+      }
+      .side-brand-logo:hover {
+        transform: translateY(-4px) rotate(3deg);
+        box-shadow: 0 13px 0 rgba(4, 27, 15, 0.2), 0 22px 34px rgba(0, 0, 0, 0.32), 0 0 30px rgba(148, 226, 166, 0.3);
+      }
+      .side-brand-name {
+        margin-top: 16px;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
       }
       .side-brand small {
         display: block;
@@ -227,7 +253,7 @@
         background: var(--green);
       }
       .panel {
-        background: #fff;
+        background: linear-gradient(135deg, #043945, #1289a3, #043945);
         border: 1px solid var(--line);
         border-radius: 17px;
         box-shadow: var(--shadow);
@@ -242,6 +268,7 @@
       }
       .search {
         max-width: 500px;
+        background: rgb(3, 66, 67);
       }
       .count {
         margin-left: auto;
@@ -255,6 +282,7 @@
         width: 100%;
         border-collapse: collapse;
         min-width: 1050px;
+        background: rgba(1, 47, 29, 0.94);
       }
       .table th,
       .table td {
@@ -263,28 +291,40 @@
         border-bottom: 1px solid var(--line);
         vertical-align: middle;
       }
+      
+      .table td{
+        color: rgb(1, 46, 11);
+        background: rgba(247, 244, 242, 0.94);
+      }
       .table th {
         font-size: 11px;
-        color: #68746d;
+        color: #034a32;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         background: #fbfcfb;
       }
-      .table tr:hover td {
-        background: #fcfefd;
+      .table tr:hover td  {
+        background: #03322c;
+        transition: background 220ms ease;
+        color: cyan;
       }
       .order-id {
         font-weight: 800;
-        color: var(--green);
+        color: rgb(197, 160, 13);
       }
       .customer-name {
         font-weight: 750;
       }
-      .muted {
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 3px;
+    .muted{
+      font-size: 13px;
+      padding: 4px 6px;
+    }
+     .table :hover .muted {
+        color: rgb(9, 114, 138);
+        
       }
+    
+      
       .total {
         font-weight: 800;
       }
@@ -292,7 +332,7 @@
         border: 1px solid #d7e0da;
         border-radius: 9px;
         padding: 8px 9px;
-        background: #fff;
+        background: #13c7ac;
         text-transform: capitalize;
         cursor: pointer;
       }
@@ -324,7 +364,7 @@
         width: min(760px, 100%);
         max-height: 90vh;
         overflow: auto;
-        background: #fff;
+        background: linear-gradient(175deg, #2d0234, #001d11, #054252);
         border-radius: 20px;
         box-shadow: 0 25px 70px #0003;
       }
@@ -335,6 +375,7 @@
         justify-content: space-between;
         gap: 15px;
         align-items: center;
+        color: cyan;
       }
       .modal-head h2 {
         margin: 0;
@@ -365,18 +406,20 @@
       .info h3 {
         font-size: 12px;
         text-transform: uppercase;
-        color: var(--muted);
+        color: cyan;
         margin: 0 0 10px;
       }
       .info p {
         margin: 5px 0;
         line-height: 1.5;
+        color:cyan;
       }
       .items-list {
         margin-top: 16px;
         border: 1px solid var(--line);
         border-radius: 13px;
         overflow: hidden;
+        color: cyan;
       }
       .item {
         display: flex;
@@ -384,6 +427,7 @@
         gap: 12px;
         padding: 13px 15px;
         border-bottom: 1px solid var(--line);
+        color: cyan;
       }
       .item:last-child {
         border: 0;
@@ -397,13 +441,13 @@
         display: flex;
         justify-content: space-between;
         padding: 6px 0;
-        color: #5d6962;
+        color: cyan;
       }
       .sum.final {
         border-top: 1px solid var(--line);
         margin-top: 5px;
         padding-top: 12px;
-        color: var(--text);
+        color: cyan;
         font-size: 18px;
         font-weight: 800;
       }
@@ -434,11 +478,14 @@
           overflow-x: auto;
           white-space: nowrap;
         }
-        .side-brand { padding: 4px 8px; font-size: 15px; }
+        .side-brand { flex: 0 0 auto; padding: 2px 8px; font-size: 12px; }
+        .side-brand-logo { width: 42px; height: 42px; border-width: 2px; box-shadow: 0 4px 0 rgba(4, 27, 15, 0.24), 0 7px 12px rgba(0, 0, 0, 0.25); }
+        .side-brand-name { margin-top: 6px; }
         .side-brand small, .nav-title { display: none; }
         .nav-item { flex: 0 0 auto; margin: 0; padding: 9px 11px; }
         .app {
           display: block;
+          
         }
         .main {
           margin: 0;
@@ -645,7 +692,7 @@
         );
       }
       function login() {
-        app.innerHTML = `<div class="login-page"><div class="login"><div class="brand"><div class="brand-icon">🌿</div><div><h1>Barakah Agro</h1><p>Secure Admin Panel</p></div></div><div id="err" class="error"></div><label>Username</label><input id="u" value="admin" autocomplete="username"><label>Password</label><input id="p" type="password" placeholder="Admin password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:10px" onclick="doLogin()">Sign in to dashboard</button></div></div>`;
+        app.innerHTML = `<div class="login-page"><div class="login"><div class="brand"><img class="brand-icon" src="/images/logo.png" alt="Barakah Agro logo"><div><h1 style="color:cyan;">Barakah Agro</h1><p>Secure Admin Panel</p></div></div><div id="err" class="error"></div><label>Username</label><input id="u" value="admin" autocomplete="username"><label>Password</label><input id="p" type="password" placeholder="Admin password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:10px" onclick="doLogin()">Sign in to dashboard</button></div></div>`;
       }
       async function doLogin() {
         const err = document.getElementById("err");
@@ -689,7 +736,7 @@
         return d;
       }
       async function dashboard() {
-        app.innerHTML = `<div class="app"><aside class="sidebar"><div class="side-brand">🌿 Barakah Agro<small>Store Administration</small></div><div class="nav-title">Management</div><button class="nav-item active" onclick="dashboard()">📦 Orders</button><button class="nav-item" onclick="showProducts()">🛍️ Products</button></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="enableNotifications()">🔔 Enable alerts</button><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openContactMessages()">✉️ Messages <span id="contactBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;
+        app.innerHTML = `<div class="app"><aside class="sidebar"><div class="side-brand"><img class="side-brand-logo" src="../images/logo.png" alt="Barakah Agro logo"><span class="side-brand-name">&#127807; Barakah Agro</span><small>Store Administration</small></div><div class="nav-title">Management</div><button class="nav-item active" onclick="dashboard()">📦 Orders</button><button class="nav-item" onclick="showProducts()">🛍️ Products</button></aside><main class="main"><div class="header"><div><h1>Orders</h1><p>Manage customer orders and delivery status.</p></div><div class="actions"><button class="btn secondary" onclick="enableNotifications()">🔔 Enable alerts</button><button class="btn secondary" onclick="openReviews()"> Reviews</button><button class="btn secondary" onclick="openContactMessages()">✉️ Messages <span id="contactBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge" style="display:none"></span></button><button class="btn secondary" onclick="dashboard()">↻ Refresh</button><button class="btn dark" onclick="logout()">Logout</button></div></div><div id="stats" class="stats"></div><section class="panel"><div class="toolbar"><input id="search" class="search" placeholder="Search order ID, customer, phone or district..." oninput="filterRows()"><span id="count" class="count"></span></div><div id="orders" class="table-wrap"><div class="empty">Loading orders...</div></div></section></main></div>`;
         try {
           const d = await api("/api/admin/orders");
           window.orders = d.orders || [];
