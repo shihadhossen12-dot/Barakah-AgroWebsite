@@ -635,7 +635,7 @@ app.post('/api/telegram/webhook', async (req, res) => {
   }
 });
 
-registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersByUserId });
+registerReviewRoutes(app, { customerAuth, optionalCustomerAuth, adminAuth, getOrdersByUserId });
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

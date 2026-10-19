@@ -55,16 +55,17 @@ const BARAKAH_PRODUCTS = [
 
     id: 2,
     name: "Sun-Dried Pat Pata",
-    banglaName: "প্রাকৃতিক শুকনো পাট পাতা। (100 গ্রাম সাজনা পাতা একদম ফ্রি)",
+    banglaName: "শুকনো পাট পাতার সাথে 100 গ্রাম সাজনা পাতা একদম ফ্রি",
     category: "leaves",
     categoryName: "Dry Leaves",
     banglaCategory: "শুকনো পাট পাতা",
     sku: "BA-PP-0100",
     image: "images/products/patpata.jpeg",
     images: [
+      "images/products/patpata.jpeg",
       "images/products/patpata4.jpeg",
       "images/products/patpata2.jpeg",
-      "images/products/patpata3.jpeg"
+      "images/products/sajnapata.jpeg"
     ],
     rating: 5,
     reviewCount: 56,
@@ -4474,12 +4475,6 @@ async function handleServerReviewSubmit(e) {
   if (!product) return;
 
   const user = getLoggedInCustomer();
-  if (!user) {
-    showToast("রিভিউ দিতে আগে লগইন করুন");
-    if (typeof openAccountModal === "function") openAccountModal("login");
-    return;
-  }
-
   const name = document.getElementById("reviewAuthorName")?.value.trim();
   const location = document.getElementById("reviewAuthorLocation")?.value.trim();
   const comment = document.getElementById("reviewCommentText")?.value.trim();
@@ -4493,9 +4488,11 @@ async function handleServerReviewSubmit(e) {
   if (submitBtn) submitBtn.disabled = true;
 
   try {
+    const headers = { "Content-Type": "application/json" };
+    if (user?.token) headers.Authorization = "Bearer " + user.token;
     const res = await fetch("/api/reviews", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + user.token },
+      headers,
       body: JSON.stringify({
         productId: product.id,
         name: name,

@@ -146,7 +146,7 @@ export async function initDb({ required = false } = {}) {
         `CREATE TABLE IF NOT EXISTS reviews (
           id VARCHAR(100) PRIMARY KEY,
           product_id VARCHAR(20) NOT NULL,
-          user_id VARCHAR(100) NOT NULL,
+          user_id VARCHAR(100) NULL,
           name VARCHAR(60) NOT NULL,
           location VARCHAR(80),
           rating TINYINT NOT NULL,

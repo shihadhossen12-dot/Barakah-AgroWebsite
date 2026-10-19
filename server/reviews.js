@@ -15,7 +15,7 @@ async function ensureTable(pool) {
         CREATE TABLE IF NOT EXISTS reviews (
           id VARCHAR(100) PRIMARY KEY,
           product_id VARCHAR(20) NOT NULL,
-          user_id VARCHAR(100) NOT NULL,
+          user_id VARCHAR(100) NULL,
           name VARCHAR(60) NOT NULL,
           location VARCHAR(80),
           rating TINYINT NOT NULL,
@@ -29,6 +29,7 @@ async function ensureTable(pool) {
           KEY reviews_product_idx (product_id, created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `)
+      .then(() => pool.query('ALTER TABLE reviews MODIFY COLUMN user_id VARCHAR(100) NULL'))
       .catch((err) => {
         tableReady = null;
         throw err;
@@ -58,7 +59,7 @@ async function addReview(r) {
     );
     return r;
   }
-  if (inMemoryReviews.some((x) => x.productId === r.productId && x.userId === r.userId)) {
+  if (r.userId && inMemoryReviews.some((x) => x.productId === r.productId && x.userId === r.userId)) {
     const dup = new Error('duplicate');
     dup.code = '23505';
     throw dup;
@@ -163,7 +164,7 @@ function publicReview(r) {
   };
 }
 
-export function registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersByUserId }) {
+export function registerReviewRoutes(app, { customerAuth, optionalCustomerAuth, adminAuth, getOrdersByUserId }) {
   // সবাই দেখতে পাবে
   app.get('/api/reviews/:productId', async (req, res) => {
     const productId = String(req.params.productId || '');
@@ -195,7 +196,7 @@ export function registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersBy
   });
 
   // শুধু লগইন করা ক্রেতা রিভিউ দিতে পারবে
-  app.post('/api/reviews', customerAuth, async (req, res) => {
+  app.post('/api/reviews', optionalCustomerAuth, async (req, res) => {
     const body = req.body || {};
     const productId = String(body.productId ?? '');
     const name = String(body.name ?? '').trim();
@@ -212,21 +213,25 @@ export function registerReviewRoutes(app, { customerAuth, adminAuth, getOrdersBy
     if (image && (image.length > 600000 || !IMAGE_RE.test(image))) {
       return res.status(400).json({ error: 'ছবিটি সঠিক নয় বা অনেক বড়। ছোট JPG/PNG/WebP ছবি দিন।' });
     }
-    if (!reviewRateOk(req.customer.userId)) {
+    const rateKey = req.customer ? `user:${req.customer.userId}` : `ip:${req.ip || req.socket?.remoteAddress || 'unknown'}`;
+    if (!reviewRateOk(rateKey)) {
       return res.status(429).json({ error: 'অনেক বেশি রিভিউ দেওয়া হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন।' });
     }
 
     try {
       // "ভেরিফাইড ক্রয়" চিহ্ন: শুধু যদি এই ক্রেতার ডেলিভারড অর্ডারে এই পণ্য থাকে
-      const orders = await getOrdersByUserId(req.customer.userId);
-      const verified = orders.some(
-        (o) => o.status === 'delivered' && Array.isArray(o.items) && o.items.some((i) => String(i.id) === productId)
-      );
+      let verified = false;
+      if (req.customer) {
+        const orders = await getOrdersByUserId(req.customer.userId);
+        verified = orders.some(
+          (o) => o.status === 'delivered' && Array.isArray(o.items) && o.items.some((i) => String(i.id) === productId)
+        );
+      }
 
       const review = await addReview({
         id: 'REV-' + crypto.randomBytes(6).toString('hex').toUpperCase(),
         productId,
-        userId: req.customer.userId,
+        userId: req.customer?.userId || null,
         name,
         location,
         rating,
