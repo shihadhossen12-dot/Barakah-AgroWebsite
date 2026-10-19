@@ -3675,7 +3675,7 @@ function initProductDetailsPage() {
                   <span class="patpata-offer-kicker">সীমিত সময়ের বিশেষ অফার</span>
                   <h2>পাটপাতা মাত্র ৳৯৯৯</h2>
                 </div>
-                <span class="patpata-offer-sparkle">✦</span>
+                
               </div>
               <div class="patpata-offer-perks">
                 <span><b>🚚</b> সারা বাংলাদেশে হোম ডেলিভারি ফ্রি</span>
