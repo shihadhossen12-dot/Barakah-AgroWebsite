@@ -55,7 +55,7 @@ const BARAKAH_PRODUCTS = [
 
     id: 2,
     name: "Sun-Dried Pat Pata",
-    banglaName: "প্রাকৃতিক শুকনো পাট পাতা",
+    banglaName: "প্রাকৃতিক শুকনো পাট পাতা। (100 গ্রাম সাজনা পাতা একদম ফ্রি)",
     category: "leaves",
     categoryName: "Dry Leaves",
     banglaCategory: "শুকনো পাট পাতা",
@@ -69,7 +69,7 @@ const BARAKAH_PRODUCTS = [
     rating: 5,
     reviewCount: 56,
     isOffer: true,
-    shortDescription: "ঐতিহ্যবাহী স্বাদ ও পুষ্টিতে ভরপুর স্বাস্থ্যসম্মত শুকনো পাট পাতা।",
+    shortDescription: "ঐতিহ্যবাহী স্বাদ ও পুষ্টিতে ভরপুর স্বাস্থ্যসম্মত শুকনো পাট পাতা। সারা বাংলাদেশে হোম ডেলিভারি ফ্রি",
     description: "প্রাকৃতিকভাবে সংগ্রহ ও যত্নসহকারে শুকানো শুকনো পাটপাতা এখন পাওয়া যাচ্ছে Barakah Agro-তে।গ্রামবাংলার পরিচিত পাটপাতার নিজস্ব স্বাদ ও গন্ধ ধরে রাখতে সংগ্রহ থেকে শুরু করে শুকানো ও সংরক্ষণ—প্রতিটি ধাপে Barakah Agro-এর নিজস্ব তত্ত্বাবধান নিশ্চিত করা হয়।",
     ingredients: "১০০% দেশি কচি পাট পাতা (Dried Jute Leaves)",
     benefits: [
@@ -84,9 +84,7 @@ const BARAKAH_PRODUCTS = [
       "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ ও শুকানো, যা পরিবেশের প্রতি যত্নশীল।"
     ],
     packages: [
-      { id: "pp-250", label: "250 gm  1 packet (size :10/14)", price: 200},
-      { id: "pp-500", label: "500 gm  1 packet (size :12/16)", price: 380},
-      { id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 650}
+      { id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 999 }
     ]
   },
   {
@@ -786,6 +784,13 @@ fetch('/api/products').then(r => r.ok ? r.json() : null).then(data => {
     if (deleted.has(String(BARAKAH_PRODUCTS[i].id))) BARAKAH_PRODUCTS.splice(i, 1);
   }
   (data.products || []).forEach(product => {
+    if (String(product.id) === "2") {
+      const offerPackage = product.packages?.find(pkg => String(pkg.id) === "pp-1k") || product.packages?.[0] || {};
+      product = {
+        ...product,
+        packages: [{ ...offerPackage, id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 999 }]
+      };
+    }
     const i = BARAKAH_PRODUCTS.findIndex(p => String(p.id) === String(product.id));
     if (i >= 0) BARAKAH_PRODUCTS[i] = product; else BARAKAH_PRODUCTS.push(product);
   });
@@ -804,6 +809,23 @@ const SHIPPING_CONFIG = {
   hotline: "01786-239185",
   whatsappNumber: "8801786239185"
 };
+
+function hasPatpataFreeDelivery(cart) {
+  return cart.some((item) => String(item.productId) === "2");
+}
+
+function getCartItemPackageLabel(item) {
+  const label = item.packageLabel || "";
+  return String(item.productId) === "2" && !label.includes("সাজনা")
+    ? `${label} + ১০০ গ্রাম সাজনা পাতা ফ্রি`
+    : label;
+}
+
+function getDeliveryFee(cart, location, subtotal) {
+  if (hasPatpataFreeDelivery(cart)) return 0;
+  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) return 0;
+  return location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
+}
 
 // Available coupons
 const COUPONS = {
@@ -1022,7 +1044,10 @@ const FEATURED_CATEGORIES = [
 function getCart() {
   try {
     const cart = localStorage.getItem("barakah_cart");
-    return cart ? JSON.parse(cart) : [];
+    const items = cart ? JSON.parse(cart) : [];
+    return Array.isArray(items) ? items.map((item) => String(item.productId) === "2"
+      ? { ...item, packageId: "pp-1k", packageLabel: "1 kg  2 packet (size :12/16)", price: 999 }
+      : item) : [];
   } catch (e) {
     console.error("Cart read error:", e);
     return [];
@@ -1605,7 +1630,7 @@ function renderCartPage() {
         <img src="${item.image}" alt="${item.banglaName}" class="cart-item-thumb">
         <div class="cart-item-info">
           <h4>${item.banglaName}</h4>
-          <span class="cart-item-package">${item.packageLabel}</span>
+          <span class="cart-item-package">${getCartItemPackageLabel(item)}</span>
           <p style="font-size: 0.85rem; color: #64748b;">৳ ${item.price} প্রতি ইউনিট</p>
         </div>
         <div class="qty-control">
@@ -1638,10 +1663,7 @@ function calculateAndRenderTotals() {
     if (r.checked) location = r.value;
   }
 
-  let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) {
-    deliveryFee = 0;
-  }
+  const deliveryFee = getDeliveryFee(cart, location, subtotal);
 
   // Coupon Discount calculation
   let discountAmount = 0;
@@ -1668,7 +1690,7 @@ function calculateAndRenderTotals() {
 
   if (subtotalEl) subtotalEl.textContent = `৳ ${subtotal}`;
   if (deliveryEl) {
-    if (deliveryFee === 0 && isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) {
+    if (deliveryFee === 0) {
       deliveryEl.innerHTML = '<span class="free-delivery-badge">ফ্রি ডেলিভারি!</span>';
     } else {
       deliveryEl.textContent = `৳ ${deliveryFee}`;
@@ -1755,7 +1777,7 @@ function renderCheckoutSummary() {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.92rem;">
         <div>
           <strong style="color: #1e293b;">${item.banglaName}</strong>
-          <span style="display: block; font-size: 0.8rem; color: #64748b;">${item.packageLabel} × ${item.quantity}</span>
+          <span style="display: block; font-size: 0.8rem; color: #64748b;">${getCartItemPackageLabel(item)} × ${item.quantity}</span>
         </div>
         <span style="font-weight: 700; color: #166534;">৳ ${item.price * item.quantity}</span>
       </div>
@@ -1975,8 +1997,7 @@ async function handleCheckoutSubmit(e) {
   let location = "inside";
   document.querySelectorAll('input[name="deliveryLocation"]').forEach(r => { if (r.checked) location = r.value; });
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
+  const deliveryFee = getDeliveryFee(cart, location, subtotal);
 
   let discountAmount = 0;
   const activeCoupon = getAppliedCouponRule();
@@ -1992,7 +2013,8 @@ async function handleCheckoutSubmit(e) {
 
   const payload = {
     customer: { name, phone, district, address },
-    note, deliveryLocation: location, items: cart,
+    note, deliveryLocation: location,
+    items: cart.map((item) => ({ ...item, id: item.productId, packageLabel: getCartItemPackageLabel(item) })),
     subtotal, discount: discountAmount, couponCode: appliedCouponCode || null, deliveryFee, total: grandTotal,
     paymentMethod: paymentInfo.summary
   };
@@ -2062,14 +2084,13 @@ function orderViaWhatsApp() {
     if (r.checked) location = r.value;
   }
 
-  let deliveryFee = location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
-  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) deliveryFee = 0;
+  const deliveryFee = getDeliveryFee(cart, location, subtotal);
 
   const total = subtotal + deliveryFee;
 
   let itemsText = "";
   cart.forEach((item, idx) => {
-    itemsText += `${idx + 1}. ${item.banglaName} (${item.packageLabel}) - পরিমাণ: ${item.quantity}টি - মূল্য: ৳${item.price * item.quantity}\n`;
+    itemsText += `${idx + 1}. ${item.banglaName} (${getCartItemPackageLabel(item)}) - পরিমাণ: ${item.quantity}টি - মূল্য: ৳${item.price * item.quantity}\n`;
   });
 
   const message = `🌿 *নতুন অর্ডার - বারাকাহ এগ্রো* 🌿
@@ -3617,6 +3638,7 @@ function initProductDetailsPage() {
             <div class="details-price-current" id="detailsCurrentPrice">৳ ${initialPkg.price}</div>
             <div class="details-price-old" id="detailsOldPrice" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳ ${initialPkg.oldPrice || ""}</div>
             <div class="details-discount-chip" id="detailsDiscountChip" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳${initialPkg.oldPrice ? initialPkg.oldPrice - initialPkg.price : 0} সাশ্রয়</div>
+            ${String(product.id) === "2" ? '<span class="details-price-delivery-free"><span aria-hidden="true"></span> Delivery charge: FREE</span>' : ""}
           </div>
 
           <!-- Short Description -->
@@ -3644,6 +3666,23 @@ function initProductDetailsPage() {
           </div>
 
           <!-- Quantity & Primary Purchase Actions -->
+          ${String(product.id) === "2" ? `
+            <section class="patpata-offer-banner" aria-label="পাটপাতার বিশেষ অফার">
+              <div class="patpata-offer-heading">
+                <span class="patpata-offer-icon">🌿</span>
+                <div>
+                  <span class="patpata-offer-kicker">সীমিত সময়ের বিশেষ অফার</span>
+                  <h2>পাটপাতা মাত্র ৳৯৯৯</h2>
+                </div>
+                <span class="patpata-offer-sparkle">✦</span>
+              </div>
+              <div class="patpata-offer-perks">
+                <span><b>🚚</b> সারা বাংলাদেশে হোম ডেলিভারি ফ্রি</span>
+                <span><b>🎁</b>  100 গ্রাম সাজনা পাতা একদম ফ্রি</span>
+              </div>
+              <p class="patpata-offer-note">অর্ডার করুন নিচের বাটন থেকে—ফ্রি উপহারটি অর্ডারের সঙ্গে পাঠানো হবে।</p>
+            </section>
+          ` : ""}
           <div class="details-purchase-bar">
             <div class="details-qty-stepper">
               <button type="button" class="stepper-btn" onclick="adjustDetailsQty(-1)" aria-label="Decrease quantity">−</button>

@@ -5333,8 +5333,8 @@ html, body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: 36px;
   margin-bottom: 36px;
-  background: #ffffff;
   border-radius: var(--radius-lg);
+background: radial-gradient(circle at 50% 50% in oklch, oklch(87.80% 0.0441 245.39) 0.0%, oklch(88.42% 0.0416 243.40) 3.2%, oklch(89.33% 0.0381 239.90) 6.5%, oklch(90.39% 0.0339 236.04) 9.7%, oklch(91.48% 0.0296 232.99) 12.9%, oklch(92.45% 0.0257 231.91) 16.1%, oklch(93.20% 0.0225 233.94) 19.4%, oklch(93.67% 0.0203 240.39) 22.6%, oklch(94.01% 0.0186 251.14) 25.8%, oklch(94.23% 0.0172 264.46) 29.0%, oklch(94.32% 0.0162 278.63) 32.3%, oklch(94.30% 0.0156 291.89) 35.5%, oklch(94.18% 0.0152 302.51) 38.7%, oklch(93.94% 0.0151 309.55) 41.9%, oklch(93.58% 0.0152 315.21) 45.2%, oklch(93.12% 0.0156 319.52) 48.4%, oklch(92.54% 0.0164 322.19) 51.6%, oklch(91.85% 0.0176 322.93) 54.8%, oklch(91.07% 0.0193 321.45) 58.1%, oklch(90.20% 0.0217 317.16) 61.3%, oklch(89.35% 0.0244 308.01) 64.5%, oklch(88.47% 0.0277 295.36) 67.7%, oklch(87.44% 0.0314 281.32) 71.0%, oklch(86.20% 0.0358 268.03) 74.2%, oklch(84.62% 0.0409 257.62) 77.4%, oklch(82.62% 0.0467 252.17) 80.6%, oklch(79.85% 0.0545 251.83) 83.9%, oklch(76.44% 0.0637 255.01) 87.1%, oklch(72.79% 0.0735 260.31) 90.3%, oklch(69.27% 0.0829 266.33) 93.5%, oklch(66.27% 0.0908 271.69) 96.8%, oklch(64.17% 0.0965 274.98) 100.0%);
   border: 1px solid var(--border-light);
   padding: 32px;
   box-shadow: var(--shadow-sm);
@@ -5592,7 +5592,7 @@ html, body {
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px;
-  background: #f8faf8;
+  background: white;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
   margin-bottom: 18px;
@@ -5601,7 +5601,30 @@ html, body {
 .details-price-current {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--primary);
+  color: cyan;
+}
+
+.details-price-delivery-free {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: black;
+  color: cyan;
+  font-size: 0.82rem;
+  font-weight: 800;
+  
+
+box-shadow:
+    inset 0 0 25px rgba(0, 255, 255, 0.45),
+    inset 0 0 50px rgba(0, 255, 255, 0.30),
+    inset 0 0 80px rgba(0, 255, 255, 0.15),
+    0 0 20px rgba(0, 255, 255, 0.35);
+
+border: 1px solid rgba(0, 255, 255, 0.65);
+
+
 }
 
 .details-price-old {
@@ -7666,5 +7689,154 @@ body.account-3d .btn-primary:hover {
   .promo-countdown-unit {
     min-width: 58px;
     padding: 10px 8px;
+  }
+}
+
+/* Professional product details layout and Pat Pata offer card */
+.product-details-wrapper {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.product-details-grid {
+  gap: 40px;
+  padding: clamp(20px, 3.5vw, 42px);
+  border-color: #e4ebe5;
+  box-shadow: 0 18px 55px rgba(22, 65, 39, 0.09);
+}
+
+.details-gallery-box,
+.details-info-box {
+  min-width: 0;
+}
+
+.gallery-main-view {
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.details-info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.details-title {
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.details-price-wrap {
+
+  background-image: radial-gradient( circle farthest-corner at 50% 52.5%,  rgba(14,53,92,1) 0%, rgba(16,14,72,1) 90% );
+  border-color: #dcebdd;
+  border-radius: 16px;
+}
+
+.details-pkg-chip {
+  border-radius: 12px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.details-pkg-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(25, 91, 52, 0.1);
+}
+
+.details-purchase-bar {
+  gap: 12px;
+}
+
+.details-purchase-bar .btn {
+  min-height: 50px;
+  border-radius: 13px;
+  box-shadow: 0 8px 18px rgba(22, 101, 52, 0.15);
+}
+
+.patpata-offer-banner {
+  position: relative;
+  overflow: hidden;
+  margin: 4px 0 22px;
+  padding: 20px 22px 16px;
+  border: 1px solid rgba(226, 245, 215, 0.9);
+  border-radius: 20px;
+  color: #fff;
+background: linear-gradient(90deg in oklch, oklch(19.69% 0.0441 259.45) 0.0%, oklch(20.22% 0.0449 258.96) 3.2%, oklch(20.86% 0.0461 258.33) 6.5%, oklch(21.61% 0.0475 257.59) 9.7%, oklch(22.45% 0.0491 256.75) 12.9%, oklch(23.39% 0.0507 255.84) 16.1%, oklch(24.40% 0.0524 254.90) 19.4%, oklch(25.48% 0.0540 253.95) 22.6%, oklch(26.63% 0.0554 253.00) 25.8%, oklch(27.84% 0.0567 252.10) 29.0%, oklch(29.10% 0.0576 251.26) 32.3%, oklch(30.36% 0.0583 250.52) 35.5%, oklch(31.53% 0.0591 249.93) 38.7%, oklch(32.64% 0.0599 249.43) 41.9%, oklch(33.78% 0.0606 248.98) 45.2%, oklch(35.00% 0.0612 248.53) 48.4%, oklch(36.36% 0.0615 248.03) 51.6%, oklch(37.92% 0.0616 247.43) 54.8%, oklch(39.76% 0.0612 246.69) 58.1%, oklch(41.93% 0.0604 245.74) 61.3%, oklch(44.49% 0.0591 244.55) 64.5%, oklch(47.55% 0.0571 243.06) 67.7%, oklch(51.41% 0.0541 241.12) 71.0%, oklch(56.01% 0.0503 238.78) 74.2%, oklch(61.12% 0.0458 236.16) 77.4%, oklch(66.54% 0.0408 233.36) 80.6%, oklch(72.05% 0.0357 230.51) 83.9%, oklch(77.46% 0.0305 227.71) 87.1%, oklch(82.53% 0.0257 225.08) 90.3%, oklch(87.07% 0.0214 222.73) 93.5%, oklch(90.87% 0.0178 220.76) 96.8%, oklch(93.70% 0.0152 219.30) 100.0%);
+  box-shadow: 0 16px 32px rgba(15, 75, 41, 0.2), inset 0 1px rgba(255, 255, 255, 0.17);
+}
+
+.patpata-offer-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+
+.patpata-offer-icon {
+  display: none;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  font-size: 25px;
+}
+
+.patpata-offer-kicker {
+  color: orange;
+  font-size: 0.79rem;
+  font-weight: 700;
+}
+
+.patpata-offer-heading h2 {
+  margin: 2px 0 0;
+  color: cyan;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.patpata-offer-perks {
+  display: grid;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.patpata-offer-perks span {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #f3fbf2;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color:#04e9fe;
+}
+
+.patpata-offer-perks b {
+  flex: 0 0 auto;
+}
+
+.patpata-offer-note {
+  margin: 13px 0 0;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: #d9ecdd;
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .product-details-grid {
+    gap: 24px;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .patpata-offer-banner {
+    padding: 17px 16px 14px;
+    border-radius: 17px;
   }
 }
