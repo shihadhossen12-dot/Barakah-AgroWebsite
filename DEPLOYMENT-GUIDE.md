@@ -25,6 +25,10 @@ Add these environment variables in the Node.js app settings. Use the values show
 - `ADMIN_PASSWORD` (use a strong, unique secret)
 - `NODE_ENV` = `production`
 - `APP_URL` (your live HTTPS domain)
+	- `TELEGRAM_BOT_TOKEN` (optional; create a bot with Telegram's `@BotFather`)
+	- `TELEGRAM_CHAT_ID` (optional; start a chat with the bot and set your chat ID)
+
+	To find your chat ID, create the bot with `@BotFather`, open the bot and press Start, then visit `https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/getUpdates` and copy `message.chat.id` from the response. Keep the bot token private. When both Telegram variables are set, each successfully saved order sends an order notification to that chat; if either variable is missing, notifications are disabled.
 
 The application creates the required MySQL tables at startup. If the database connection or table setup fails, the Node.js app should fail to start rather than accept orders into temporary memory.
 

@@ -814,6 +814,16 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
         console.error('Auto-save profile failed:', e);
       }
     }
+    const itemSummary = order.items
+      .map(item => `• ${item.name}${item.packageLabel ? ` (${item.packageLabel})` : ''} × ${item.quantity}`)
+      .join('\n');
+    await notifyOwner(
+      `🛒 নতুন অর্ডার: ${order.id}\n` +
+      `নাম: ${order.customer.name}\nফোন: ${order.customer.phone}\n` +
+      `এলাকা: ${order.customer.district}\nঠিকানা: ${order.customer.address}\n` +
+      `পণ্য:\n${itemSummary}\n` +
+      `পেমেন্ট: ${order.paymentMethod}\nমোট: ৳${order.total}`
+    );
     res.status(201).json({ order });
   } catch (error) {
     console.error('Create order error:', error);

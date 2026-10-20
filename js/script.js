@@ -46,16 +46,19 @@ const BARAKAH_PRODUCTS = [
 
     ],
     packages: [
-      { id: "mo-5l", label: "5 liter", price: 1300, oldPrice: 1500 },
-      { id: "mo-2l", label: "2 liter", price: 520, oldPrice: 600 },
-      { id: "mo-1l", label: "1 liter", price: 260, oldPrice: 300 }
+      { id: "mo-5l", label: "5 liter", price: 1500 },
+      { id: "mo-4l", label: "4 liter", price: 1200 },
+      { id: "mo-3l", label: "3 liter", price: 900 },
+      { id: "mo-2l", label: "2 liter", price: 600 },
+      { id: "mo-1l", label: "1 liter", price: 300 },
+
     ]
   },
   {
 
     id: 2,
     name: "Sun-Dried Pat Pata",
-    banglaName: "শুকনো পাট পাতার সাথে 100 গ্রাম সাজনা পাতা একদম ফ্রি",
+    banglaName: "শুকনো পাট পাতা",
     category: "leaves",
     categoryName: "Dry Leaves",
     banglaCategory: "শুকনো পাট পাতা",
@@ -64,13 +67,12 @@ const BARAKAH_PRODUCTS = [
     images: [
       "images/products/patpata.jpeg",
       "images/products/patpata4.jpeg",
-      "images/products/patpata2.jpeg",
-      "images/products/sajnapata.jpeg"
+      "images/products/patpata2.jpeg"
     ],
     rating: 5,
     reviewCount: 56,
     isOffer: true,
-    shortDescription: "ঐতিহ্যবাহী স্বাদ ও পুষ্টিতে ভরপুর স্বাস্থ্যসম্মত শুকনো পাট পাতা। সারা বাংলাদেশে হোম ডেলিভারি ফ্রি",
+    shortDescription: "ঐতিহ্যবাহী স্বাদ ও পুষ্টিতে ভরপুর স্বাস্থ্যসম্মত শুকনো পাট পাতা।",
     description: "প্রাকৃতিকভাবে সংগ্রহ ও যত্নসহকারে শুকানো শুকনো পাটপাতা এখন পাওয়া যাচ্ছে Barakah Agro-তে।গ্রামবাংলার পরিচিত পাটপাতার নিজস্ব স্বাদ ও গন্ধ ধরে রাখতে সংগ্রহ থেকে শুরু করে শুকানো ও সংরক্ষণ—প্রতিটি ধাপে Barakah Agro-এর নিজস্ব তত্ত্বাবধান নিশ্চিত করা হয়।",
     ingredients: "১০০% দেশি কচি পাট পাতা (Dried Jute Leaves)",
     benefits: [
@@ -85,7 +87,9 @@ const BARAKAH_PRODUCTS = [
       "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ ও শুকানো, যা পরিবেশের প্রতি যত্নশীল।"
     ],
     packages: [
-      { id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 999 }
+      { id: "pp-250g", label: "250 gm", price: 200 },
+      { id: "pp-500g", label: "500 gm", price: 380 },
+      { id: "pp-1k", label: "1 kg", price: 650 }
     ]
   },
   {
@@ -786,10 +790,13 @@ fetch('/api/products').then(r => r.ok ? r.json() : null).then(data => {
   }
   (data.products || []).forEach(product => {
     if (String(product.id) === "2") {
-      const offerPackage = product.packages?.find(pkg => String(pkg.id) === "pp-1k") || product.packages?.[0] || {};
       product = {
         ...product,
-        packages: [{ ...offerPackage, id: "pp-1k", label: "1 kg  2 packet (size :12/16)", price: 999 }]
+        packages: [
+          { id: "pp-250g", label: "250 gm", price: 200 },
+          { id: "pp-500g", label: "500 gm", price: 380 },
+          { id: "pp-1k", label: "1 kg", price: 650 }
+        ]
       };
     }
     const i = BARAKAH_PRODUCTS.findIndex(p => String(p.id) === String(product.id));
@@ -811,10 +818,6 @@ const SHIPPING_CONFIG = {
   whatsappNumber: "8801786239185"
 };
 
-function hasPatpataFreeDelivery(cart) {
-  return cart.some((item) => String(item.productId) === "2");
-}
-
 function getCartItemPackageLabel(item) {
   const label = item.packageLabel || "";
   return String(item.productId) === "2" && !label.includes("সাজনা")
@@ -823,8 +826,7 @@ function getCartItemPackageLabel(item) {
 }
 
 function getDeliveryFee(cart, location, subtotal) {
-  if (hasPatpataFreeDelivery(cart)) return 0;
-  if (isFreeDeliveryOfferActive() && subtotal >= SHIPPING_CONFIG.freeThreshold) return 0;
+  if (subtotal >= SHIPPING_CONFIG.freeThreshold) return 0;
   return location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
 }
 
@@ -834,54 +836,6 @@ const COUPONS = {
   ASHATURAB: { type: "percent", value: 20, minSpend: 0, label: "২০% ছাড়" },
   "AMADER-BARAKAH": { type: "percent", value: 50, minSpend: 0, label: "৫০% ছাড়" }
 };
-
-const FREE_DELIVERY_OFFER_KEY = "barakah_free_delivery_offer_deadline";
-const FREE_DELIVERY_OFFER_DURATION = 2 * 60 * 60 * 1000;
-let fallbackOfferDeadline = 0;
-
-function getFreeDeliveryOfferDeadline() {
-  const now = Date.now();
-  try {
-    const savedDeadline = Number(localStorage.getItem(FREE_DELIVERY_OFFER_KEY));
-    if (Number.isFinite(savedDeadline) && savedDeadline > now) return savedDeadline;
-
-    const deadline = now + FREE_DELIVERY_OFFER_DURATION;
-    localStorage.setItem(FREE_DELIVERY_OFFER_KEY, String(deadline));
-    return deadline;
-  } catch (error) {
-    if (!fallbackOfferDeadline || fallbackOfferDeadline <= now) {
-      fallbackOfferDeadline = now + FREE_DELIVERY_OFFER_DURATION;
-    }
-    return fallbackOfferDeadline;
-  }
-}
-
-function isFreeDeliveryOfferActive() {
-  return Date.now() < getFreeDeliveryOfferDeadline();
-}
-
-function initFreeDeliveryCountdown() {
-  const hoursEl = document.getElementById("offerCountdownHours");
-  const minutesEl = document.getElementById("offerCountdownMinutes");
-  const secondsEl = document.getElementById("offerCountdownSeconds");
-  const statusEl = document.getElementById("offerCountdownStatus");
-  if (!hoursEl || !minutesEl || !secondsEl || !statusEl) return;
-
-  const updateCountdown = () => {
-    const remaining = Math.max(0, getFreeDeliveryOfferDeadline() - Date.now());
-    const totalSeconds = Math.floor(remaining / 1000);
-    hoursEl.textContent = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-    minutesEl.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-    secondsEl.textContent = String(totalSeconds % 60).padStart(2, "0");
-    statusEl.textContent = remaining > 0 ? "অফারটি ২ ঘণ্টার মধ্যে শেষ হবে" : "এই অফারের সময় শেষ";
-    document.querySelectorAll("[data-free-delivery-copy]").forEach((element) => {
-      if (!isFreeDeliveryOfferActive()) element.textContent = "ফ্রি ডেলিভারি অফারের সময় শেষ";
-    });
-  };
-
-  updateCountdown();
-  window.setInterval(updateCountdown, 1000);
-}
 
 /* ==========================================================================
    CUSTOMER REVIEWS DATABASE (Easily customize or replace photos here)
@@ -1046,9 +1000,12 @@ function getCart() {
   try {
     const cart = localStorage.getItem("barakah_cart");
     const items = cart ? JSON.parse(cart) : [];
-    return Array.isArray(items) ? items.map((item) => String(item.productId) === "2"
-      ? { ...item, packageId: "pp-1k", packageLabel: "1 kg  2 packet (size :12/16)", price: 999 }
-      : item) : [];
+    return Array.isArray(items) ? items.map((item) => {
+      if (String(item.productId) !== "2") return item;
+      const product = BARAKAH_PRODUCTS.find((entry) => String(entry.id) === "2");
+      const pkg = product?.packages.find((entry) => entry.id === item.packageId) || product?.packages.find((entry) => entry.id === "pp-1k");
+      return pkg ? { ...item, packageId: pkg.id, packageLabel: pkg.label, price: pkg.price } : item;
+    }) : [];
   } catch (e) {
     console.error("Cart read error:", e);
     return [];
@@ -2168,8 +2125,6 @@ function showOrderSuccessModal(orderId, name, phone, address, paymentMethod) {
 // 8. GLOBAL INITIALIZATION (DOM CONTENT LOADED)
 // --------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-  getFreeDeliveryOfferDeadline();
-  initFreeDeliveryCountdown();
   const couponInput = document.getElementById("couponInput");
   if (couponInput && appliedCouponCode) couponInput.value = appliedCouponCode;
 
@@ -2388,6 +2343,16 @@ function renderHomeHeroSlider() {
       btnLink: "products.html?category=superfoods",
       btnSecText: "হোম ডেলিভারি নিন",
       btnSecLink: "products.html"
+    },
+    {
+      image: "images/products/murgiheader.jpeg",
+      badge: "🐔 গ্রামে পালিত খাঁটি দেশি মুরগি",
+      title: "তাজা দেশি মুরগির মাংস",
+      desc: "দেশি মুরগির স্বতন্ত্র স্বাদ ও ঘ্রাণে তৈরি করুন পরিবারের পছন্দের খাবার। সতেজতা ও মান বজায় রেখে পৌঁছে দিচ্ছি আপনার ঘরে।",
+      btnText: "দেশি মুরগি কিনুন",
+      btnLink: "products.html?category=meat",
+      btnSecText: "মাংসের পণ্য দেখুন",
+      btnSecLink: "products.html?category=meat"
     }
   ];
 
@@ -3639,7 +3604,6 @@ function initProductDetailsPage() {
             <div class="details-price-current" id="detailsCurrentPrice">৳ ${initialPkg.price}</div>
             <div class="details-price-old" id="detailsOldPrice" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳ ${initialPkg.oldPrice || ""}</div>
             <div class="details-discount-chip" id="detailsDiscountChip" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳${initialPkg.oldPrice ? initialPkg.oldPrice - initialPkg.price : 0} সাশ্রয়</div>
-            ${String(product.id) === "2" ? '<span class="details-price-delivery-free"><span aria-hidden="true"></span> Delivery charge: FREE</span>' : ""}
           </div>
 
           <!-- Short Description -->
@@ -3673,15 +3637,14 @@ function initProductDetailsPage() {
                 <span class="patpata-offer-icon">🌿</span>
                 <div>
                   <span class="patpata-offer-kicker">সীমিত সময়ের বিশেষ অফার</span>
-                  <h2>পাটপাতা মাত্র ৳৯৯৯</h2>
+                  <h2>৳২,০০০ বা তার বেশি অর্ডারে ডেলিভারি ফ্রি</h2>
                 </div>
                 
               </div>
               <div class="patpata-offer-perks">
-                <span><b>🚚</b> সারা বাংলাদেশে হোম ডেলিভারি ফ্রি</span>
-                <span><b>🎁</b>  100 গ্রাম সাজনা পাতা একদম ফ্রি</span>
+                <span><b></b></span>
               </div>
-              <p class="patpata-offer-note">অর্ডার করুন নিচের বাটন থেকে—ফ্রি উপহারটি অর্ডারের সঙ্গে পাঠানো হবে।</p>
+              <p class="patpata-offer-note">অর্ডার করুন নিচের বাটন থেকে</p>
             </section>
           ` : ""}
           <div class="details-purchase-bar">
