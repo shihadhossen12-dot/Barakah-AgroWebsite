@@ -819,10 +819,7 @@ const SHIPPING_CONFIG = {
 };
 
 function getCartItemPackageLabel(item) {
-  const label = item.packageLabel || "";
-  return String(item.productId) === "2" && !label.includes("সাজনা")
-    ? `${label} + ১০০ গ্রাম সাজনা পাতা ফ্রি`
-    : label;
+  return item.packageLabel || "";
 }
 
 function getDeliveryFee(cart, location, subtotal) {
