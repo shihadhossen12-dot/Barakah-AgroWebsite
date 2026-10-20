@@ -997,12 +997,36 @@ function getCart() {
   try {
     const cart = localStorage.getItem("barakah_cart");
     const items = cart ? JSON.parse(cart) : [];
-    return Array.isArray(items) ? items.map((item) => {
+    if (!Array.isArray(items)) return [];
+
+    let changed = false;
+    const cleanItems = items.filter((item) => {
+      const name = `${item.banglaName || ""} ${item.name || ""}`;
+      const packageLabel = item.packageLabel || "";
+      const freeSajna = /(?:১০০\s*গ্রাম|100\s*(?:gm|gram)).*সাজনা.*(?:ফ্রি|free)|(?:সাজনা).*?(?:ফ্রি|free)/i;
+      // Remove any stale zero-priced free-gift line left in a customer's saved cart.
+      if (Number(item.price) === 0 && freeSajna.test(`${name} ${packageLabel}`)) {
+        changed = true;
+        return false;
+      }
+
+      const cleanedLabel = packageLabel
+        .replace(/\s*\+?\s*(?:১০০\s*গ্রাম|100\s*(?:gm|gram))\s*সাজনা\s*পাতা\s*(?:ফ্রি|free)/i, "")
+        .trim();
+      if (cleanedLabel !== packageLabel) {
+        item.packageLabel = cleanedLabel;
+        changed = true;
+      }
+      return true;
+    }).map((item) => {
       if (String(item.productId) !== "2") return item;
       const product = BARAKAH_PRODUCTS.find((entry) => String(entry.id) === "2");
       const pkg = product?.packages.find((entry) => entry.id === item.packageId) || product?.packages.find((entry) => entry.id === "pp-1k");
       return pkg ? { ...item, packageId: pkg.id, packageLabel: pkg.label, price: pkg.price } : item;
-    }) : [];
+    });
+
+    if (changed) localStorage.setItem("barakah_cart", JSON.stringify(cleanItems));
+    return cleanItems;
   } catch (e) {
     console.error("Cart read error:", e);
     return [];
