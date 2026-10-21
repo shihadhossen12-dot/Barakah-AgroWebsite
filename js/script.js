@@ -49,7 +49,7 @@ const BARAKAH_PRODUCTS = [
       { id: "mo-5l", label: "5 liter", price: 1500 },
       { id: "mo-4l", label: "4 liter", price: 1200 },
       { id: "mo-3l", label: "3 liter", price: 900 },
-      { id: "mo-2l", label: "2 liter", price: 600 },
+      
       { id: "mo-1l", label: "1 liter", price: 300 },
 
     ]
