@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অর্ডার ট্র্যাক করুন | Barakah Agro</title>
+  <meta name="description" content="অর্ডার আইডি ও মোবাইল নম্বর দিয়ে আপনার অর্ডারের বর্তমান অবস্থা জানুন।">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>.trk-wrap{max-width:720px;margin:0 auto;padding:40px 0 80px}.trk-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;margin-bottom:20px;padding:24px;box-shadow:0 6px 24px #0f172a0d}.trk-title{color:#166534;margin:0 0 6px;font-size:1.4rem;font-weight:800}.trk-sub{color:#64748b;margin:0 0 18px;font-size:.92rem}.trk-field{margin-bottom:14px}.trk-field label{color:#334155;margin-bottom:6px;font-size:.88rem;font-weight:700;display:block}.trk-field input{box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:12px;outline:none;width:100%;padding:12px 14px;font-family:inherit;font-size:1rem}.trk-field input:focus{border-color:#166534;box-shadow:0 0 0 3px #1665341f}.trk-btn{color:#fff;cursor:pointer;background:#166534;border:0;border-radius:12px;width:100%;padding:13px;font-family:inherit;font-size:1rem;font-weight:700}.trk-btn:disabled{opacity:.6;cursor:wait}.trk-error{color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;margin-top:14px;padding:12px 14px;font-size:.9rem;display:none}.trk-head{flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;display:flex}.trk-id{color:#c2782b;font-size:1.05rem;font-weight:800}.trk-date{color:#64748b;margin-top:2px;font-size:.85rem}.trk-badge{color:#166534;background:#dcfce7;border-radius:999px;padding:7px 14px;font-size:.85rem;font-weight:700}.trk-badge.cancelled{color:#b91c1c;background:#fee2e2}.trk-steps{margin:8px 0 22px;padding:0;list-style:none;display:flex}.trk-steps li{text-align:center;color:#94a3b8;flex:1;font-size:.78rem;font-weight:600;position:relative}.trk-steps li:before{content:"";z-index:0;background:#e2e8f0;width:100%;height:3px;position:absolute;top:13px;left:-50%}.trk-steps li:first-child:before{display:none}.trk-steps .dot{z-index:1;color:#fff;background:#e2e8f0;border-radius:50%;justify-content:center;align-items:center;width:28px;height:28px;margin:0 auto 6px;font-size:.8rem;font-weight:800;display:flex;position:relative}.trk-steps li.done{color:#166534}.trk-steps li.done:before{background:#4ade80}.trk-steps li.done .dot{background:#16a34a}.trk-steps li.current .dot{color:#16a34a;background:#fff;border:3px solid #16a34a;box-shadow:0 0 0 4px #16a34a26}.trk-note{color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:18px;padding:12px 14px;font-size:.9rem}.trk-note.cancelled{color:#b91c1c;background:#fef2f2;border-color:#fecaca}.trk-item{background:#f8fafc;border-radius:12px;justify-content:space-between;gap:10px;margin-bottom:8px;padding:10px 12px;font-size:.92rem;display:flex}.trk-item small{color:#64748b}.trk-sum{margin-top:14px;font-size:.92rem}.trk-sum div{color:#475569;justify-content:space-between;padding:5px 0;display:flex}.trk-sum .total{color:#166534;border-top:1px dashed #cbd5e1;margin-top:6px;padding-top:10px;font-size:1.05rem;font-weight:800}.trk-help{text-align:center;color:#64748b;font-size:.88rem}.trk-help a{color:#166534;font-weight:700}</style>
+  <script src="js/meta-pixel.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-D5wyxYUn.css">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span>🔥 বিশেষ অফার: ২,০০০ টাকার অর্ডারে সমগ্র বাংলাদেশে হোম ডেলিভারি একদম ফ্রি!</span>
+      </div>
+      <div class="top-bar-right">
+        <a href="tel:01786239185" class="top-bar-link">হটলাইন: 01786-239185</a>
+        <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="top-bar-link">হোয়াটসঅ্যাপ সাপোর্ট</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="header">
+    <div class="container navbar">
+      <a href="index.html" class="logo">
+        <img src="/assets/logo-BLt03TQE.png" alt="Barakah Agro Logo" class="logo-img">
+        <div class="logo-text-wrap">
+          <span class="logo-name">Barakah <span>Agro</span></span>
+          <span class="logo-tagline">বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" class="nav-link">হোম</a></li>
+          <li><a href="products.html" class="nav-link">পণ্য সম্ভার</a></li>
+          <li><a href="about.html" class="nav-link">আমাদের গল্প</a></li>
+          <li><a href="contact.html" class="nav-link">যোগাযোগ</a></li>
+          <li><a href="track.html" class="nav-link active">অর্ডার ট্র্যাক</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="account-btn" onclick="openAccountModal('login')" title="লগইন বা অ্যাকাউন্ট">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="account-btn-label">Login</span>
+        </button>
+
+        <a href="cart.html" class="cart-btn" aria-label="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-count">0</span>
+        </a>
+
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container">
+      <div class="trk-wrap">
+
+        <!-- খোঁজার ফর্ম -->
+        <div class="trk-card">
+          <h1 class="trk-title">আপনার অর্ডার ট্র্যাক করুন</h1>
+          <p class="trk-sub">অর্ডারের সময় পাওয়া অর্ডার আইডি ও মোবাইল নম্বর দিন। লগইন করার দরকার নেই।</p>
+
+          <form id="trackForm">
+            <div class="trk-field">
+              <label for="trkId">অর্ডার আইডি</label>
+              <input type="text" id="trkId" placeholder="যেমন: BA-XXXXXXXX-XXXX" autocomplete="off" required>
+            </div>
+            <div class="trk-field">
+              <label for="trkPhone">মোবাইল নম্বর</label>
+              <input type="tel" id="trkPhone" placeholder="অর্ডারের সময় দেওয়া নম্বর" required>
+            </div>
+            <button type="submit" class="trk-btn" id="trkBtn">অর্ডার খুঁজুন</button>
+            <div class="trk-error" id="trkError" role="alert"></div>
+          </form>
+        </div>
+
+        <!-- ফলাফল -->
+        <div id="trkResult" style="display:none;"></div>
+
+        <p class="trk-help">সাহায্য দরকার? কল করুন <a href="tel:01786239185">01786-239185</a> অথবা <a href="https://wa.me/8801786239185" target="_blank" rel="noopener">হোয়াটসঅ্যাপে</a> লিখুন।</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">
+    <span class="toast-dot"></span>
+    <span id="toastMsg">কার্টে যোগ হয়েছে!</span>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <h3 class="footer-logo-title">Barakah Agro</h3>
+          <p class="footer-tagline">“বিশুদ্ধ খাবার, সুস্থ জীবনের জন্য” — ঘরোয়া যত্ন ও শতভাগ বিশুদ্ধতায় উৎপাদিত প্রাকৃতিক পণ্য সরাসরি আপনার দোরগোড়ায়।</p>
+          <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <a href="https://wa.me/8801786239185" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
+              WhatsApp Support
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="footer-col-title">গুরুত্বপূর্ণ লিংক</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">All Products</a></li>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="cart.html">Shopping Cart</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div>
+          <h4 class="footer-col-title">পণ্য বিভাগ</h4>
+          <ul class="footer-links">
+            <li><a href="products.html?category=mustard-oil">কাঠের ঘানির সরিষার তেল</a></li>
+            <li><a href="products.html?category=milk">দেশি গরুর দুধ</a></li>
+            <li><a href="products.html?category=meat">দেশি হাঁস ও মুরগির মাংস</a></li>
+            <li><a href="products.html?category=leaves">শুকনো পাট ও সাজনা পাতা</a></li>
+            <li><a href="products.html?category=superfoods">আজওয়া খেজুর ও সুপারফুড</a></li>
+            <li><a href="products.html?category=fruits">নিজস্ব বাগানের ফল</a></li>
+            <li><a href="products.html?category=honey">খাঁটি মধু</a></li>
+             <li><a href="products.html?category=spices">মসলা</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div>
+          <h4 class="footer-col-title">যোগাযোগ</h4>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>হটলাইন: <a href="tel:01786239185">01786-239185</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              <span>হোয়াটসঅ্যাপ: <a href="https://wa.me/8801786239185">01786-239185</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>ইমেইল: <a href="mailto:barakahagrofirm@gmail.com">barakahagrofirm@gmail.com</a></span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>ঠিকানা: নরুন্দি বাজার, জামালপুর সদর, ময়মনসিংহ, বাংলাদেশ</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Barakah Agro. All rights reserved.</p>
+        <p>পেমেন্ট: ক্যাশ অন ডেলিভারি | বিকাশ | নগদ</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/script.js"></script>
+  <script src="js/chat.js"></script>
+  <script>
+    (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var esc = function (s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      };
+      var money = function (n) { return "৳" + Number(n || 0).toLocaleString("en-US"); };
+
+      var STATUS = {
+        pending:    { label: "অর্ডার গ্রহণ করা হয়েছে", step: "গ্রহণ",     msg: "আপনার অর্ডার আমরা পেয়েছি। শীঘ্রই আমাদের প্রতিনিধি যোগাযোগ করবেন।" },
+        processing: { label: "প্রসেসিং চলছে",          step: "প্রসেসিং",  msg: "আপনার অর্ডারটি এখন প্রস্তুত করা হচ্ছে।" },
+        confirmed:  { label: "অর্ডার কনফার্ম হয়েছে",    step: "কনফার্ম",   msg: "আপনার অর্ডার কনফার্ম হয়েছে। খুব শীঘ্রই পাঠানো হবে।" },
+        shipped:    { label: "পাঠানো হয়েছে",           step: "শিপিং",     msg: "আপনার অর্ডার পাঠানো হয়েছে। ডেলিভারি ম্যানের ফোনের জন্য অপেক্ষা করুন।" },
+        delivered:  { label: "ডেলিভারি সম্পন্ন",        step: "ডেলিভারি",  msg: "আপনার অর্ডার ডেলিভারি সম্পন্ন হয়েছে। আমাদের সাথে থাকার জন্য ধন্যবাদ!" },
+        cancelled:  { label: "অর্ডার বাতিল",           step: "বাতিল",     msg: "এই অর্ডারটি বাতিল করা হয়েছে। প্রশ্ন থাকলে আমাদের সাথে যোগাযোগ করুন।" }
+      };
+      var STEPS = ["pending", "processing", "confirmed", "shipped", "delivered"];
+
+      function fmtDate(d) {
+        if (!d) return "";
+        return new Date(d).toLocaleString("bn-BD", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+      }
+
+      function showError(msg) {
+        var el = $("trkError");
+        el.textContent = msg;
+        el.style.display = msg ? "block" : "none";
+      }
+
+      function render(o) {
+        var info = STATUS[o.status] || { label: o.status, step: o.status, msg: "" };
+        var cancelled = o.status === "cancelled";
+        var idx = STEPS.indexOf(o.status);
+
+        var stepsHtml = "";
+        if (!cancelled) {
+          stepsHtml = '<ol class="trk-steps">' + STEPS.map(function (s, i) {
+            var cls = i < idx ? "done" : (i === idx ? "current done" : "");
+            var dot = i < idx ? "✓" : String(i + 1);
+            return '<li class="' + cls + '"><div class="dot">' + dot + '</div>' + STATUS[s].step + '</li>';
+          }).join("") + '</ol>';
+        }
+
+        var itemsHtml = (o.items || []).map(function (it) {
+          return '<div class="trk-item"><div>' + esc(it.name) +
+            (it.packageLabel ? '<br><small>' + esc(it.packageLabel) + ' × ' + it.quantity + '</small>' : '<br><small>পরিমাণ: ' + it.quantity + '</small>') +
+            '</div><strong>' + money(it.price * it.quantity) + '</strong></div>';
+        }).join("");
+
+        var html =
+          '<div class="trk-card">' +
+            '<div class="trk-head">' +
+              '<div><div class="trk-id">' + esc(o.id) + '</div><div class="trk-date">অর্ডারের সময়: ' + esc(fmtDate(o.createdAt)) + '</div></div>' +
+              '<span class="trk-badge' + (cancelled ? ' cancelled' : '') + '">' + esc(info.label) + '</span>' +
+            '</div>' +
+            stepsHtml +
+            '<div class="trk-note' + (cancelled ? ' cancelled' : '') + '">' + esc(info.msg) +
+              (o.updatedAt ? '<br><small>সর্বশেষ আপডেট: ' + esc(fmtDate(o.updatedAt)) + '</small>' : '') + '</div>' +
+            itemsHtml +
+            '<div class="trk-sum">' +
+              '<div><span>পণ্য সাবটোটাল</span><span>' + money(o.subtotal) + '</span></div>' +
+              (o.discount > 0 ? '<div><span>ছাড়</span><span>- ' + money(o.discount) + '</span></div>' : '') +
+              '<div><span>ডেলিভারি চার্জ</span><span>' + money(o.deliveryFee) + '</span></div>' +
+              '<div><span>পেমেন্ট পদ্ধতি</span><span>' + esc(o.paymentMethod) + '</span></div>' +
+              '<div class="total"><span>সর্বমোট</span><span>' + money(o.total) + '</span></div>' +
+            '</div>' +
+          '</div>';
+
+        $("trkResult").innerHTML = html;
+        $("trkResult").style.display = "block";
+      }
+
+      async function search(id, phone) {
+        showError("");
+        $("trkResult").style.display = "none";
+        var btn = $("trkBtn");
+        btn.disabled = true;
+        btn.textContent = "খোঁজা হচ্ছে...";
+        try {
+          var res = await fetch("/api/orders/track?id=" + encodeURIComponent(id) + "&phone=" + encodeURIComponent(phone));
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok) throw new Error(data.error || "কিছু একটা সমস্যা হয়েছে।");
+          render(data.order);
+        } catch (err) {
+          showError(err.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "অর্ডার খুঁজুন";
+        }
+      }
+
+      $("trackForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        search($("trkId").value.trim(), $("trkPhone").value.trim());
+      });
+
+      // অর্ডার সফল মডাল থেকে এলে নিজে নিজে খুঁজবে
+      var params = new URLSearchParams(window.location.search);
+      var qId = params.get("id");
+      var qPhone = params.get("phone");
+      if (qId) $("trkId").value = qId;
+      if (qPhone) $("trkPhone").value = qPhone;
+      if (qId && qPhone) search(qId, qPhone);
+    })();
+  </script>
+</body>
+</html>
