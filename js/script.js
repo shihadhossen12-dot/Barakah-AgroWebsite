@@ -571,7 +571,7 @@ const BARAKAH_PRODUCTS = [
   {
     id: 16,
     name: "Coriander Powder",
-    banglaName: "ধনিয়ার গুঁড়া",
+    banglaName: "ধনিয়ার গুঁড়া — রান্নায় ঘ্রাণ ও স্বাদের জন্য",
     category: "spices",
     categoryName: "Spices",
     banglaCategory: "মসলা",
