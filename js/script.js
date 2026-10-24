@@ -135,7 +135,7 @@ const BARAKAH_PRODUCTS = [
   {
     id: 4,
     name: "Sun-Dried Sajna Leaves",
-    banglaName: "প্রাকৃতিক শুকনো সাজনা পাতা",
+    banglaName: " শুকনো সাজনা পাতা",
     category: "leaves",
     categoryName: "Dry Leaves",
     banglaCategory: "শুকনো পাতা ও ভেষজ",
@@ -150,7 +150,7 @@ const BARAKAH_PRODUCTS = [
     isOffer: true,
     shortDescription: "পুষ্টির আধার সাজনা পাতা স্বাস্থ্যসম্মত উপায়ে রোদে শুকিয়ে প্রস্তুত।",
     description: "সাজনা পাতা বিশ্বজুড়ে সুপারফুড হিসেবে পরিচিত। এতে দুধের চেয়ে বেশি ক্যালসিয়াম, কলার চেয়ে বেশি পটাশিয়াম এবং কমলার চেয়ে বহুগুণ ভিটামিন-সি রয়েছে। বারাকাহ এগ্রোর শুকনো সাজনা পাতা সম্পূর্ণ ধুলোবালি মুক্ত পরিচ্ছন্ন পরিবেশে রোদে শুকানো হয়। এটি চা আকারে অথবা ভাতের সাথে মিশিয়ে সহজেই গ্রহণ করা যায়।",
-    ingredients: "১০০% বাছাইকৃত তাজা সাজনা পাতা (Dried Moringa Oleifera Leaves)",
+    ingredients: "১০০% বাছাইকৃত সাজনা পাতা (Dried Moringa Oleifera Leaves)",
     benefits: [
       "উচ্চ রক্তচাপ ও ডায়াবেটিস নিয়ন্ত্রণে সহায়ক",
       "শরীরের দুর্বলতা দূর করে ও শক্তি যোগায়",
@@ -180,7 +180,7 @@ const BARAKAH_PRODUCTS = [
     reviewCount: 42,
     isOffer: true,
     shortDescription: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾 📍 শুধুমাত্র জামালপুর এলাকায় ডেলিভারি।",
-    description: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾 বারাকাহ এগ্রো গ্রামবাংলার চারণভূমিতে ঘাস খাওয়া দেশি গাভীর খাঁটি দুধ সংগ্রহ করে সরাসরি গ্রাহকের কাছে পৌঁছে দেয়। কোনো প্রকার কেমিক্যাল বা প্রিজারভেটিভ ছাড়াই প্রতিদিনের তাজা দুধ সরবরাহ করা হয়। এতে রয়েছে প্রচুর পরিমাণে প্রোটিন, ক্যালসিয়াম, ভিটামিন এবং অন্যান্য পুষ্টিগুণ যা শরীরের জন্য অত্যন্ত উপকারী। “প্রোটিন, ক্যালসিয়াম ও প্রয়োজনীয় পুষ্টি উপাদানে সমৃদ্ধ—প্রতিদিনের সুষম খাদ্যাভ্যাসে খাঁটি দুধ হতে পারে পরিবারের পুষ্টির একটি সহজ ও সুস্বাদু অংশ।” 🥛🤍",
+    description: "গ্রামবাংলার খাঁটি দেশি গাভীর দুধ – ১০ কেজি 🌾 বারাকাহ এগ্রো গ্রামবাংলার চারণভূমিতে ঘাস খাওয়া দেশি গাভীর খাঁটি দুধ সংগ্রহ করে সরাসরি গ্রাহকের কাছে পৌঁছে দেয়। কোনো প্রকার কেমিক্যাল বা প্রিজারভেটিভ ছাড়াই প্রতিদিনের দুধ সরবরাহ করা হয়। এতে রয়েছে প্রচুর পরিমাণে প্রোটিন, ক্যালসিয়াম, ভিটামিন এবং অন্যান্য পুষ্টিগুণ যা শরীরের জন্য অত্যন্ত উপকারী। “প্রোটিন, ক্যালসিয়াম ও প্রয়োজনীয় পুষ্টি উপাদানে সমৃদ্ধ—প্রতিদিনের সুষম খাদ্যাভ্যাসে খাঁটি দুধ হতে পারে পরিবারের পুষ্টির একটি সহজ ও সুস্বাদু অংশ।” 🥛🤍",
     ingredients: "১০০% দেশি গাভীর দুধ (Pure Deshi Cow Milk)",
     benefits: [
       "🥛 দেশি গাভীর দুধের উপকারিতা",
@@ -256,7 +256,7 @@ const BARAKAH_PRODUCTS = [
   reviewCount: 22,
   isOffer: false,
 
-  shortDescription: "তাজা দেশি রাজহাঁসের মাংস | স্বাদে অনন্য, ঘরোয়া রান্নায় অতুলনীয়!",
+  shortDescription: "দেশি রাজহাঁসের মাংস | স্বাদে অনন্য, ঘরোয়া রান্নায় অতুলনীয়!",
 
   description: "গ্রামে পালিত দেশি রাজহাঁসের সুস্বাদু মাংস নিয়ে এসেছে Barakah Agro। রাজহাঁসের মাংস দিয়ে তৈরি করুন মজাদার ঝোল, ভুনা কিংবা পছন্দের ঐতিহ্যবাহী খাবার। পরিষ্কার করার পর ওজন অনুযায়ী মাংস সরবরাহ করা হয়, যাতে আপনি পান নির্ধারিত পরিমাণের মাংস। পরিবারের বিশেষ আয়োজন ও প্রিয় খাবারের জন্য বেছে নিন দেশি রাজহাঁসের মাংস।",
 
@@ -601,7 +601,7 @@ const BARAKAH_PRODUCTS = [
 {
   id: 17,
   name: "খাঁটি দেশি মোরগের মাংস",
-  banglaName: "তাজা দেশি মোরগ — স্বাদে অতুলনীয় , গ্রামে পালিত দেশি মোরগ প্রতি কেজি-৮৫০/-(পরিষ্কার করার পর ওজন)",
+  banglaName: " দেশি মোরগ — স্বাদে অতুলনীয় , গ্রামে পালিত দেশি মোরগ প্রতি কেজি-৮৫০/-(পরিষ্কার করার পর ওজন)",
   category: "meat",
   categoryName: "Meat",
   banglaCategory: "মাংস",
@@ -645,7 +645,7 @@ const BARAKAH_PRODUCTS = [
 {
   id: 18,
   name: "খাঁটি দেশি মুরগির মাংস",
-  banglaName: "তাজা দেশি মুরগি — স্বাদে অতুলনীয়, গ্রামে পালিত দেশি মুরগি প্রতি কেজি ৭৫০৳ (পরিষ্কার করার পর ওজন)",
+  banglaName: " দেশি মুরগি — স্বাদে অতুলনীয়, গ্রামে পালিত দেশি মুরগি প্রতি কেজি ৭৫০৳ (পরিষ্কার করার পর ওজন)",
   category: "meat",
   categoryName: "Meat",
   banglaCategory: "মাংস",
@@ -688,7 +688,7 @@ const BARAKAH_PRODUCTS = [
 
 {
   id: 19,
-  name: "তাজা চিনাহাঁসের মাংস",
+  name: " চিনাহাঁসের মাংস",
   banglaName: "গ্রামে পালিত চিনাহাঁস প্রতি কেজি ৯৫০৳ (পরিষ্কার করার পর ওজন)",
   category: "meat",
   categoryName: "Meat",
@@ -706,7 +706,7 @@ const BARAKAH_PRODUCTS = [
   isOffer: false,
 
   shortDescription:
-    "তাজা চিনাহাঁসের মাংস — স্বাদে অনন্য, ঘরোয়া রান্নার জন্য দারুণ পছন্দ! প্রতি কেজি ৯৫০৳ (পরিষ্কার করার পর ওজন)।",
+    " চিনাহাঁসের মাংস — স্বাদে অনন্য, ঘরোয়া রান্নার জন্য দারুণ পছন্দ! প্রতি কেজি ৯৫০৳ (পরিষ্কার করার পর ওজন)।",
 
   description:
     "Barakah Agro নিয়ে এসেছে চিনাহাঁসের মাংস, যা আপনার প্রিয় রান্নায় যোগ করবে ভিন্নধর্মী স্বাদ। চিনাহাঁসের মাংস দিয়ে তৈরি করুন মজাদার ঝোল, ভুনা কিংবা পছন্দের ঐতিহ্যবাহী খাবার। পরিষ্কার করার পর ওজন অনুযায়ী মাংস সরবরাহ করা হয়। সতেজতা ও মান বজায় রেখে গ্রাহকের কাছে পৌঁছে দেওয়াই আমাদের লক্ষ্য। প্রতি কেজি মাত্র ৯৫০৳।",
@@ -749,10 +749,10 @@ const BARAKAH_PRODUCTS = [
   isOffer: false,
 
   shortDescription:
-    "তাজা দেশি পাতিহাঁসের মাংস — ঘরোয়া রান্না ও ঐতিহ্যবাহী খাবারের জন্য দারুণ পছন্দ! প্রতি কেজি ৮০০৳ (পরিষ্কার করার পর ওজন)।",
+    " দেশি পাতিহাঁসের মাংস — ঘরোয়া রান্না ও ঐতিহ্যবাহী খাবারের জন্য দারুণ পছন্দ! প্রতি কেজি ৮০০৳ (পরিষ্কার করার পর ওজন)।",
 
   description:
-    "Barakah Agro নিয়ে এসেছে তাজা দেশি পাতিহাঁসের মাংস, যা আপনার প্রিয় রান্নায় যোগ করবে ঐতিহ্যবাহী স্বাদ। পাতিহাঁসের মাংস দিয়ে তৈরি করুন মজাদার ঝোল, ভুনা কিংবা পছন্দের দেশি খাবার। পরিষ্কার করার পর ওজন অনুযায়ী মাংস সরবরাহ করা হয়। সতেজতা ও মান বজায় রেখে গ্রাহকের কাছে পৌঁছে দেওয়াই আমাদের লক্ষ্য। প্রতি কেজি মাত্র ৮০০৳।",
+    "Barakah Agro নিয়ে এসেছে  দেশি পাতিহাঁসের মাংস, যা আপনার প্রিয় রান্নায় যোগ করবে ঐতিহ্যবাহী স্বাদ। পাতিহাঁসের মাংস দিয়ে তৈরি করুন মজাদার ঝোল, ভুনা কিংবা পছন্দের দেশি খাবার। পরিষ্কার করার পর ওজন অনুযায়ী মাংস সরবরাহ করা হয়। সতেজতা ও মান বজায় রেখে গ্রাহকের কাছে পৌঁছে দেওয়াই আমাদের লক্ষ্য। প্রতি কেজি মাত্র ৮০০৳।",
 
   ingredients:
     "১০০% দেশি পাতিহাঁসের মাংস (Fresh Local Duck Meat)",
@@ -940,7 +940,7 @@ const FEATURED_CATEGORIES = [
     id: "meat",
     name: "দেশি হাঁস ও মুরগি",
     enName: "Organic Meat",
-    desc: "১০০% হালাল ও তাজা",
+    desc: "১০০% হালাল",
     image: "images/products/has.jpeg",
     url: "products.html?category=meat"
   },
@@ -963,7 +963,7 @@ const FEATURED_CATEGORIES = [
   },
   {
     id: "fruits",
-    name: "তাজা ফল",
+    name: " ফল",
     enName: "Fresh Fruits",
     badge: "মিষ্টি ও রসালো",
     desc: "হিমসাগর আম ও লিচু",
@@ -2368,7 +2368,7 @@ function renderHomeHeroSlider() {
     {
       image: "images/products/murgiheader.jpeg",
       badge: "🐔 গ্রামে পালিত খাঁটি দেশি মুরগি",
-      title: "তাজা দেশি মুরগির মাংস",
+      title: " দেশি মুরগির মাংস",
       desc: "দেশি মুরগির স্বতন্ত্র স্বাদ ও ঘ্রাণে তৈরি করুন পরিবারের পছন্দের খাবার। সতেজতা ও মান বজায় রেখে পৌঁছে দিচ্ছি আপনার ঘরে।",
       btnText: "দেশি মুরগি কিনুন",
       btnLink: "products.html?category=meat",
@@ -3195,7 +3195,7 @@ function initCategoryNavigation() {
               </a>
               <a href="products.html?category=meat" class="desktop-cat-drop-item" data-cat="meat">
                 <span class="drop-icon-box meat-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-                <div class="drop-text-box"><span class="drop-name">দেশি মুরগি ও হাঁসের মাংস</span><span class="drop-sub">অর্গানিক তাজা মাংস</span></div>
+                <div class="drop-text-box"><span class="drop-name">দেশি মুরগি ও হাঁসের মাংস</span><span class="drop-sub">অর্গানিক মাংস</span></div>
                 <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </a>
               <a href="products.html?category=leaves" class="desktop-cat-drop-item" data-cat="leaves">
@@ -3210,7 +3210,7 @@ function initCategoryNavigation() {
               </a>
               <a href="products.html?category=fruits" class="desktop-cat-drop-item" data-cat="fruits">
                 <span class="drop-icon-box fruits-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></span>
-                <div class="drop-text-box"><span class="drop-name">নিজস্ব বাগানের তাজা ফল</span><span class="drop-sub">ফরমালিনমুক্ত মৌসুমী তাজা ফল</span></div>
+                <div class="drop-text-box"><span class="drop-name">নিজস্ব বাগানের ফল</span><span class="drop-sub">ফরমালিনমুক্ত মৌসুমী  ফল</span></div>
                 <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </a>
               <a href="products.html?category=honey" class="desktop-cat-drop-item" data-cat="honey">
@@ -3256,7 +3256,7 @@ function initCategoryNavigation() {
           </a>
           <a href="products.html?category=fruits" class="desktop-cat-link" data-cat="fruits">
             <span class="cat-link-icon fruits-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></span>
-            <span>তাজা ফল</span>
+            <span> ফল</span>
           </a>
           <a href="products.html?category=honey" class="desktop-cat-link" data-cat="honey">
             <span class="cat-link-icon honey-color"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z"/></svg></span>
@@ -3348,7 +3348,7 @@ function initCategoryNavigation() {
                 </a>
                 <a href="products.html?category=fruits" class="mobile-cat-card">
                   <div class="mobile-cat-card-icon fruits-theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg></div>
-                  <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">নিজস্ব বাগানের তাজা ফল</span><span class="mobile-cat-card-sub">Fresh Garden Fruits</span></div>
+                  <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">নিজস্ব বাগানের ফল</span><span class="mobile-cat-card-sub">Fresh Garden Fruits</span></div>
                   <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </a>
                 <a href="products.html?category=honey" class="mobile-cat-card">
