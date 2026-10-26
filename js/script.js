@@ -484,7 +484,8 @@ const BARAKAH_PRODUCTS = [
     images: [
       "images/products/modhu1.jpeg",
       "images/products/modhu2.jpeg",
-      "images/products/modhu3.jpeg"
+      "images/products/modhu3.jpeg",
+      "images/products/modhu4.jpeg"
                     
     ],
     rating: 5,                                   
@@ -504,9 +505,9 @@ const BARAKAH_PRODUCTS = [
 
     ],
     packages: [
-      { id: "hn-250gm", label: " 250gm", price: 425, oldPrice: 500 },
-      { id: "hn-500gm", label: "500 gm", price: 850, oldPrice: 1000 },
-      { id: "hn-1kg", label: "1 kg", price: 1700, oldPrice: 2000 }
+      { id: "hn-300gm", label: " 300gm", price: 1000, oldPrice: 1200 },
+      { id: "hn-600gm", label: "600 gm", price: 2000, oldPrice: 2400 }
+      
     ]
   },
   
