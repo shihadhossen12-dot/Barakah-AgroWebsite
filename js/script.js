@@ -772,6 +772,188 @@ const BARAKAH_PRODUCTS = [
     { id: "patihash-1kg", label: "1 kg", price: 800 },
     { id: "patihash-2kg", label: "2 kg", price: 1600 }
   ]
+},
+{
+  id: 21,
+  name: " ঐতিহ্যবাহী গোল পাটালি গুড়",
+  banglaName: " ঐতিহ্যবাহী গোল পাটালি গুড় — Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সরাসরি আপনার ঘরে!",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-DEMO",
+  image: "images/products/golpatali.jpg",
+  images: ["images/products/golpatali.jpg"],
+  rating: 0,
+  reviewCount: 0,
+  isOffer: false,
+  shortDescription: "ঐতিহ্যবাহী গোল পাটালি গুড় – গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য! শীতের সকালে এক কাপ চা, গরম ভাপা পিঠা কিংবা দুধ-চিতই পিঠার সঙ্গে এক টুকরো গোল পাটালি গুড়—স্বাদটা যেন অন্যরকম!",
+  description: "আমাদের ঐতিহ্যবাহী গোল পাটালি গুড় আপনাকে দেবে গ্রামবাংলার সেই চিরচেনা মিষ্টি স্বাদের অনুভূতি। Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সতর্কভাবে সংগ্রহ করা খেজুরের রস দিয়ে তৈরি এই গুড়। প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।",
+  ingredients: "খেজুরের গুড়",
+  benefits: [
+    "কেন নেবেন গোল পাটালি গুড়?",
+    "ঐতিহ্যবাহী স্বাদ — গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য।",
+    "প্রাকৃতিক মিষ্টতা — কোনো কৃত্রিম রঙ বা ফ্লেভার নেই।",
+    "উচ্চ পুষ্টিগুণ — প্রাকৃতিকভাবে পাকা খেজুরের রস থেকে তৈরি।",
+    "পরিবারের জন্য উপযোগী — চা, পিঠা, দুধ বা অন্যান্য মিষ্টি পদে ব্যবহার করা যায়।",
+    "সতর্কভাবে বাছাই ও প্যাকেজিং — Barakah Agro-এর নিজস্ব তত্ত্বাবধান।",
+    "স্বাস্থ্যসম্মত — প্রাকৃতিকভাবে পাকা ও সতর্কভাবে সংগ্রহ করা, যা স্বাস্থ্যকর খাদ্যাভ্যাসে সহায়ক।",
+    "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ করা, যা পরিবেশের প্রতি যত্নশীল।",
+    "গুণগত মান — প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।"
+  ],
+  packages: [
+    { id: "kg-demo-1kg", label: "১ কেজি", price: 300 },
+    { id: "kg-demo-2kg", label: "২ কেজি", price: 600 },
+    { id: "kg-demo-3kg", label: "৩ কেজি", price: 900 },
+    { id: "kg-demo-4kg", label: "৪ কেজি", price: 1200 },
+    { id: "kg-demo-5kg", label: "৫ কেজি", price: 1500 }
+  ]
+},
+{
+  id: 22,
+  name: "ঐতিহ্যবাহী ফয়েল পাটালি গুড় – মিষ্টি স্বাদে বাংলার ঐতিহ্য!",
+  banglaName: "ঐতিহ্যবাহী ফয়েল পাটালি গুড় – মিষ্টি স্বাদে বাংলার ঐতিহ্য!",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-DEMO-02",
+  image: "images/products/golpatali.jpg",
+  images: ["images/products/golpatali.jpg"],
+  rating: 0,
+  reviewCount: 0,
+  isOffer: false,
+  shortDescription: "গ্রামবাংলার চিরচেনা পাটালি গুড়ের স্বাদ এবার ফয়েল মোড়কে! সতেজতা ও সুগন্ধ বজায় রাখতে ফয়েল মোড়কে সংরক্ষণ করা এই গুড়। মিষ্টি স্বাদ ও মন মাতানো ঘ্রাণে ফয়েল পাটালি গুড় হতে পারে আপনার শীতের পিঠাপুলির অন্যতম সঙ্গী।",
+  description: "Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সতর্কভাবে সংগ্রহ করা খেজুরের রস দিয়ে তৈরি এই ফয়েল পাটালি গুড়। প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ। ফয়েল মোড়কে প্যাকেজিং করা হওয়ায় এটি দীর্ঘ সময় ধরে সতেজ ও সুগন্ধযুক্ত থাকে। মিষ্টি স্বাদ ও মন মাতানো ঘ্রাণে ফয়েল পাটালি গুড় হতে পারে আপনার শীতের পিঠাপুলির অন্যতম সঙ্গী।",
+  ingredients: "খেজুরের গুড়",
+  benefits: [
+    "যেভাবে খেতে পারেন:",
+    "চা, দুধ বা অন্যান্য পানীয়ের সঙ্গে মিশিয়ে খেতে পারেন।",
+    "পিঠা, মিষ্টি বা অন্যান্য রান্নায় ব্যবহার করতে পারেন।",
+    "সতেজতা ও সুগন্ধ বজায় রাখতে ফয়েল মোড়কে সংরক্ষণ করুন।",
+    "ঐতিহ্যবাহী স্বাদ — গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য।",
+    "প্রাকৃতিক মিষ্টতা — কোনো কৃত্রিম রঙ বা ফ্লেভার নেই।",
+    "উচ্চ পুষ্টিগুণ — প্রাকৃতিকভাবে পাকা খেজুরের রস থেকে তৈরি।",
+    "পরিবারের জন্য উপযোগী — চা, পিঠা, দুধ বা অন্যান্য মিষ্টি পদে ব্যবহার করা যায়।",
+    "সতর্কভাবে বাছাই ও প্যাকেজিং — Barakah Agro-এর নিজস্ব তত্ত্বাবধান।",
+    "স্বাস্থ্যসম্মত — প্রাকৃতিকভাবে পাকা ও সতর্কভাবে সংগ্রহ করা, যা স্বাস্থ্যকর খাদ্যাভ্যাসে সহায়ক।",
+    "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ করা, যা পরিবেশের প্রতি যত্নশীল।",
+    "গুণগত মান — প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।",
+
+  ],
+  packages: [
+    { id: "kg-demo-1kg", label: "১ কেজি", price: 320 },
+    { id: "kg-demo-2kg", label: "২ কেজি", price: 640 },
+    { id: "kg-demo-3kg", label: "৩ কেজি", price: 960 },
+    { id: "kg-demo-4kg", label: "৪ কেজি", price: 1280 },
+    { id: "kg-demo-5kg", label: "৫ কেজি", price: 1600 }
+  ]
+},
+{
+  id: 23,
+  name: "দানাদার ঝোলা গুড় – মিষ্টি স্বাদে গ্রামবাংলার ঐতিহ্য!",
+  banglaName: "দানাদার ঝোলা গুড় – মিষ্টি স্বাদে গ্রামবাংলার ঐতিহ্য!",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-DEMO-03",
+  image: "images/products/jholagur.jpg",
+  images: ["images/products/jholagur.jpg"],
+  rating: 0,
+  reviewCount: 0,
+  isOffer: false,
+  shortDescription: "ঐতিহ্যবাহী দানাদার ঝোলা গুড় দিয়ে উপভোগ করুন পিঠা-পায়েসসহ নানা মজার খাবার। এর দানাদার গঠন ও ঝোলা ভাব খাবারে যোগ করে ভিন্ন মাত্রার স্বাদ।",
+  description: "Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সতর্কভাবে সংগ্রহ করা খেজুরের রস দিয়ে তৈরি এই দানাদার ঝোলা গুড়। প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ। দানাদার গঠন ও ঝোলা ভাব খাবারে যোগ করে ভিন্ন মাত্রার স্বাদ। পিঠা-পায়েসসহ নানা মজার খাবারে এটি ব্যবহার করে উপভোগ করুন গ্রামবাংলার ঐতিহ্যবাহী স্বাদ।",
+  ingredients: "খেজুরের গুড়",
+  benefits: [
+    "যেভাবে খেতে পারেন:",
+    "পিঠা, পায়েস বা অন্যান্য মিষ্টি পদে ব্যবহার করতে পারেন।",
+    "চা, দুধ বা অন্যান্য পানীয়ের সঙ্গে মিশিয়ে খেতে পারেন।",
+    "সতেজতা ও সুগন্ধ বজায় রাখতে ফয়েল মোড়কে সংরক্ষণ করুন।",
+    "ঐতিহ্যবাহী স্বাদ — গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য।",
+    "প্রাকৃতিক মিষ্টতা — কোনো কৃত্রিম রঙ বা ফ্লেভার নেই।",
+    "উচ্চ পুষ্টিগুণ — প্রাকৃতিকভাবে পাকা খেজুরের রস থেকে তৈরি।",
+    "স্বাস্থ্যসম্মত — প্রাকৃতিকভাবে পাকা ও সতর্কভাবে সংগ্রহ করা, যা স্বাস্থ্যকর খাদ্যাভ্যাসে সহায়ক।",
+    "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ করা, যা পরিবেশের প্রতি যত্নশীল।",
+    "গুণগত মান — প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।",
+  ],
+  packages: [
+    { id: "kg-jhola-1kg", label: "১ কেজি", price: 320 },
+    { id: "kg-jhola-2kg", label: "২ কেজি", price: 640 },
+    { id: "kg-jhola-3kg", label: "৩ কেজি", price: 960 },
+    { id: "kg-jhola-4kg", label: "৪ কেজি", price: 1280 },
+    { id: "kg-jhola-5kg", label: "৫ কেজি", price: 1600 }
+  ]
+},
+{
+  id: 24,
+  name: " চকলেট গুড় – ঐতিহ্যবাহী গুড়ে চকলেটের মতো মজার স্বাদ!",
+  banglaName: " চকলেট গুড় – ঐতিহ্যবাহী গুড়ে চকলেটের মতো মজার স্বাদ!",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-DEMO-04",
+  image: "images/products/chockletgur.jpg",
+  images: ["images/products/chockletgur.jpg"],
+  rating: 0,
+  reviewCount: 0,
+  isOffer: false,
+  shortDescription: "ঐতিহ্যবাহী চকলেট গুড় দিয়ে উপভোগ করুন মিষ্টি স্বাদের নতুন মাত্রা। এর মসৃণ গঠন ও চকলেটের মতো স্বাদ খাবারে যোগ করে ভিন্ন মাত্রার আনন্দ।",
+  description: "Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সতর্কভাবে সংগ্রহ করা খেজুরের রস দিয়ে তৈরি এই চকলেট গুড়। প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ। মসৃণ গঠন ও চকলেটের মতো স্বাদ খাবারে যোগ করে ভিন্ন মাত্রার আনন্দ। পিঠা-পায়েসসহ নানা মজার খাবারে এটি ব্যবহার করে উপভোগ করুন গ্রামবাংলার ঐতিহ্যবাহী স্বাদ। ",
+  ingredients: "খেজুরের গুড়",
+  benefits: [
+    "যেভাবে খেতে পারেন:",
+    "পিঠা, পায়েস বা অন্যান্য মিষ্টি পদে ব্যবহার করতে পারেন।",
+    "চা, দুধ বা অন্যান্য পানীয়ের সঙ্গে মিশিয়ে খেতে পারেন।",
+    "সতেজতা ও সুগন্ধ বজায় রাখতে ফয়েল মোড়কে সংরক্ষণ করুন।",
+    "ঐতিহ্যবাহী স্বাদ — গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য।",
+    "প্রাকৃতিক মিষ্টতা — কোনো কৃত্রিম রঙ বা ফ্লেভার নেই।",
+    "উচ্চ পুষ্টিগুণ — প্রাকৃতিকভাবে পাকা খেজুরের রস থেকে তৈরি।",
+    "স্বাস্থ্যসম্মত — প্রাকৃতিকভাবে পাকা ও সতর্কভাবে সংগ্রহ করা, যা স্বাস্থ্যকর খাদ্যাভ্যাসে সহায়ক।",
+    "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ করা, যা পরিবেশের প্রতি যত্নশীল।",
+    "গুণগত মান — প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।"
+  ],
+  packages: [
+    { id: "kg-demo-chockletgur-1kg", label: "১ কেজি", price: 450 },
+    { id: "kg-demo-chockletgur-2kg", label: "২ কেজি", price: 900 },
+    { id: "kg-demo-chockletgur-3kg", label: "৩ কেজি", price: 1350 },
+    { id: "kg-demo-chockletgur-4kg", label: "৪ কেজি", price: 1800 },
+    { id: "kg-demo-chockletgur-5kg", label: "৫ কেজি", price: 2250 }
+  ]
+},
+{
+  id: 25,
+  name: "বাদাম মিক্সড গুড় – মিষ্টি স্বাদে বাদামের মজাদার মিশ্রণ!",
+  banglaName: "বাদাম মিক্সড গুড় – মিষ্টি স্বাদে বাদামের মজাদার মিশ্রণ!",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-DEMO-05",
+  image: "images/products/badammix.jpg",
+  images: ["images/products/badammix.jpg"],
+  rating: 0,
+  reviewCount: 0,
+  isOffer: false,
+  shortDescription: "গুড়ের মিষ্টি স্বাদের সঙ্গে বাদামের মুচমুচে মজাদার স্বাদ।",
+  description: "বাদাম মিক্সড গুড় — মিষ্টি স্বাদে বাদামের মজাদার মিশ্রণ! এই পণ্যটি খেজুরের গুড়ের মিষ্টি স্বাদের সঙ্গে বাদামের মুচমুচে মজাদার স্বাদ। Barakah Agro-এর নিজস্ব খেজুর বাগান থেকে সতর্কভাবে সংগ্রহ করা খেজুরের রস দিয়ে তৈরি এই বাদাম মিক্সড গুড়। প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ। পিঠা-পায়েসসহ নানা মজার খাবারে এটি ব্যবহার করে উপভোগ করুন গ্রামবাংলার ঐতিহ্যবাহী স্বাদ।",
+  ingredients: "খেজুরের গুড়",
+  benefits: [
+    "যেভাবে খেতে পারেন:",
+    "পিঠা, পায়েস বা অন্যান্য মিষ্টি পদে ব্যবহার করতে পারেন।",
+    "চা, দুধ বা অন্যান্য পানীয়ের সঙ্গে মিশিয়ে খেতে পারেন।",
+    "সতেজতা ও সুগন্ধ বজায় রাখতে ফয়েল মোড়কে সংরক্ষণ করুন।",
+    "ঐতিহ্যবাহী স্বাদ — গ্রামবাংলার খাঁটি স্বাদের ঐতিহ্য।",
+    "প্রাকৃতিক মিষ্টতা — কোনো কৃত্রিম রঙ বা ফ্লেভার নেই।",
+    "উচ্চ পুষ্টিগুণ — প্রাকৃতিকভাবে পাকা খেজুরের রস থেকে তৈরি।",
+    "স্বাস্থ্যসম্মত — প্রাকৃতিকভাবে পাকা ও সতর্কভাবে সংগ্রহ করা, যা স্বাস্থ্যকর খাদ্যাভ্যাসে সহায়ক।",
+    "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ করা, যা পরিবেশের প্রতি যত্নশীল।",
+    "গুণগত মান — প্রতিটি টুকরো গুড়ে রয়েছে প্রাকৃতিক মিষ্টতা, সুগন্ধ এবং স্বাস্থ্যকর পুষ্টিগুণ।"
+  ],
+  packages: [
+    { id: "kg-badammix-1kg", label: "১ কেজি", price: 450 },
+    { id: "kg-badammix-2kg", label: "২ কেজি", price: 900 },
+    { id: "kg-badammix-3kg", label: "৩ কেজি", price: 1350 },
+    { id: "kg-badammix-4kg", label: "৪ কেজি", price: 1800 },
+    { id: "kg-badammix-5kg", label: "৫ কেজি", price: 2250 }
+  ]
 }
 
 
@@ -987,6 +1169,14 @@ const FEATURED_CATEGORIES = [
     desc: "মরিচ, হলুদ ও ধনিয়ার গুঁড়া",
     image: "images/products/morich.jpeg",
     url: "products.html?category=spices"
+  },
+  {
+    id: "khejur-gur",
+    name: "খেজুরের গুড়",
+    enName: "Date Palm Jaggery",
+    desc: "খাঁটি খেজুরের গুড়",
+    image: "images/products/golpatali.jpg",
+    url: "products.html?category=khejur-gur"
   }
 ];
 
@@ -3369,6 +3559,49 @@ function initCategoryNavigation() {
       }
     }
   }
+
+  const jaggeryHref = "products.html?category=khejur-gur";
+  const jaggeryIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10z"/></svg>';
+  const addCategoryLink = (container, className, contents) => {
+    if (!container || container.querySelector('[data-cat="khejur-gur"]')) return;
+    const link = document.createElement("a");
+    link.href = jaggeryHref;
+    link.className = className;
+    link.dataset.cat = "khejur-gur";
+    link.innerHTML = contents;
+    container.appendChild(link);
+  };
+
+  document.querySelectorAll(".mobile-cat-items-list").forEach((list) => {
+    addCategoryLink(list, "mobile-cat-card", `
+      <div class="mobile-cat-card-icon dates-theme">${jaggeryIcon}</div>
+      <div class="mobile-cat-card-info"><span class="mobile-cat-card-name">খেজুরের গুড়</span><span class="mobile-cat-card-sub">Date Palm Jaggery</span></div>
+      <svg class="mobile-cat-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    `);
+  });
+  document.querySelectorAll(".desktop-cat-dropdown-grid").forEach((grid) => {
+    addCategoryLink(grid, "desktop-cat-drop-item", `
+      <span class="drop-icon-box dates-theme">${jaggeryIcon}</span>
+      <div class="drop-text-box"><span class="drop-name">খেজুরের গুড়</span><span class="drop-sub">Date Palm Jaggery</span></div>
+      <svg class="drop-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    `);
+  });
+  document.querySelectorAll(".desktop-cat-nav-links").forEach((links) => {
+    addCategoryLink(links, "desktop-cat-link", `
+      <span class="cat-link-icon dates-color">${jaggeryIcon}</span><span>খেজুরের গুড়</span>
+    `);
+  });
+  document.querySelectorAll(".category-nav-group").forEach((links) => {
+    const link = document.createElement("a");
+    link.href = jaggeryHref;
+    link.className = "category-nav-item";
+    link.innerHTML = "<span>খেজুরের গুড়</span>";
+    if (links.getAttribute("aria-hidden") === "true") link.tabIndex = -1;
+    links.appendChild(link);
+  });
+  document.querySelectorAll(".mobile-cat-count-pill, .desktop-cat-dropdown-badge").forEach((badge) => {
+    badge.textContent = "৯টি ক্যাটাগরি";
+  });
 
   // 3. Desktop "All Categories" Dropdown toggle / click
   const catDropdownBtn = document.getElementById("desktopCatDropdownBtn");

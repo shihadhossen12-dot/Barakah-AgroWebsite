@@ -29,7 +29,6 @@ import {
   markChatReadByAdmin,
   getChatThreads,
   getManagedProducts,
-  saveManagedProduct,
   removeManagedProduct,
   addContactMessage,
   getContactMessages
@@ -414,18 +413,6 @@ app.get('/api/admin/orders', adminAuth, async (req, res) => {
 app.get('/api/products', async (_req, res) => {
   try { res.json(await getManagedProducts()); }
   catch (error) { console.error('Products load error:', error); res.status(500).json({ error: 'Failed to load products.' }); }
-});
-
-app.post('/api/admin/products', adminAuth, async (req, res) => {
-  const b = req.body || {};
-  const name = String(b.name || '').trim();
-  const price = Number(b.price);
-  if (name.length < 2 || !Number.isFinite(price) || price < 0) return res.status(400).json({ error: 'নাম ও সঠিক দাম দিন।' });
-  const id = 'admin-' + crypto.randomBytes(6).toString('hex');
-  const category = String(b.category || 'other').trim().slice(0, 60);
-  const product = { id, name, banglaName: String(b.banglaName || name).trim(), category, categoryName: category, sku: String(b.sku || id).trim(), price, oldPrice: Number(b.oldPrice) || 0, stock: Math.max(0, Number(b.stock) || 0), image: String(b.image || 'images/products/default.png').trim(), images: [String(b.image || 'images/products/default.png').trim()], shortDescription: String(b.description || '').trim(), description: String(b.description || '').trim(), rating: 0, reviewCount: 0, packages: [{ id: id + '-default', label: '১ পিস', price, oldPrice: Number(b.oldPrice) || 0, stock: Math.max(0, Number(b.stock) || 0) }] };
-  try { await saveManagedProduct(product); res.status(201).json({ product }); }
-  catch (error) { console.error('Product add error:', error); res.status(500).json({ error: 'পণ্য যোগ করা যায়নি।' }); }
 });
 
 app.delete('/api/admin/products/:id', adminAuth, async (req, res) => {
