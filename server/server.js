@@ -736,6 +736,15 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
     quantity: Math.max(1, Number(item.quantity) || 1),
     image: String(item.image ?? '')
   }));
+  const bengaliDigits = '০১২৩৪৫৬৭৮৯';
+  const comboWeight = cleanItems.filter(item => item.id === '26').reduce((total, item) => {
+    const latinLabel = item.packageLabel.replace(/[০-৯]/g, digit => String(bengaliDigits.indexOf(digit)));
+    const match = /^([1-5])\s*(?:কেজি|kg)$/i.exec(latinLabel);
+    return total + (match ? Number(match[1]) * item.quantity : 0);
+  }, 0);
+  if (comboWeight > 0 && comboWeight < 3) {
+    return res.status(400).json({ error: 'কম্বো খেজুরের গুড় অর্ডার করতে সর্বনিম্ন ৩ কেজি লাগবে।' });
+  }
 
   const normalizedCouponCode = String(couponCode || '').trim().toUpperCase();
   const couponRules = {
@@ -760,7 +769,9 @@ app.post('/api/orders', optionalCustomerAuth, async (req, res) => {
   const orderDiscount = coupon
     ? (coupon.type === 'percent' ? Math.round(orderSubtotal * coupon.value / 100) : coupon.value)
     : 0;
-  const orderDeliveryFee = Math.max(0, Number(deliveryFee) || 0);
+  const orderDeliveryFee = comboWeight >= 5 || orderSubtotal >= 2000
+    ? 0
+    : (deliveryLocation === 'outside' ? 130 : 80);
   const orderTotal = Math.max(0, orderSubtotal - orderDiscount + orderDeliveryFee);
 
   const order = {

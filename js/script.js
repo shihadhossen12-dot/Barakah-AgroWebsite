@@ -1057,12 +1057,28 @@ function getCartItemPackageLabel(item) {
   return item.packageLabel || "";
 }
 
-function getDeliveryFee(cart, location, subtotal) {
-  const comboWeight = cart.reduce((total, item) => {
+function getComboWeightKg(cart) {
+  return cart.reduce((total, item) => {
     if (String(item.productId) !== "26") return total;
-    return total + Number(item.weightKg || 0) * Number(item.quantity || 0);
+    const bengaliDigits = "০১২৩৪৫৬৭৮৯";
+    const latinLabel = String(item.packageLabel || "").replace(/[০-৯]/g, digit => String(bengaliDigits.indexOf(digit)));
+    const labelMatch = /^([1-5])\s*(?:কেজি|kg)$/i.exec(latinLabel);
+    const weightKg = Number(item.weightKg) || (labelMatch ? Number(labelMatch[1]) : 0);
+    return total + weightKg * Number(item.quantity || 0);
   }, 0);
-  if (comboWeight >= 5) return 0;
+}
+
+function validateComboMinimumOrder(cart = getCart()) {
+  const comboWeight = getComboWeightKg(cart);
+  if (comboWeight === 0 || comboWeight >= 3) return true;
+
+  const remaining = (3 - comboWeight).toLocaleString("bn-BD");
+  showToast(`কম্বো অর্ডার করতে অন্তত ৩ কেজি লাগবে। আরও ${remaining} কেজি খেজুরের গুড় যোগ করুন।`);
+  return false;
+}
+
+function getDeliveryFee(cart, location, subtotal) {
+  if (getComboWeightKg(cart) >= 5) return 0;
   if (subtotal >= SHIPPING_CONFIG.freeThreshold) return 0;
   return location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
 }
@@ -1744,7 +1760,7 @@ currentProductImageIndex = 0;
             <button class="btn btn-primary btn-lg modal-add-btn" onclick="addModalItemToCart()">
               কার্টে যোগ করুন
             </button>
-            <a href="checkout.html" class="btn btn-accent btn-lg modal-buy-btn" onclick="buyModalItemNow()">
+            <a href="checkout.html" class="btn btn-accent btn-lg modal-buy-btn" onclick="return buyModalItemNow()">
               এখনই কিনুন
             </a>
           </div>
@@ -1842,7 +1858,9 @@ function buyModalItemNow() {
   const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
 
   addToCart(productId, packageId, qty);
+  if (String(productId) === "26" && !validateComboMinimumOrder()) return false;
   closeProductModal();
+  return true;
 }
 function buyCardItemNow(productId, button) {
   const card = button.closest(".product-card");
@@ -1852,6 +1870,7 @@ function buyCardItemNow(productId, button) {
   const packageId = card.getAttribute("data-selected-pkg");
 
   addToCart(productId, packageId, 1);
+  if (String(productId) === "26" && !validateComboMinimumOrder()) return;
 
   window.location.href = "checkout.html";
 }
@@ -1939,6 +1958,11 @@ function renderCartPage() {
   });
 
   container.innerHTML = html;
+  const comboWeight = getComboWeightKg(cart);
+  const comboNotice = document.getElementById("comboMinimumOrderNotice");
+  if (comboNotice) {
+    comboNotice.style.display = comboWeight > 0 && comboWeight < 3 ? "block" : "none";
+  }
   calculateAndRenderTotals();
 }
 
@@ -2239,11 +2263,13 @@ function goToPaymentPage(e) {
   // জামালপুরের বাইরে হলে দুধ নিজে নিজে সরে যাবে (এখানে থামবে না)
   const removedMilk = removeLocalOnlyItems(district, true);
 
-  if (getCart().length === 0) {
+  const cart = getCart();
+  if (cart.length === 0) {
     alert("দুধ শুধু জামালপুর জেলায় পাওয়া যায়, তাই কার্ট থেকে দুধ সরানো হয়েছে। এখন আপনার কার্ট খালি, অনুগ্রহ করে অন্য পণ্য যুক্ত করুন।");
     window.location.href = "products.html";
     return;
   }
+  if (!validateComboMinimumOrder(cart)) return;
 
   let location = "inside";
   document.querySelectorAll('input[name="deliveryLocation"]').forEach(r => { if (r.checked) location = r.value; });
@@ -2277,6 +2303,7 @@ async function handleCheckoutSubmit(e) {
     showToast("আপনার কার্ট খালি! অনুগ্রহ করে পণ্য যুক্ত করুন।");
     return;
   }
+  if (!validateComboMinimumOrder(cart)) return;
 
     const paymentInfo = getPaymentInfo();
   if (!paymentInfo.ok) {
@@ -2326,7 +2353,10 @@ async function handleCheckoutSubmit(e) {
       showToast(data.error || "এই Transaction ID দিয়ে আগেই অর্ডার করা হয়েছে।");
       return;
     }
-    if (!response.ok) throw new Error(data.error || "Order save failed");
+        if (!response.ok) {
+          showToast(data.error || "অর্ডারটি গ্রহণ করা যায়নি।");
+          return;
+        }
 
         if (typeof fbTrackPurchase === "function") fbTrackPurchase(cart, grandTotal, data.order.id);
     showOrderSuccessModal(data.order.id, name, phone, address, data.order.paymentMethod);
@@ -2365,6 +2395,7 @@ function orderViaWhatsApp() {
     showToast("আপনার কার্ট খালি!");
     return;
   }
+  if (!validateComboMinimumOrder(cart)) return;
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -3996,7 +4027,7 @@ function initProductDetailsPage() {
             <label>১. গুড়ের ধরন বেছে নিন</label>
             ${createGurVariantOptionsHTML(product, selectedVariant.id, "details")}
           </div>
-          <div class="gur-order-guide">২. ১, ২, ৩, ৪ বা ৫ কেজির প্যাকেজ বেছে নিন। ৩. কার্টে যোগ করুন। কম্বোর সব প্যাক মিলিয়ে মোট ওজন ৫ কেজি বা বেশি হলেই ডেলিভারি চার্জ ফ্রি হবে।</div>
+          <div class="gur-order-guide">সর্বনিম্ন ৩ কেজি অর্ডার করতে হবে । কম্বোর সব প্যাক মিলিয়ে মোট ওজন ৫ কেজি বা বেশি হলেই ডেলিভারি চার্জ ফ্রি হবে।</div>
           ` : ""}
 
           <!-- Package / Size Selector -->
@@ -4524,6 +4555,7 @@ function handleDetailsAddToCart() {
 function handleDetailsBuyNow() {
   if (!detailsState.product || !detailsState.selectedPkg) return;
   addToCart(detailsState.product.id, detailsState.selectedPkg.id, detailsState.quantity);
+  if (String(detailsState.product.id) === "26" && !validateComboMinimumOrder()) return;
   window.location.href = "checkout.html";
 }
 

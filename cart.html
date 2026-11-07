@@ -166,7 +166,10 @@
           </div>
 
           <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 10px;">
-            <a href="checkout.html" class="btn btn-primary btn-lg" style="width: 100%;">
+            <p id="comboMinimumOrderNotice" style="display: none; margin: 0; color: #a16207; font-size: 0.84rem; font-weight: 700; line-height: 1.6; text-align: center;">
+              কম্বো খেজুরের গুড় অর্ডার করতে মোট অন্তত ৩ কেজি বেছে নিন।
+            </p>
+            <a href="checkout.html" class="btn btn-primary btn-lg" style="width: 100%;" onclick="return validateComboMinimumOrder()">
               অর্ডার সম্পন্ন করতে এগিয়ে যান →
             </a>
             <p style="font-size: 0.8rem; color: #64748b; text-align: center;">
