@@ -87,7 +87,7 @@ const BARAKAH_PRODUCTS = [
       "পরিবেশবান্ধব — প্রাকৃতিকভাবে সংগ্রহ ও শুকানো, যা পরিবেশের প্রতি যত্নশীল।"
     ],
     packages: [
-      { id: "pp-250g", label: "250 gm", price: 200 },
+      { id: "pp-250g", label: "250 gm", price: 230 },
       { id: "pp-500g", label: "500 gm", price: 380 },
       { id: "pp-1k", label: "1 kg", price: 650 }
     ]
