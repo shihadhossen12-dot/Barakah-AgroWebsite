@@ -738,6 +738,105 @@ input, select, textarea {
   margin-bottom: 16px;
 }
 
+.gur-variant-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.gur-variant-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 66px;
+  padding: 7px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: linear-gradient(145deg, #fff, #f8fbf7);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.gur-variant-option:hover {
+  border-color: #9cbe9e;
+  box-shadow: 0 5px 14px rgba(22, 101, 52, 0.1);
+  transform: translateY(-1px);
+}
+
+.gur-variant-option.active {
+  border-color: var(--primary);
+  background: linear-gradient(145deg, #f0f8ef, #e5f2e5);
+  box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.1);
+}
+
+.gur-variant-option img {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 9px;
+  object-fit: cover;
+  background: #f0f0e8;
+}
+
+.gur-variant-option-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.gur-variant-option-name {
+  overflow: hidden;
+  color: var(--text-main);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.gur-variant-option-price {
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.gur-order-guide {
+  margin: 2px 0 14px;
+  padding: 10px 12px;
+  border: 1px solid #cfe5d0;
+  border-radius: 11px;
+  background: linear-gradient(110deg, #f1f9ef, #fff9e9);
+  color: #315a35;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.gur-price-delivery-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 9px;
+  border: 1px solid #b8dfc0;
+  border-radius: 999px;
+  background: #eaf8ed;
+  color: #176b36;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.gur-price-box {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .package-label {
   font-size: 0.78rem;
   font-weight: 700;
@@ -5650,6 +5749,32 @@ border: 1px solid rgba(0, 255, 255, 0.65);
   margin-bottom: 20px;
 }
 
+.details-variant-selector {
+  margin-bottom: 12px;
+}
+
+.details-variant-selector .gur-variant-options {
+  margin: 0;
+}
+
+.gur-details-price-wrap {
+  align-items: center;
+  background: linear-gradient(120deg, #f3fbf2, #fffaf0);
+  border-color: #d7ead8;
+}
+
+.gur-details-price-wrap .details-price-current {
+  color: var(--primary);
+}
+
+.details-variant-selector label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
 /* Package Selector */
 .details-package-selector {
   margin-bottom: 22px;
@@ -5707,6 +5832,27 @@ border: 1px solid rgba(0, 255, 255, 0.65);
 .details-pkg-chip.active .chip-label,
 .details-pkg-chip.active .chip-price {
   color: #ffffff;
+}
+
+.details-pkg-chips--combo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+}
+
+.details-pkg-chips--combo .details-pkg-chip {
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 76px;
+  width: 100%;
+  padding: 9px 6px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.details-pkg-chips--combo .chip-label {
+  line-height: 1.4;
 }
 
 /* Purchase Bar */
@@ -7733,6 +7879,16 @@ body.account-3d .btn-primary:hover {
   border-radius: 16px;
 }
 
+.gur-details-price-wrap {
+  background-image: linear-gradient(120deg, #f3fbf2, #fffaf0);
+}
+
+.gur-variant-option:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - 4px);
+}
+
 .details-pkg-chip {
   border-radius: 12px;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
@@ -7838,5 +7994,35 @@ background: linear-gradient(90deg in oklch, oklch(19.69% 0.0441 259.45) 0.0%, ok
   .patpata-offer-banner {
     padding: 17px 16px 14px;
     border-radius: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gur-variant-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gur-variant-option:last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .details-pkg-chips--combo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .details-pkg-chips--combo .details-pkg-chip {
+    min-height: 72px;
+    padding: 8px 5px;
+  }
+
+  .details-pkg-chips--combo .chip-label {
+    font-size: 0.8rem;
+  }
+
+  .details-pkg-chips--combo .chip-price {
+    font-size: 0.78rem;
   }
 }

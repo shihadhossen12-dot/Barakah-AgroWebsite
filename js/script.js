@@ -962,16 +962,66 @@ const BARAKAH_PRODUCTS = [
   
 ];
 
+const gurComboVariants = [
+  { id: "gol-patali", name: "গোল পাটালি গুড়", image: "images/products/golpatali.jpg", pricePerKg: 300 },
+  { id: "foil-patali", name: "ফয়েল পাটালি গুড়", image: "images/products/golpatali.jpg", pricePerKg: 320 },
+  { id: "jhola", name: "দানাদার ঝোলা গুড়", image: "images/products/jholagur.jpg", pricePerKg: 320 },
+  { id: "chocolate", name: "চকলেট গুড়", image: "images/products/chockletgur.jpg", pricePerKg: 450 },
+  { id: "badam-mix", name: "বাদাম মিক্সড গুড়", image: "images/products/badammix.jpg", pricePerKg: 450 }
+];
+const gurComboWeights = [
+  { kg: 3, label: "৩ কেজি" },
+  { kg: 4, label: "৪ কেজি" },
+  { kg: 5, label: "৫ কেজি" }
+];
+const gurComboProduct = {
+  id: 26,
+  name: "Khejur Gur Combo",
+  banglaName: "খেজুরের গুড়ের কম্বো",
+  category: "khejur-gur",
+  categoryName: "খেজুরের গুড়",
+  banglaCategory: "খেজুরের গুড়",
+  sku: "BA-KG-COMBO",
+  image: gurComboVariants[0].image,
+  images: gurComboVariants.map((variant) => variant.image),
+  variants: gurComboVariants,
+  rating: 0,
+  reviewCount: 0,
+  isOffer: true,
+  badge: "৫ কেজিতে ফ্রি ডেলিভারি",
+  shortDescription: "পছন্দের খেজুরের গুড় বেছে নিন। সর্বনিম্ন ৩ কেজি থেকে অর্ডার করুন।",
+  description: "গোল পাটালি, ফয়েল পাটালি, দানাদার ঝোলা, চকলেট অথবা বাদাম মিক্সড গুড় থেকে পছন্দের ধরনটি বেছে নিন। সর্বনিম্ন অর্ডার ৩ কেজি। ৫ কেজি অর্ডারে ডেলিভারি চার্জ সম্পূর্ণ ফ্রি।",
+  ingredients: "নির্বাচিত খেজুরের গুড়",
+  benefits: [
+    "৫ ধরনের খেজুরের গুড় থেকে পছন্দমতো বেছে নিন।",
+    "সর্বনিম্ন অর্ডার ৩ কেজি।",
+    "৫ কেজি অর্ডারে ডেলিভারি চার্জ ফ্রি।"
+  ],
+  packages: gurComboVariants.flatMap((variant) =>
+    gurComboWeights.map((weight) => ({
+      id: `gur-combo-${variant.id}-${weight.kg}kg`,
+      label: weight.label,
+      price: variant.pricePerKg * weight.kg,
+      variantId: variant.id,
+      variantName: variant.name,
+      image: variant.image,
+      weightKg: weight.kg
+    }))
+  )
+};
+BARAKAH_PRODUCTS.push(gurComboProduct);
 
 window.BARAKAH_PRODUCTS = BARAKAH_PRODUCTS;
 // Apply the admin-managed catalog overlay across the storefront.
 fetch('/api/products').then(r => r.ok ? r.json() : null).then(data => {
   if (!data) return;
-  const deleted = new Set((data.deletedIds || []).map(String));
+  const comboProductIds = new Set(["26"]);
+  const deleted = new Set((data.deletedIds || []).map(String).filter(id => !comboProductIds.has(id)));
   for (let i = BARAKAH_PRODUCTS.length - 1; i >= 0; i--) {
     if (deleted.has(String(BARAKAH_PRODUCTS[i].id))) BARAKAH_PRODUCTS.splice(i, 1);
   }
   (data.products || []).forEach(product => {
+    if (comboProductIds.has(String(product.id))) return;
     if (String(product.id) === "2") {
       product = {
         ...product,
@@ -1006,6 +1056,11 @@ function getCartItemPackageLabel(item) {
 }
 
 function getDeliveryFee(cart, location, subtotal) {
+  const comboWeight = cart.reduce((total, item) => {
+    if (String(item.productId) !== "26") return total;
+    return total + Number(item.weightKg || 0) * Number(item.quantity || 0);
+  }, 0);
+  if (comboWeight >= 5) return 0;
   if (subtotal >= SHIPPING_CONFIG.freeThreshold) return 0;
   return location === "outside" ? SHIPPING_CONFIG.outsideDhaka : SHIPPING_CONFIG.insideDhaka;
 }
@@ -1235,7 +1290,7 @@ function saveCart(cart) {
 }
 
 function addToCart(productId, packageId, quantity = 1) {
-  const product = BARAKAH_PRODUCTS.find((p) => p.id === productId);
+  const product = BARAKAH_PRODUCTS.find((p) => String(p.id) === String(productId));
   if (!product) return;
 
   const pkg = product.packages.find((p) => p.id === packageId) || product.packages[0];
@@ -1253,10 +1308,12 @@ function addToCart(productId, packageId, quantity = 1) {
       productId: product.id,
       packageId: pkg.id,
       name: product.name,
-      banglaName: product.banglaName,
+      banglaName: pkg.variantName ? `${product.banglaName} (${pkg.variantName})` : product.banglaName,
       packageLabel: pkg.label,
       price: pkg.price,
-      image: product.image,
+      image: pkg.image || product.image,
+      variantId: pkg.variantId || null,
+      weightKg: pkg.weightKg || null,
       quantity: quantity
     });
   }
@@ -1339,37 +1396,68 @@ function showToast(message) {
 // --------------------------------------------------------------------------
 // 4. PRODUCT CARDS HTML BUILDER
 // --------------------------------------------------------------------------
-function createProductCardHTML(product) {
-  const initialPkg = product.packages[0];
+function getPackagesForVariant(product, variantId) {
+  return product.packages.filter((pkg) => !pkg.variantId || pkg.variantId === variantId);
+}
 
-  const packagesHTML = product.packages
-    .map(
-      (pkg, idx) => `
-      <button
-        type="button"
-        class="pkg-chip ${idx === 0 ? "active" : ""}"
-        data-product-id="${product.id}"
-        data-pkg-id="${pkg.id}"
-        data-price="${pkg.price}"
-        data-old-price="${pkg.oldPrice || ""}"
-        data-label="${pkg.label}">
-        ${pkg.label}
-      </button>
-    `
-    )
-    .join("");
+function createPackageChipsHTML(product, packages) {
+  return packages.map((pkg, idx) => `
+    <button
+      type="button"
+      class="pkg-chip ${idx === 0 ? "active" : ""}"
+      data-product-id="${product.id}"
+      data-pkg-id="${pkg.id}"
+      data-price="${pkg.price}"
+      data-old-price="${pkg.oldPrice || ""}"
+      data-label="${pkg.label}">
+      ${pkg.label}${pkg.weightKg === 5 && String(product.id) === "26" ? " · ফ্রি ডেলিভারি" : ""}
+    </button>
+  `).join("");
+}
+
+function createGurVariantOptionsHTML(product, selectedVariantId, context) {
+  if (!product.variants) return "";
+  const handler = context === "card" ? "handleGurCardVariantSelect" : "handleDetailsVariantSelect";
+  return `
+    <div class="gur-variant-options" role="group" aria-label="গুড়ের ধরন বেছে নিন">
+      ${product.variants.map((variant) => `
+        <button type="button" class="gur-variant-option ${variant.id === selectedVariantId ? "active" : ""}"
+          data-variant-id="${variant.id}"
+          aria-pressed="${variant.id === selectedVariantId}"
+          onclick="${handler}('${variant.id}'${context === "card" ? ", this" : ""})">
+          <img src="${variant.image}" alt="" loading="lazy">
+          <span class="gur-variant-option-copy">
+            <span class="gur-variant-option-name">${variant.name}</span>
+            <span class="gur-variant-option-price">৳${variant.pricePerKg} / কেজি</span>
+          </span>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function createProductCardHTML(product) {
+  const selectedVariant = product.variants?.[0];
+  const initialPackages = selectedVariant ? getPackagesForVariant(product, selectedVariant.id) : product.packages;
+  const initialPkg = initialPackages[0];
+  const packagesHTML = createPackageChipsHTML(product, initialPackages);
+  const variantsHTML = selectedVariant ? `
+    <span class="package-label">১. গুড়ের ধরন বেছে নিন</span>
+    ${createGurVariantOptionsHTML(product, selectedVariant.id, "card")}
+  ` : "";
 
   const isStockOut = product.badge === "stock-out" || product.inStock === false;
 
   return `
-    <div class="product-card" data-product-id="${product.id}" data-selected-pkg="${initialPkg.id}">
+    <div class="product-card" data-product-id="${product.id}" data-selected-pkg="${initialPkg.id}"
+      ${selectedVariant ? `data-selected-variant="${selectedVariant.id}"` : ""}>
       <div class="product-badge-wrap">
 
         ${isStockOut ? `<span class="badge-stock-out">Stock Out</span>` : `<span class="badge-best">${product.badge || "In Stock"}</span>`}
       </div>
 
       <div class="product-image-box" onclick="window.location.href='product-details.html?id=${product.id}'" title="${product.banglaName} বিস্তারিত দেখুন">
-        <img src="${product.image}" alt="${product.banglaName}" class="product-img" loading="lazy">
+        <img src="${selectedVariant ? selectedVariant.image : product.image}" alt="${selectedVariant ? selectedVariant.name : product.banglaName}" class="product-img" loading="lazy">
       </div>
 
       <div class="product-content">
@@ -1386,13 +1474,16 @@ function createProductCardHTML(product) {
         <p class="product-short-desc">${product.shortDescription}</p>
 
         <div class="product-package-select">
-          <span class="package-label">সাইজ / প্যাকেজ:</span>
+          ${variantsHTML}
+          <span class="package-label">${selectedVariant ? "২. ওজন বেছে নিন" : "সাইজ / প্যাকেজ:"}</span>
           <div class="package-options">${packagesHTML}</div>
         </div>
+        ${selectedVariant ? `<div class="gur-order-guide">৩. কার্টে যোগ করুন। কম্বোর মোট ওজন ৫ কেজি বা বেশি হলেই ডেলিভারি ফ্রি—একাধিক প্যাক মিলিয়েও হবে।</div>` : ""}
 
         <div class="product-card-footer">
-          <div class="price-box">
+          <div class="price-box ${selectedVariant ? "gur-price-box" : ""}">
             <span class="price-current card-price">৳ ${initialPkg.price}</span>
+            ${selectedVariant ? `<span class="gur-price-delivery-label">🎁 ৫ কেজি+ হলে ফ্রি ডেলিভারি</span>` : ""}
             ${initialPkg.oldPrice ? `<span class="price-old card-old-price">৳ ${initialPkg.oldPrice}</span>` : ""}
           </div>
           <div class="card-actions">
@@ -1443,6 +1534,33 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+function handleGurCardVariantSelect(variantId, button) {
+  const card = button.closest(".product-card");
+  if (!card) return;
+  const product = BARAKAH_PRODUCTS.find((item) => String(item.id) === card.dataset.productId);
+  const variant = product?.variants?.find((item) => item.id === variantId);
+  if (!product || !variant) return;
+
+  const packages = getPackagesForVariant(product, variant.id);
+  const initialPkg = packages[0];
+  card.dataset.selectedVariant = variant.id;
+  card.dataset.selectedPkg = initialPkg.id;
+  card.querySelectorAll(".gur-variant-option").forEach((option) => {
+    const isActive = option.dataset.variantId === variantId;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-pressed", String(isActive));
+  });
+  const image = card.querySelector(".product-img");
+  if (image) {
+    image.src = variant.image;
+    image.alt = variant.name;
+  }
+  const packageOptions = card.querySelector(".package-options");
+  if (packageOptions) packageOptions.innerHTML = createPackageChipsHTML(product, packages);
+  const price = card.querySelector(".card-price");
+  if (price) price.textContent = `৳ ${initialPkg.price}`;
+}
 
 function handleCardAddToCart(productId, button) {
   const card = button.closest(".product-card");
@@ -3728,6 +3846,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 let detailsState = {
   product: null,
+  selectedVariant: null,
   images: [],
   currentImageIndex: 0,
   selectedPkg: null,
@@ -3749,10 +3868,15 @@ function initProductDetailsPage() {
     product = BARAKAH_PRODUCTS[0];
   }
 
-  const images = (product.images && product.images.length > 0) ? product.images : [product.image];
-  const initialPkg = product.packages[0];
+  const selectedVariant = product.variants?.[0] || null;
+  const images = selectedVariant
+    ? [selectedVariant.image]
+    : ((product.images && product.images.length > 0) ? product.images : [product.image]);
+  const initialPackages = selectedVariant ? getPackagesForVariant(product, selectedVariant.id) : product.packages;
+  const initialPkg = initialPackages[0];
 
   detailsState.product = product;
+  detailsState.selectedVariant = selectedVariant;
   detailsState.images = images;
   detailsState.currentImageIndex = 0;
   detailsState.selectedPkg = initialPkg;
@@ -3810,7 +3934,7 @@ function initProductDetailsPage() {
               <button type="button" class="gallery-nav-btn gallery-prev-btn" onclick="switchProductGalleryImage(-1)" aria-label="পূর্ববর্তী ছবি">❮</button>
             ` : ""}
 
-            <div class="gallery-img-container" onclick="openImageLightbox('${images[0]}', '${product.banglaName}')" title="বড় করে দেখতে ক্লিক করুন">
+            <div class="gallery-img-container" id="detailsGalleryImageBox" onclick="openImageLightbox('${images[0]}', '${product.banglaName}')" title="বড় করে দেখতে ক্লিক করুন">
               <img id="detailsMainImg" src="${images[0]}" alt="${product.banglaName}" class="details-main-img">
             </div>
 
@@ -3855,8 +3979,9 @@ function initProductDetailsPage() {
           </div>
 
           <!-- Price Display Box -->
-          <div class="details-price-wrap" id="detailsPriceWrap">
+          <div class="details-price-wrap ${selectedVariant ? "gur-details-price-wrap" : ""}" id="detailsPriceWrap">
             <div class="details-price-current" id="detailsCurrentPrice">৳ ${initialPkg.price}</div>
+            ${selectedVariant ? `<span class="gur-price-delivery-label">🎁 ৫ কেজি+ হলে ফ্রি ডেলিভারি</span>` : ""}
             <div class="details-price-old" id="detailsOldPrice" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳ ${initialPkg.oldPrice || ""}</div>
             <div class="details-discount-chip" id="detailsDiscountChip" style="${initialPkg.oldPrice ? "" : "display:none;"}">৳${initialPkg.oldPrice ? initialPkg.oldPrice - initialPkg.price : 0} সাশ্রয়</div>
           </div>
@@ -3864,21 +3989,29 @@ function initProductDetailsPage() {
           <!-- Short Description -->
           <p class="details-short-desc">${product.shortDescription}</p>
 
+          ${selectedVariant ? `
+          <div class="details-variant-selector">
+            <label>১. গুড়ের ধরন বেছে নিন</label>
+            ${createGurVariantOptionsHTML(product, selectedVariant.id, "details")}
+          </div>
+          <div class="gur-order-guide">২. ৩, ৪ বা ৫ কেজির প্যাকেজ বেছে নিন। ৩. কার্টে যোগ করুন। কম্বোর সব প্যাক মিলিয়ে মোট ওজন ৫ কেজি বা বেশি হলেই ডেলিভারি চার্জ ফ্রি হবে।</div>
+          ` : ""}
+
           <!-- Package / Size Selector -->
           <div class="details-package-selector">
             <div class="package-selector-header">
-              <span>প্যাকেজ সাইজ বা পরিমাণ নির্বাচন করুন:</span>
+              <span>${selectedVariant ? "২. প্যাকেজের ওজন বেছে নিন:" : "প্যাকেজ সাইজ বা পরিমাণ নির্বাচন করুন:"}</span>
               <strong id="selectedPkgLabel">${initialPkg.label}</strong>
             </div>
-            <div class="details-pkg-chips" id="detailsPkgChips">
-              ${product.packages.map((pkg, idx) => `
+            <div class="details-pkg-chips ${selectedVariant ? "details-pkg-chips--combo" : ""}" id="detailsPkgChips">
+              ${initialPackages.map((pkg, idx) => `
                 <button type="button" class="details-pkg-chip ${idx === 0 ? "active" : ""}"
                   data-pkg-id="${pkg.id}"
                   data-price="${pkg.price}"
                   data-old-price="${pkg.oldPrice || ""}"
                   data-label="${pkg.label}"
                   onclick="handleDetailsPkgSelect('${pkg.id}')">
-                  <span class="chip-label">${pkg.label}</span>
+                  <span class="chip-label">${pkg.label}${pkg.weightKg === 5 && String(product.id) === "26" ? " · ফ্রি ডেলিভারি" : ""}</span>
                   <span class="chip-price">৳ ${pkg.price}</span>
                 </button>
               `).join("")}
@@ -4285,6 +4418,52 @@ function setupMainGalleryTouchSwipe() {
 }
 
 // Package Selection in Details Page
+function handleDetailsVariantSelect(variantId) {
+  const product = detailsState.product;
+  const variant = product?.variants?.find((item) => item.id === variantId);
+  if (!product || !variant) return;
+
+  const packages = getPackagesForVariant(product, variant.id);
+  detailsState.selectedVariant = variant;
+  detailsState.images = [variant.image];
+  detailsState.currentImageIndex = 0;
+  detailsState.selectedPkg = packages[0];
+  document.querySelectorAll(".details-variant-selector .gur-variant-option").forEach((option) => {
+    const isActive = option.dataset.variantId === variantId;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-pressed", String(isActive));
+  });
+
+  const mainImage = document.getElementById("detailsMainImg");
+  if (mainImage) {
+    mainImage.src = variant.image;
+    mainImage.alt = variant.name;
+  }
+  const galleryImageBox = document.getElementById("detailsGalleryImageBox");
+  if (galleryImageBox) {
+    galleryImageBox.setAttribute("onclick", `openImageLightbox('${variant.image}', '${variant.name}')`);
+  }
+  document.querySelectorAll(".gallery-nav-btn, .gallery-counter-pill, .gallery-thumbs-row").forEach((el) => {
+    el.style.display = "none";
+  });
+
+  const packageChips = document.getElementById("detailsPkgChips");
+  if (packageChips) {
+    packageChips.innerHTML = packages.map((pkg, idx) => `
+      <button type="button" class="details-pkg-chip ${idx === 0 ? "active" : ""}"
+        data-pkg-id="${pkg.id}"
+        data-price="${pkg.price}"
+        data-old-price="${pkg.oldPrice || ""}"
+        data-label="${pkg.label}"
+        onclick="handleDetailsPkgSelect('${pkg.id}')">
+        <span class="chip-label">${pkg.label}${pkg.weightKg === 5 ? " · ফ্রি ডেলিভারি" : ""}</span>
+        <span class="chip-price">৳ ${pkg.price}</span>
+      </button>
+    `).join("");
+  }
+  handleDetailsPkgSelect(packages[0].id);
+}
+
 function handleDetailsPkgSelect(pkgId) {
   const pkg = detailsState.product.packages.find((p) => p.id === pkgId);
   if (!pkg) return;
